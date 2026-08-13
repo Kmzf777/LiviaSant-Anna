@@ -146,6 +146,14 @@
 
   --secao-y: clamp(5rem, 12vh, 11rem); /* padding vertical de seção */
 
+  /* Altura do header sticky.
+     Uma seção full-bleed que queira ficar SOB o header (o hero da home, § 8.1)
+     aplica `-mt-[var(--header-h)]` e compensa no próprio padding. Sem isso o
+     header transparente flutua sobre o fundo do body, não sobre a seção — e a
+     tipografia blush cai para ~1.2:1 de contraste. O Header confere esse
+     overlap em runtime e cai para tinta se ele não existir. */
+  --header-h: 80px;
+
   --dur-draw: 2400ms; /* exclusivo do Traço */
 
   /* Elevação: profundidade vem de superfície e filete, nunca de sombra

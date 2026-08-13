@@ -1,20 +1,32 @@
 import type { Metadata, Viewport } from "next";
 
-import { classesDeFonte } from "./fonts";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+import { Traco } from "@/components/layout/Traco";
+import { IdentificacaoCFM } from "@/components/medical/IdentificacaoCFM";
 import { SITE } from "@/lib/site";
+import { classesDeFonte } from "./fonts";
 import "./globals.css";
 
 /**
  * Layout raiz.
  *
- * Ordem de montagem prevista:
- *   <Traco />     fixo, atrás de tudo, acima do fundo   — subagent B
- *   <Header />    sticky                                 — subagent A
- *   <main>        conteúdo da rota
- *   <Footer />    selo, nav, IdentificacaoCFM            — subagent A
+ * A ordem de montagem não é arbitrária:
  *
- * O <main> carrega os retângulos de superfície que o Traço mede para decidir
- * a cor de cada segmento — ver docs/DESIGN-SYSTEM.md.
+ *   <Traco />   antes do <main>, para ficar sob o conteúdo na ordem de pintura
+ *   <Header />  sticky
+ *   <main>      as seções, que declaram data-superficie e são medidas pelo Traço
+ *   <Footer />  com o bloco do CFM injetado
+ *
+ * ## Por que o bloco do CFM entra por injeção
+ *
+ * A Resolução CFM 2.336/2023 exige o bloco de identificação em local visível
+ * em TODAS as páginas. Se o `Footer` o importasse sozinho, a garantia
+ * dependeria de o rodapé nunca ser trocado. Montando aqui, a obrigação fica
+ * no único lugar por onde toda rota passa.
+ *
+ * O teste `tests/e2e/cfm.spec.ts` percorre `listarRotas()` e confere, em cada
+ * uma, que o bloco existe e é tipograficamente uniforme.
  */
 
 export const metadata: Metadata = {
@@ -49,16 +61,37 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR" className={classesDeFonte}>
+      <head>
+        {/*
+          O reveal de seção começa em opacity: 0 e só aparece quando o
+          IntersectionObserver marca `data-visivel`. Sem JS, o conteúdo ficaria
+          invisível — o HTML está lá, mas ninguém o vê.
+
+          A alternativa seria começar visível e esconder na hidratação, o que
+          troca este risco por um flash em toda visita. Este <noscript> resolve
+          sem nenhum dos dois custos: quem tem JS nunca o aplica, quem não tem
+          recebe o conteúdo estático e completo.
+        */}
+        <noscript>
+          <style>{`.revelar { opacity: 1 !important; transform: none !important; }`}</style>
+        </noscript>
+      </head>
+
       <body className="min-h-dvh antialiased">
-        {/* Pular para o conteúdo: primeiro nó focável da página. */}
+        {/* Primeiro nó focável da página. */}
         <a
           href="#conteudo"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-wine-700 focus:px-4 focus:py-2 focus:text-sand-50"
+          className="focus:bg-wine-700 focus:text-sand-50 sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:not-sr-only focus:px-4 focus:py-2"
         >
           Pular para o conteúdo
         </a>
 
+        <Traco />
+        <Header />
+
         <main id="conteudo">{children}</main>
+
+        <Footer identificacao={<IdentificacaoCFM sobre="vinho" />} />
       </body>
     </html>
   );
