@@ -1,0 +1,183 @@
+@import "tailwindcss";
+@import "../styles/theme.css";
+
+/* =============================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-sand-50);
+    color: var(--color-ink-900);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Bodoni nunca em bold e nunca abaixo de 1.5rem: o hairline some.
+     Verificado por scripts/verificar-bodoni.ts. */
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-optical-sizing: auto;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-body);
+    font-weight: 500;
+  }
+
+  /* Foco sempre visível. `outline: none` é proibido no projeto. */
+  :focus-visible {
+    outline: var(--foco-largura) solid var(--foco-cor);
+    outline-offset: var(--foco-offset);
+    border-radius: var(--radius-filete);
+  }
+
+  /* Sobre vinho, o foco precisa do blush para manter contraste. */
+  [data-superficie="vinho"] :focus-visible {
+    outline-color: var(--color-blush-200);
+  }
+
+  ::selection {
+    background-color: var(--color-wine-700);
+    color: var(--color-blush-200);
+  }
+
+  [data-superficie="vinho"] ::selection {
+    background-color: var(--color-blush-200);
+    color: var(--color-wine-900);
+  }
+
+  /* Imagem nunca estoura o container. */
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* =============================================================================
+   Superfícies
+
+   Vinho é superfície, não detalhe. Blocos inteiros alternando com areia.
+   O atributo data-superficie também é lido pelo Traço para decidir a cor
+   de cada segmento (§ 4.4 do spec) — não o remova de seções full-bleed.
+   ========================================================================== */
+
+@layer components {
+  [data-superficie="areia"] {
+    background-color: var(--color-sand-50);
+    color: var(--color-ink-900);
+  }
+
+  [data-superficie="areia-100"] {
+    background-color: var(--color-sand-100);
+    color: var(--color-ink-900);
+  }
+
+  [data-superficie="vinho"] {
+    background-color: var(--color-wine-700);
+    color: var(--color-sand-50);
+  }
+
+  [data-superficie="vinho"] h1,
+  [data-superficie="vinho"] h2 {
+    color: var(--color-blush-200);
+  }
+
+  /* Filete: a única forma de separação. Sem sombra. */
+  .filete {
+    border-color: var(--color-sand-200);
+  }
+
+  [data-superficie="vinho"] .filete {
+    border-color: var(--color-wine-600);
+  }
+
+  /* Medida de linha em texto corrido: 62–70 caracteres. */
+  .medida {
+    max-width: var(--container-medida);
+  }
+}
+
+/* =============================================================================
+   Movimento
+
+   Reveal de entrada por seção. A classe `revelar` começa oculta e ganha
+   `data-visivel` via IntersectionObserver. Deliberadamente CSS puro e não
+   framer-motion: não adiciona JS ao bundle inicial.
+   ========================================================================== */
+
+@layer utilities {
+  .revelar {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      transform var(--duration-slow) var(--ease-out);
+    transition-delay: calc(var(--revelar-index, 0) * 60ms);
+  }
+
+  .revelar[data-visivel="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Underline crescendo da esquerda. */
+  .link-filete {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size var(--duration-fast) var(--ease-out);
+  }
+
+  .link-filete:hover,
+  .link-filete:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Escala 1.02 em imagem, sempre dentro de overflow: hidden. */
+  .zoom-suave {
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .zoom-suave:hover {
+    transform: scale(1.02);
+  }
+}
+
+/* Desliga tudo, incluindo o Traço, que passa a renderizar completo e estático. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .revelar {
+    opacity: 1;
+    transform: none;
+  }
+}

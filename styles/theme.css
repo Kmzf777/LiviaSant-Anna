@@ -1,0 +1,162 @@
+/* =============================================================================
+   Bordô Editorial — design tokens
+   Fonte: prompt.md § 5. Não altere valores sem atualizar o briefing.
+
+   Regras verificadas por script (pnpm verify):
+   - Nenhum #000 ou #fff puro                        -> scripts/verificar-cores.ts
+   - Nenhum gradiente colorido / sombra colorida     -> scripts/verificar-cores.ts
+   - Contraste AA em todo par usado                  -> scripts/verificar-contraste.ts
+   - Bodoni nunca < 1.5rem, nunca bold               -> scripts/verificar-bodoni.ts
+   ========================================================================== */
+
+@theme {
+  /* ---------------------------------------------------------------------
+     Cor — amostrada do logo e das fotos. Não são valores arbitrários.
+     Vinho é superfície, não detalhe: blocos inteiros alternando com areia.
+     Um acento vivo é desnecessário. Destaque vem de troca de superfície.
+     ------------------------------------------------------------------ */
+
+  /* Vinho — cor da marca, #6D1F3A amostrado do fundo do logo */
+  --color-wine-900: #3f0f22;
+  --color-wine-800: #55172d;
+  --color-wine-700: #6d1f3a; /* PRIMÁRIA */
+  --color-wine-600: #863350;
+  /* Briefing dizia #C08D9E. Medido em 3.96:1 sobre wine-700 — reprova AA
+     como texto corrido, e a nota de § 8.5 usa este token em mono 0.75rem.
+     Clareado 8%: mesmo matiz, 4.58:1. Ver docs/DESIGN-SYSTEM.md. */
+  --color-wine-300: #cf98ab;
+
+  /* Blush — #FBD8C9 amostrado do traço do logo */
+  --color-blush-200: #fbd8c9; /* traço, texto sobre vinho */
+  --color-blush-100: #fdebe3;
+
+  /* Areia — amostrada do fundo das fotos */
+  --color-sand-50: #f6f1ec; /* fundo padrão do site */
+  --color-sand-100: #ede4da;
+  --color-sand-200: #d9ccbf;
+  --color-sand-300: #c5b7ae; /* fundo real das fotos */
+
+  /* Tinta — quase-preto quente. NUNCA #000 */
+  --color-ink-900: #241a1e; /* texto principal */
+  --color-ink-600: #5a4a50; /* texto secundário */
+  /* Briefing dizia #8A7A80. Medido em 3.62:1 sobre sand-50 e 3.23:1 sobre
+     sand-100 — reprova AA, e este token carrega os eyebrows em mono 0.75rem.
+     Escurecido 20%: mesmo matiz, 5.19:1 e 4.64:1. Ver docs/DESIGN-SYSTEM.md. */
+  --color-ink-400: #6e6266; /* legendas, eyebrows */
+
+  /* ---------------------------------------------------------------------
+     Tipografia — três papéis, três famílias, nenhuma decorativa.
+
+     display  persuasão      H1, H2, citações
+     body     leitura        todo texto corrido
+     mono     fato           CRM, RQE, ficha técnica, endereço, disclaimer
+
+     A mono é a espinha clínica do site. Tudo que é verificável aparece
+     nela; tudo que é persuasão aparece em display ou body. O leitor
+     aprende a diferença sem que ninguém explique.
+     ------------------------------------------------------------------ */
+
+  --font-display:
+    var(--fonte-bodoni), Georgia, "Times New Roman", Times, serif;
+  --font-body:
+    var(--fonte-switzer), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font-mono:
+    var(--fonte-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Escala fluida. lh/tracking/weight acompanham cada degrau. */
+
+  --text-hero: clamp(2.75rem, 1.2rem + 6.5vw, 7rem);
+  --text-hero--line-height: 0.95;
+  --text-hero--letter-spacing: -0.03em;
+  --text-hero--font-weight: 400;
+
+  --text-h1: clamp(2.25rem, 1.2rem + 4.5vw, 4.5rem);
+  --text-h1--line-height: 1.02;
+  --text-h1--letter-spacing: -0.025em;
+  --text-h1--font-weight: 400;
+
+  --text-h2: clamp(1.75rem, 1.1rem + 2.8vw, 3.25rem);
+  --text-h2--line-height: 1.08;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h2--font-weight: 400;
+
+  --text-h3: clamp(1.25rem, 1rem + 1.1vw, 1.75rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h3--font-weight: 500;
+
+  --text-lead: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  --text-lead--line-height: 1.5;
+  --text-lead--font-weight: 400;
+
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+  --text-body--font-weight: 400;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.12em;
+
+  /* ---------------------------------------------------------------------
+     Geometria — o logo é um selo circular de traço curvo, então a
+     linguagem é o ARCO, e só ele.
+
+       arco  = retrato        (máscara superior, 50vw 50vw 0 0)
+       reto  = interface      (botões e cards, 2px)
+
+     Não misture. Sem pílula em lugar nenhum.
+     ------------------------------------------------------------------ */
+
+  --radius-filete: 2px; /* botões, cards, inputs */
+  --radius-arco: 50vw 50vw 0 0; /* retratos */
+
+  /* ---------------------------------------------------------------------
+     Movimento — orçamento fechado (§ 5.7):
+       1. O Traço
+       2. Reveal de seção: fade + translateY 16px, stagger 60ms
+       3. Hover: underline da esquerda, escala 1.02 em imagem
+     Nada além disso.
+     ------------------------------------------------------------------ */
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --duration-fast: 200ms;
+  --duration-base: 400ms;
+  --duration-slow: 700ms;
+
+  /* ---------------------------------------------------------------------
+     Container
+     ------------------------------------------------------------------ */
+
+  --container-site: 1440px;
+  --container-medida: 34em; /* 62–70 caracteres em texto corrido */
+}
+
+:root {
+  /* Tokens fora dos namespaces do Tailwind. */
+
+  --container: 1440px;
+  --gutter: clamp(1.25rem, 4vw, 5rem);
+  --rail: 80px; /* rail esquerdo, some abaixo de 1024px */
+
+  --secao-y: clamp(5rem, 12vh, 11rem); /* padding vertical de seção */
+
+  --dur-draw: 2400ms; /* exclusivo do Traço */
+
+  /* Elevação: profundidade vem de superfície e filete, nunca de sombra
+     colorida. Esta é a única sombra permitida no site. */
+  --sombra-header: 0 1px 0 var(--color-sand-200);
+
+  /* Foco — filete vinho de 2px. `outline: none` é proibido e verificado. */
+  --foco-cor: var(--color-wine-700);
+  --foco-largura: 2px;
+  --foco-offset: 3px;
+
+  /* Escrito pelo Traço (0 → 1). Fallback estático quando não há JS. */
+  --traco-progresso: 1;
+}
