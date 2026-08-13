@@ -105,11 +105,22 @@ export function Header() {
           rolado ? "shadow-[var(--sombra-header)]" : "bg-transparent",
         )}
       >
-        <Container className="flex items-center justify-between gap-8 py-4 lg:py-5">
+        {/*
+          Altura fixa, não padding. O hero se encaixa embaixo do header com
+          `-mt-[var(--header-h)]`, então o token precisa ser verdade — e com
+          padding ele não era: o botão do menu esticava o header para 88px em
+          390 e 768, contra os 80px declarados, deixando uma faixa errada no
+          topo dessas larguras. Agora a altura É o token.
+          Coberto por tests/e2e/header.spec.ts.
+        */}
+        <Container className="flex h-[var(--header-h)] items-center justify-between gap-8">
           <Link
             href="/"
             aria-label="Lívia Sant'Anna — página inicial"
-            className="font-display text-[1.5rem] leading-none font-normal tracking-[-0.02em]"
+            // `whitespace-nowrap`: em 390px o nome quebrava em duas linhas e
+            // empurrava a altura do header de 80 para 86px, desalinhando o
+            // `--header-h` que o hero usa para se encaixar embaixo dele.
+            className="font-display text-[1.5rem] leading-none font-normal tracking-[-0.02em] whitespace-nowrap"
           >
             Lívia Sant&apos;Anna
           </Link>
@@ -144,13 +155,17 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Botao
-              href={CTA_AGENDAR.href}
-              tamanho="compacto"
-              className="hidden md:inline-flex"
-            >
-              {CTA_AGENDAR.texto}
-            </Botao>
+            {/*
+              O `hidden` vai no invólucro, não no `className` do Botão.
+              Passado ao Botão ele não teria efeito: `BASE` já traz
+              `inline-flex`, e o Tailwind emite essa regra depois de `hidden`
+              — o botão aparecia em 390px. Ver o comentário em ui/cn.ts.
+            */}
+            <span className="hidden md:inline-flex">
+              <Botao href={CTA_AGENDAR.href} tamanho="compacto">
+                {CTA_AGENDAR.texto}
+              </Botao>
+            </span>
 
             <button
               type="button"

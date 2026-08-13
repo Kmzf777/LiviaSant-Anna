@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 440" width="640" height="440" role="img" aria-labelledby="fluxo-de-ar-titulo">
+  <title id="fluxo-de-ar-titulo">Esquema em linha do fluxo de ar pelas duas fossas nasais: as paredes laterais e o septo ao centro formam um canal que estreita na altura da válvula nasal, onde as linhas de corrente se aproximam.</title>
+
+  <!--
+    Fluxo de ar pelo septo nasal — briefing § 12.3.
+
+    Ilustração vetorial abstrata, linha filete no mesmo peso do logo (1px).
+    Não há pessoa, rosto nem nada figurativo: o § 12.3 proíbe, e num site
+    médico rosto gerado destrói a credibilidade que as fotos reais constroem.
+
+    Três famílias de linha:
+      estrutura  paredes laterais e septo, formando um canal que estreita na
+                 altura da válvula nasal e reabre acima
+      fluxo      seis linhas de corrente que se aproximam no estreitamento,
+                 com uma cheuronete por canal marcando o sentido do ar
+      cota       linha de medida no ponto mais estreito, com as marcas
+
+    Sem animação, de propósito: o orçamento do § 5.7 tem três itens e o Traço
+    é a assinatura do site (§ 15).
+
+    ESTE É O ASSET CANÔNICO E TROCÁVEL. A mesma geometria está inline em
+    components/sections/rinoplastia/fluxo-de-ar.ts, porque `currentColor` não
+    atravessa um <img> e a linha precisa ser blush sobre vinho e vinho sobre
+    areia. tests/unit/procedimento.spec.tsx reprova se os dois divergirem —
+    ao trocar este arquivo, atualize também aquele.
+
+    Cor: wine-700 (#6D1F3A). Sobre superfície vinho, use blush-200 (#FBD8C9).
+  -->
+
+  <g fill="none" stroke="#6D1F3A" stroke-width="1" stroke-linecap="round" vector-effect="non-scaling-stroke">
+    <g opacity="0.3">
+      <path d="M 120 250 L 520 250" />
+      <path d="M 268 242 L 268 258" />
+      <path d="M 320 242 L 320 258" />
+      <path d="M 372 242 L 372 258" />
+    </g>
+
+    <g opacity="0.55">
+      <path d="M 250 418 C 268 350, 292 300, 296 250 C 300 200, 288 140, 280 64" />
+      <path d="M 210 418 C 235 350, 275 300, 282 250 C 288 195, 262 130, 248 64" />
+      <path d="M 172 418 C 205 350, 260 300, 272 250 C 280 192, 236 125, 216 64" />
+      <path d="M 390 418 C 372 350, 348 300, 344 250 C 340 200, 352 140, 360 64" />
+      <path d="M 430 418 C 405 350, 365 300, 358 250 C 352 195, 378 130, 392 64" />
+      <path d="M 468 418 C 435 350, 380 300, 368 250 C 360 192, 404 125, 424 64" />
+    </g>
+
+    <g opacity="0.7">
+      <path d="M 226 361 L 235 350 L 244 361" />
+      <path d="M 396 361 L 405 350 L 414 361" />
+    </g>
+
+    <g>
+      <path d="M 140 420 C 176 374, 226 340, 262 292 C 278 271, 273 240, 249 210 C 222 177, 197 130, 181 60" />
+      <path d="M 320 62 C 316 160, 324 260, 318 418" />
+      <path d="M 500 420 C 464 374, 414 340, 378 292 C 362 271, 367 240, 391 210 C 418 177, 443 130, 459 60" />
+    </g>
+  </g>
+</svg>

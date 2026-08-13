@@ -27,6 +27,15 @@ export function normalizarNumero(numero: string): string {
  * Serve para barrar o placeholder `[CONFIRMAR: ...]` antes de virar link.
  */
 export function numeroValido(numero: string): boolean {
+  // O marcador de pendência precisa ser barrado ANTES da contagem de dígitos.
+  // O texto em content/consultorio.ts é
+  //   "[CONFIRMAR: WhatsApp com DDI e DDD, ex. 5531999999999]"
+  // e `normalizarNumero` descarta as letras, deixando 5531999999999 — treze
+  // dígitos começando em 55, que passariam na regra abaixo. O site publicaria
+  // um botão abrindo conversa com um número de exemplo. Encontrado pelo teste
+  // tests/unit/formulario.spec.tsx.
+  if (/\[\s*CONFIRMAR/i.test(numero)) return false;
+
   const digitos = normalizarNumero(numero);
   return /^55\d{10,11}$/.test(digitos);
 }

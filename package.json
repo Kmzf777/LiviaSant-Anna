@@ -19,8 +19,10 @@
     "verify:contraste": "tsx scripts/verificar-contraste.ts",
     "verify:cores": "tsx scripts/verificar-cores.ts",
     "verify:bodoni": "tsx scripts/verificar-bodoni.ts",
+    "verify:html": "tsx scripts/verificar-html.ts",
     "verify": "pnpm verify:termos && pnpm verify:contraste && pnpm verify:cores && pnpm verify:bodoni",
-    "check": "pnpm typecheck && pnpm lint && pnpm verify && pnpm test"
+    "check": "pnpm typecheck && pnpm lint && pnpm verify && pnpm test",
+    "check:full": "pnpm check && pnpm build && pnpm verify:html && pnpm test:e2e"
   },
   "dependencies": {
     "motion": "^12.23.12",
