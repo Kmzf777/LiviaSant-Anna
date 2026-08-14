@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { getHome } from "@/content";
+import { getConsulta } from "@/content";
 import { RailLateral } from "@/components/layout/RailLateral";
 import { ChamadaConsulta } from "@/components/sections/ChamadaConsulta";
 import { ParagrafoPendente } from "@/components/sections/DadoPendente";
@@ -54,7 +54,7 @@ const ATALHOS = [
 ] as const;
 
 export default function PaginaConsulta() {
-  const { consulta } = getHome();
+  const consulta = getConsulta();
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { getHome } from "@/content";
+import { getTese } from "@/content";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Nota } from "@/components/ui/Nota";
@@ -60,7 +60,7 @@ const LEGENDA_ILUSTRACAO =
   "sem escala anatômica.";
 
 export function AberturaRinoplastia() {
-  const home = getHome();
+  const tese = getTese();
 
   return (
     <Secao
@@ -83,7 +83,7 @@ export function AberturaRinoplastia() {
               como array em vez de um parágrafo.
             */}
             <p className="font-display text-h1 text-blush-200 mt-8 font-normal">
-              {home.manifesto.linhas.map((linha) => (
+              {tese.linhas.map((linha) => (
                 <span key={linha} className="block text-balance">
                   {linha}
                 </span>
@@ -112,16 +112,16 @@ export function AberturaRinoplastia() {
         >
           <Reveal index={2} className="lg:col-span-6">
             <p className="medida text-lead text-sand-50">
-              {home.manifesto.apoio}
+              {tese.apoio}
             </p>
           </Reveal>
 
           <Reveal index={3} className="lg:col-span-4 lg:col-start-8">
             <p className="medida text-body text-sand-50">
-              {home.rinoplastia.corpo}
+              {tese.corpo}
             </p>
 
-            <Nota className="mt-10">{home.rinoplastia.nota}</Nota>
+            <Nota className="mt-10">{tese.nota}</Nota>
           </Reveal>
         </div>
       </Container>

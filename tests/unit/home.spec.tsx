@@ -1,25 +1,33 @@
 /**
  * Home — os contratos que quebrariam em silêncio.
  *
- * Aparência não se testa aqui: para isso existem `scripts/capturar.mjs` e a
- * crítica visual dos três breakpoints. O que este arquivo protege é o que um
+ * Aparência não se testa aqui: para isso existem as capturas nos três
+ * breakpoints e a crítica visual. O que este arquivo protege é o que um
  * screenshot não mostra e um refactor derruba sem avisar:
  *
- *   - o puxão que põe o hero sob o header (sem ele o header cai para tinta e
- *     o hero perde o efeito, sem nenhum erro em lugar nenhum);
- *   - a alternância de `data-superficie`, que três sistemas leem — o CSS, o
- *     foco e o Traço;
- *   - o respiro sem texto entre o manifesto e a rinoplastia, que é onde o
- *     Traço resolve no perfil de rosto;
+ *   - o puxão que põe a chamada sob o header (sem ele o header cai para tinta
+ *     e a chamada perde o efeito, sem nenhum erro em lugar nenhum);
+ *   - a ordem de `data-superficie`, que três sistemas leem — o CSS, o foco e
+ *     o Traço;
+ *   - o respiro sem texto entre a § 3 e a § 4, que é onde o Traço resolve no
+ *     perfil de rosto;
  *   - a hierarquia de heading;
+ *   - a regra de curadoria das fotos de centro cirúrgico: nenhuma legenda
+ *     afirma qual profissional é ela;
  *   - e a regra mais séria do JSON-LD: placeholder não vira dado estruturado.
  */
 
 import { describe, expect, it } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import Home from "@/app/page";
-import { getConsultorio, getHome, getMedica } from "@/content";
+import {
+  getConsultorio,
+  getHome,
+  getMedica,
+  listarHospitais,
+  listarProcedimentos,
+} from "@/content";
 import {
   breadcrumbJsonLd,
   ehPendente,
@@ -63,12 +71,19 @@ function grafoDaPagina(container: HTMLElement): Record<string, unknown>[] {
 // -----------------------------------------------------------------------------
 
 describe("home — estrutura", () => {
-  it("tem exatamente um h1, e é a tese do site", () => {
+  it("tem exatamente um h1, e é o problema que ela resolve", () => {
     renderizarHome();
 
     const titulos = screen.getAllByRole("heading", { level: 1 });
     expect(titulos).toHaveLength(1);
-    expect(titulos[0]?.textContent).toContain("Forma e função");
+
+    // A métrica do briefing § 2: quem chega buscando "amígdala" e quem chega
+    // buscando "rinoplastia" precisam se reconhecer em cinco segundos. Um
+    // slogan sobre a filosofia da médica não faz isso; os três órgãos fazem.
+    const texto = titulos[0]?.textContent ?? "";
+    for (const orgao of ["nariz", "ouvido", "garganta"]) {
+      expect(texto.toLowerCase(), `o h1 não nomeia "${orgao}"`).toContain(orgao);
+    }
   });
 
   it("não salta nível de heading", () => {
@@ -90,62 +105,75 @@ describe("home — estrutura", () => {
     }
   });
 
-  it("puxa o hero para debaixo do header sticky", () => {
-    const { container } = renderizarHome();
-    const hero = container.querySelector<HTMLElement>("[data-superficie]");
+  it("as três seções seguintes à chamada são h2", () => {
+    renderizarHome();
 
-    // Sem este puxão o header transparente flutua sobre o fundo do body e a
-    // tipografia blush cai para ~1.2:1. O Header mede o overlap e se protege
-    // caindo para tinta — o hero fica correto, mas perde o efeito, e nada
-    // falha. Este teste é o alarme que falta lá.
-    expect(hero?.className).toContain("-mt-[var(--header-h)]");
-    expect(hero?.dataset["superficie"]).toBe("vinho");
-  });
+    const titulos = screen
+      .getAllByRole("heading", { level: 2 })
+      .map((titulo) => titulo.textContent);
 
-  it("alterna as superfícies na ordem do § 8", () => {
-    const { container } = renderizarHome();
-
-    expect(superficies(container)).toEqual([
-      "vinho", // § 8.1 hero
-      "areia", // § 8.2 faixa de identificação
-      "areia", // § 8.3 manifesto
-      "areia-100", // § 8.4 as duas frentes
-      "areia", // respiro do Traço
-      "vinho", // § 8.5 rinoplastia
-      "areia", // § 8.6 a médica
-      "areia-100", // § 8.7 como é a consulta
-      "areia", // § 8.8 resultados
-      "areia", // § 8.9 FAQ e contato
+    expect(titulos).toEqual([
+      HOME.medica.h2,
+      HOME.experiencia.h2,
+      HOME.procedimentos.h2,
     ]);
   });
 
-  it("reserva o respiro sem texto entre o manifesto e a rinoplastia", () => {
+  it("puxa a chamada para debaixo do header sticky", () => {
+    const { container } = renderizarHome();
+    const chamada = container.querySelector<HTMLElement>("[data-superficie]");
+
+    // Sem este puxão o header transparente flutua sobre o fundo do body e a
+    // tipografia blush cai para ~1.2:1. O Header mede o overlap e se protege
+    // caindo para tinta — a seção fica correta, mas perde o efeito, e nada
+    // falha. Este teste é o alarme que falta lá.
+    expect(chamada?.className).toContain("-mt-[var(--header-h)]");
+    expect(chamada?.dataset["superficie"]).toBe("vinho");
+  });
+
+  it("alterna as superfícies na ordem das quatro seções", () => {
+    const { container } = renderizarHome();
+
+    expect(superficies(container)).toEqual([
+      "vinho", // § 1 chamada
+      "areia", // § 2 a médica
+      "areia-100", // § 3 experiência hospitalar
+      "areia", // respiro do Traço
+      "areia", // § 4 procedimentos e atendimentos
+      // O fecho já foi vinho. Virou areia-100 porque o rodapé é wine-900 e vem
+      // logo abaixo: eram dois retângulos escuros empilhados, com "agende sua
+      // consulta" repetido em meia tela. A descida areia → areia-100 → wine-900
+      // devolve ao rodapé o papel de único fim da página.
+      "areia-100", // § 4 fecho
+    ]);
+  });
+
+  it("não termina a página em duas superfícies escuras seguidas", () => {
+    const { container } = renderizarHome();
+    const ultima = superficies(container).at(-1);
+
+    // O rodapé (fora deste container) é wine-900. Se a última seção da página
+    // também for vinho, o site fecha com dois blocos escuros e o CTA duplicado.
+    expect(ultima, "o fecho da home não pode ser vinho").not.toBe("vinho");
+  });
+
+  it("reserva o respiro sem texto antes da § 4", () => {
     const { container } = renderizarHome();
 
     const secoes = Array.from(
       container.querySelectorAll<HTMLElement>("[data-superficie]"),
     );
-    const respiro = secoes[4];
+    const respiro = secoes[3];
 
-    // O Traço resolve no perfil de rosto do logo exatamente aqui, e a
-    // resolução dura ~1,5 tela. Qualquer texto nesta faixa faz o rosto se
-    // desenhar por cima da leitura. Ver components/layout/Traco.tsx.
+    // O Traço resolve no perfil de rosto do logo exatamente aqui. Qualquer
+    // texto nesta faixa faz o rosto se desenhar por cima da leitura. Ver
+    // components/layout/Traco.tsx.
     expect(respiro?.textContent?.trim()).toBe("");
     expect(respiro?.dataset["superficie"]).toBe("areia");
 
-    // A faixa é declarada por atributo, não por uma altura literal.
-    //
-    // Antes esta linha assertava `lg:min-h-[160vh]`. O número era o resultado
-    // de uma tentativa de fazer o rosto encontrar uma zona livre que deriva
-    // ~4.300px em relação a ele — e não encontrava. Hoje o rosto é ancorado
-    // AQUI, e a altura da faixa é derivada da geometria da curva
-    // (`450 × --traco-unidade`), não escolhida a olho.
-    //
-    // Assertar o valor amarrava o teste ao número; assertar o contrato amarra
-    // ao que importa: existe uma faixa sem texto, e ela é a que o Traço lê.
-    //
-    // O atributo mora no palco dentro da seção, não na seção: quem precisa da
-    // medida é o desenho do rosto, e o e2e o localiza pelo mesmo seletor.
+    // A faixa é declarada por atributo, não por uma altura literal: quem
+    // precisa da medida é o desenho do rosto, e o e2e a localiza pelo mesmo
+    // seletor.
     expect(
       respiro?.querySelector('[data-traco="livre"]'),
       "a faixa livre precisa se declarar por data-traco, que é como o Traço a encontra",
@@ -158,37 +186,74 @@ describe("home — estrutura", () => {
 // -----------------------------------------------------------------------------
 
 describe("home — conteúdo", () => {
-  it("mostra o bloco de identificação do CFM na faixa logo abaixo do hero", () => {
+  it("mostra o bloco de identificação do CFM junto do nome da médica", () => {
+    renderizarHome();
+
+    // Resolução CFM 2.336/2023 art. 3º: bloco em local visível, e não só no
+    // rodapé. Ele mora na § 2, no mesmo cluster do nome e do papel.
+    const secaoDaMedica = screen
+      .getByRole("heading", { level: 2, name: HOME.medica.h2 })
+      .closest("[data-superficie]");
+
+    const bloco = secaoDaMedica?.querySelector('[data-cfm="identificacao"]');
+
+    expect(bloco).not.toBeNull();
+    expect(bloco?.textContent).toContain(getMedica().identificacao.crm);
+    expect(bloco?.textContent).toContain(getMedica().identificacao.rqe);
+  });
+
+  it("nomeia os hospitais onde ela atuou e atua", () => {
     const { container } = renderizarHome();
 
-    const blocos = container.querySelectorAll('[data-cfm="identificacao"]');
-    expect(blocos.length).toBeGreaterThan(0);
-    expect(blocos[0]?.textContent).toContain(getMedica().identificacao.crm);
+    for (const hospital of listarHospitais()) {
+      expect(
+        container.textContent,
+        `a § 3 não cita ${hospital.nome}`,
+      ).toContain(hospital.nome);
+    }
   });
 
-  it("apresenta as duas frentes com o mesmo peso de heading", () => {
+  it("nenhuma legenda de centro cirúrgico afirma quem é a médica", () => {
     renderizarHome();
 
-    const otorrino = screen.getByRole("heading", {
-      name: "Otorrinolaringologia",
-    });
-    const face = screen.getByRole("heading", {
-      name: "Cirurgia e estética da face",
-    });
+    const secao = screen
+      .getByRole("heading", { level: 2, name: HOME.experiencia.h2 })
+      .closest("[data-superficie]");
 
-    expect(otorrino.tagName).toBe(face.tagName);
-    expect(otorrino.tagName).toBe("H2");
+    expect(secao).not.toBeNull();
+
+    // Não é possível determinar com segurança qual profissional é ela numa
+    // foto com máscara e touca, e legendar errado num site médico é erro
+    // grave. Vale para o texto visível, para os `alt` e para os `poster`.
+    const textos = [
+      secao?.textContent ?? "",
+      ...Array.from(secao?.querySelectorAll("img") ?? []).map(
+        (img) => img.getAttribute("alt") ?? "",
+      ),
+      ...Array.from(secao?.querySelectorAll("video") ?? []).map(
+        (video) => video.getAttribute("aria-label") ?? "",
+      ),
+    ].join(" ");
+
+    for (const proibido of ["Lívia", "Dra.", "Sant'Anna"]) {
+      expect(
+        textos,
+        `a § 3 identifica "${proibido}" numa foto de centro cirúrgico`,
+      ).not.toContain(proibido);
+    }
   });
 
-  it("leva aos dois hubs e à rinoplastia", () => {
+  it("liga para a página de cada cirurgia que ela realiza", () => {
     renderizarHome();
 
-    for (const destino of [
-      "/otorrinolaringologia",
-      "/cirurgia-da-face",
-      "/cirurgia-da-face/rinoplastia",
-      "/contato",
-    ]) {
+    const cirurgias = listarProcedimentos().filter(
+      (p) => p.hub !== "estetica-facial",
+    );
+
+    expect(cirurgias.length).toBeGreaterThan(0);
+
+    for (const procedimento of cirurgias) {
+      const destino = `/${procedimento.hub}/${procedimento.slug}`;
       expect(
         document.querySelector(`a[href="${destino}"]`),
         `nenhum link para ${destino}`,
@@ -196,45 +261,51 @@ describe("home — conteúdo", () => {
     }
   });
 
-  it("numera os passos da consulta, porque é sequência real", () => {
+  it("não anuncia a toxina botulínica como cirurgia", () => {
     const { container } = renderizarHome();
 
-    const lista = container.querySelector("ol");
-    expect(lista).not.toBeNull();
-    expect(within(lista as HTMLElement).getByText("01")).toBeInTheDocument();
-    expect(within(lista as HTMLElement).getByText("04")).toBeInTheDocument();
+    // O hub de estética facial se descreve como "procedimentos sem cirurgia".
+    // Listá-lo sob "Cirurgias que realizo" seria afirmação falsa num site
+    // médico. Ele continua alcançável pelo Header e pelo rodapé.
+    expect(container.textContent).not.toContain("Toxina botulínica");
   });
 
-  it("explica a ausência de antes e depois em vez de inventar galeria", () => {
-    renderizarHome();
-
-    expect(
-      screen.getByRole("heading", { name: "Sobre imagens de antes e depois" }),
-    ).toBeInTheDocument();
-
-    // Nenhum bloco com cara de foto pendente nesta seção: sugeriria que
-    // existem imagens guardadas esperando publicação.
-    const secao = screen
-      .getByRole("heading", { name: "Sobre imagens de antes e depois" })
-      .closest("[data-superficie]");
-
-    expect(secao?.querySelector("[data-placeholder]")).toBeNull();
-  });
-
-  it("não mostra ao paciente resposta ainda pendente de confirmação", () => {
+  it("nomeia a queixa antes do procedimento, agrupada por órgão", () => {
     const { container } = renderizarHome();
 
-    const pendentes = HOME.faq.filter((item) => ehPendente(item.resposta));
+    for (const grupo of HOME.procedimentos.atendimentos) {
+      expect(container.textContent).toContain(grupo.orgao);
+
+      for (const queixa of grupo.queixas) {
+        expect(container.textContent, `falta a queixa "${queixa}"`).toContain(
+          queixa,
+        );
+      }
+    }
+  });
+
+  it("fecha com a chamada para consulta e com o aviso de risco", () => {
+    const { container } = renderizarHome();
+
+    const secoes = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-superficie]"),
+    );
+    const fecho = secoes[secoes.length - 1];
+
+    // A superfície do fecho é asserida em "não termina a página em duas
+    // superfícies escuras seguidas". Aqui o que importa é o conteúdo: a ação e
+    // a ressalva que a qualifica precisam estar no mesmo bloco, sempre.
+    expect(fecho?.textContent).toContain(HOME.procedimentos.cta.texto);
+    expect(fecho?.textContent).toContain(HOME.procedimentos.fecho);
     expect(
-      pendentes.length,
-      "o teste só tem sentido enquanto houver pergunta pendente em content/faq.ts",
-    ).toBeGreaterThan(0);
+      fecho?.querySelector(`a[href="${HOME.procedimentos.cta.href}"]`),
+    ).not.toBeNull();
+  });
+
+  it("não mostra ao paciente nenhum marcador de pendência", () => {
+    const { container } = renderizarHome();
 
     expect(container.textContent).not.toContain("[CONFIRMAR");
-
-    for (const pendente of pendentes) {
-      expect(container.textContent).not.toContain(pendente.pergunta);
-    }
   });
 });
 
@@ -253,18 +324,6 @@ describe("home — dados estruturados", () => {
     expect(medico).toBeDefined();
     expect(JSON.stringify(medico)).toContain(getMedica().identificacao.crm);
     expect(JSON.stringify(medico)).toContain(getMedica().identificacao.rqe);
-  });
-
-  it("emite FAQPage apenas com as perguntas publicáveis", () => {
-    const { container } = renderizarHome();
-
-    const faq = grafoDaPagina(container).find(
-      (bloco) => bloco["@type"] === "FAQPage",
-    ) as { mainEntity?: unknown[] } | undefined;
-
-    const publicaveis = HOME.faq.filter((item) => !ehPendente(item.resposta));
-
-    expect(faq?.mainEntity).toHaveLength(publicaveis.length);
   });
 
   it("nunca publica um placeholder como dado estruturado", () => {

@@ -280,66 +280,75 @@ export type CardFrente = {
   readonly cta: Link;
 };
 
+/**
+ * Um grupo de queixas que a pessoa reconhece em si.
+ *
+ * Existe porque a home precisa passar no teste do briefing § 2: quem chega
+ * buscando "amígdala" e quem chega buscando "rinoplastia" têm que saber, em
+ * cinco segundos, que estão no lugar certo. Nome de procedimento não faz isso —
+ * ninguém procura "timpanoplastia", procura "meu filho tem otite direto".
+ */
+export type GrupoDeQueixas = {
+  readonly orgao: string;
+  readonly queixas: NaoVazio<string>;
+};
+
+/**
+ * A home, em quatro seções.
+ *
+ * Foi uma home editorial de nove seções e virou landing page de conversão. O
+ * motivo está no próprio briefing: a § 2 define como métrica de sucesso que
+ * *"um paciente que chega pela busca de 'amígdala' e um que chega por
+ * 'rinoplastia' precisam, em 5 segundos, saber que estão no lugar certo"*, e a
+ * abertura anterior — "Forma e função, nas mesmas mãos" — não dizia que
+ * problema ela resolve.
+ *
+ * A tese "forma e função" não sumiu: desceu para a página de rinoplastia, que é
+ * onde ela é argumento comercial em vez de manifesto.
+ *
+ * A ordem das quatro é a ordem em que alguém decide: reconhece o problema,
+ * confia em quem resolve, vê onde ela opera, encontra o próprio caso, agenda.
+ */
 export type ConteudoHome = {
   readonly seo: Seo;
 
+  /** § 1 — a chamada. */
   readonly hero: {
     readonly eyebrow: string;
     /** Quebrado em linhas curtas — a quebra é decisão de design. */
     readonly h1: NaoVazio<string>;
     readonly lead: string;
-    readonly ctaPrimario: Link;
-    readonly ctaSecundario: Link;
+    readonly cta: Link;
     readonly imagem: ImagemOuPendente;
   };
 
-  readonly credenciais: MinTres<string>;
-
-  readonly manifesto: {
-    readonly eyebrow: string;
-    readonly linhas: NaoVazio<string>;
-    readonly apoio: string;
-  };
-
-  readonly duasFrentes: {
-    readonly otorrino: CardFrente;
-    readonly face: CardFrente;
-  };
-
-  readonly rinoplastia: {
-    readonly eyebrow: string;
-    readonly h2: string;
-    readonly corpo: string;
-    /** Em mono, caixa alta. Resultados variam por paciente. */
-    readonly nota: string;
-    readonly cta: Link;
-  };
-
+  /** § 2 — quem é ela. A formação vem de `getMedica()`, não daqui. */
   readonly medica: {
     readonly eyebrow: string;
     readonly h2: string;
+    readonly papel: string;
+    readonly apresentacao: NaoVazio<string>;
     readonly cta: Link;
   };
 
-  readonly consulta: {
+  /** § 3 — onde ela opera. Os hospitais vêm de `listarHospitais()`. */
+  readonly experiencia: {
     readonly eyebrow: string;
     readonly h2: string;
-    readonly passos: MinTres<PassoConsulta>;
+    readonly texto: string;
+  };
+
+  /** § 4 — o que ela faz, e o fecho. */
+  readonly procedimentos: {
+    readonly eyebrow: string;
+    readonly h2: string;
+    readonly texto: string;
+    readonly tituloCirurgias: string;
+    readonly tituloAtendimentos: string;
+    readonly atendimentos: MinTres<GrupoDeQueixas>;
+    readonly cta: Link;
     readonly fecho: string;
   };
-
-  /**
-   * Sem imagens autorizadas na v1, esta seção explica a ausência em vez de
-   * inventar galeria. Converter a ausência em sinal de seriedade é melhor
-   * do que uma galeria fraca — e é a única opção legal.
-   */
-  readonly resultados: {
-    readonly eyebrow: string;
-    readonly h2: string;
-    readonly corpo: string;
-  };
-
-  readonly faq: MinCinco<PerguntaResposta>;
 };
 
 // -----------------------------------------------------------------------------

@@ -21,9 +21,18 @@ const nextConfig: NextConfig = {
       Os retratos ocupam 100vw no celular e ~30vw a partir de 1024px, e o selo
       do rodapé nunca passa de 160px. A lista padrão do Next gera oito
       variantes por imagem, quase todas inúteis aqui.
+
+      A galeria hospitalar (`components/ui/Galeria.tsx`) pede entre 23vw e 38vw
+      no desktop e 48vw a 100vw no celular. Tudo isso cai dentro da lista — com
+      uma exceção que valeu uma largura nova: a peça de abertura ocupa a tela
+      inteira no celular, e num aparelho de 430px com DPR 3 ela precisa de
+      1290px. Sem o 1440 o navegador subia direto para 1920 e baixava quase o
+      dobro de bytes do necessário, justamente no aparelho mais lento. Os
+      retratos dela não passam por isso porque os arquivos-fonte têm 1024px de
+      largura e o Next nunca amplia.
     */
     imageSizes: [160, 256, 384],
-    deviceSizes: [640, 828, 1080, 1200, 1920],
+    deviceSizes: [640, 828, 1080, 1200, 1440, 1920],
   },
 };
 

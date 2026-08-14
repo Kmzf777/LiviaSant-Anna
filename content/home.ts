@@ -1,44 +1,50 @@
-import { FAQ_TRANSVERSAL } from "./faq";
 import type { ConteudoHome } from "./tipos";
 
 /**
- * Conteúdo da home. Copy do briefing § 8, textual.
+ * Conteúdo da home.
  *
- * A ordem das chaves é a ordem das seções na página. A alternância de
- * superfície (vinho / areia / areia-100) está nos componentes de seção, não
- * aqui — este arquivo é texto, não layout.
+ * Quatro seções, na ordem em que alguém decide procurar um médico. Ver
+ * PLANO-HOME.md e o comentário de `ConteudoHome` em `tipos.ts`.
+ *
+ * Regra de escrita que vale para tudo aqui: nomear a queixa antes de nomear o
+ * procedimento. Ninguém procura "timpanoplastia" — procura "meu filho tem otite
+ * direto". A palavra técnica entra depois, quando a pessoa já se reconheceu.
  */
 export const HOME: ConteudoHome = {
   seo: {
-    // 51 caracteres. "Otorrino" em vez do termo completo é deliberado: é a
-    // forma como as pessoas efetivamente buscam ("otorrino BH", briefing § 2),
-    // e o termo completo estourava o limite de 60.
-    titulo: "Otorrino e cirurgia da face em BH | Lívia Sant'Anna",
+    // 57 caracteres.
+    titulo: "Otorrino em BH e Uberlândia | Lívia Sant'Anna",
     descricao:
-      "Otorrinolaringologista em Belo Horizonte, com atuação em cirurgia plástica da face. Rinoplastia, desvio de septo, amígdalas, blefaroplastia e otoplastia.",
+      "Otorrinolaringologista em Belo Horizonte e Uberlândia. Nariz, ouvido e garganta em adultos e crianças, e cirurgia plástica da face.",
   },
 
   // ---------------------------------------------------------------------------
-  // § 8.1 — Hero, superfície vinho
+  // § 1 — Chamada
   // ---------------------------------------------------------------------------
   hero: {
-    eyebrow: "Otorrinolaringologia · Cirurgia da face · Belo Horizonte",
-    h1: ["Forma e função,", "nas mesmas mãos."],
-    lead: "Otorrinolaringologista com atuação em cirurgia plástica da face. Opero o nariz que respira e o nariz que se vê — e trato os dois como o mesmo problema.",
-    ctaPrimario: { texto: "Agendar consulta", href: "/contato" },
-    ctaSecundario: { texto: "Conhecer a médica", href: "/dra-livia-santanna" },
-    /*
-      O `alt` descreve o que se vê, não o que se quer transmitir.
+    eyebrow:
+      "Otorrinolaringologia · Cirurgia da face · Belo Horizonte e Uberlândia",
 
-      "Médica confiante e acolhedora" seria interpretação — e, num site de
-      publicidade médica, adjetivo em texto alternativo é o mesmo adjetivo que
-      o § 3.2 proíbe no texto visível, só que escondido de quem enxerga. Quem
-      usa leitor de tela recebe a cena, e tira a própria conclusão.
+    /*
+      A quebra é decisão de design: cada linha carrega uma ideia inteira, e a
+      terceira é a única que fala do desfecho. "Viver melhor" é comparativo, não
+      promessa — o que a norma veda é garantir resultado, não descrever para que
+      serve um tratamento.
     */
+    h1: [
+      "Cuidado especializado",
+      "em nariz, ouvido e garganta",
+      "para você viver melhor.",
+    ],
+
+    lead: "Respirar pelo nariz, dormir sem roncar, ouvir bem. Atendo e opero adultos e crianças, e realizo cirurgia plástica da face dentro da especialidade.",
+
+    cta: { texto: "Agende sua consulta", href: "/contato" },
+
     imagem: {
       tipo: "imagem",
       imagem: {
-        src: "/fotos/Livia-Jaleco-preto.jpeg",
+        src: "/fotos/livia-blazer-preto.jpeg",
         alt: "Lívia Sant'Anna, de blazer preto e braços cruzados, diante de um fundo claro.",
         largura: 1024,
         altura: 1536,
@@ -47,149 +53,85 @@ export const HOME: ConteudoHome = {
   },
 
   // ---------------------------------------------------------------------------
-  // § 8.2 — Faixa de identificação
-  // ---------------------------------------------------------------------------
-  credenciais: [
-    "Residência · Hospital Madre Teresa",
-    "Fellowship em cirurgia plástica da face · UMC",
-    "Formação · UFV",
-  ],
-
-  // ---------------------------------------------------------------------------
-  // § 8.3 — Manifesto
-  //
-  // As linhas são quebradas à mão porque a quebra é decisão de design: cada
-  // linha carrega uma ideia inteira. Não junte em um parágrafo.
-  // ---------------------------------------------------------------------------
-  manifesto: {
-    eyebrow: "A premissa",
-    linhas: [
-      "O nariz é o centro do rosto",
-      "e a porta da respiração.",
-      "Mudar um sem entender o outro",
-      "é resolver metade.",
-    ],
-    apoio:
-      "Minha formação começou pela função: septo, seios da face, via aérea. A cirurgia plástica da face veio depois, e sobre essa base. Por isso, numa rinoplastia, a avaliação da respiração não é um adicional — é parte do planejamento desde a primeira consulta.",
-  },
-
-  // ---------------------------------------------------------------------------
-  // § 8.4 — As duas frentes
-  //
-  // O corte visual entre os dois cards é o momento em que o site assume sua
-  // dualidade abertamente. Peso visual idêntico: nenhum dos dois é o principal.
-  // ---------------------------------------------------------------------------
-  duasFrentes: {
-    otorrino: {
-      eyebrow: "Função",
-      titulo: "Otorrinolaringologia",
-      resumo:
-        "Respirar, ouvir, dormir melhor. Diagnóstico e tratamento clínico e cirúrgico de nariz, ouvido e garganta — em adultos e crianças.",
-      itens: [
-        "Desvio de septo",
-        "Amígdalas e adenoides",
-        "Sinusite",
-        "Tubo de ventilação",
-        "Timpanoplastia",
-      ],
-      cta: {
-        texto: "Ver procedimentos de otorrino",
-        href: "/otorrinolaringologia",
-      },
-    },
-    face: {
-      eyebrow: "Forma",
-      titulo: "Cirurgia e estética da face",
-      resumo:
-        "Cirurgia da face conduzida por quem opera a função. Planejamento individual, resultado proporcional ao seu rosto.",
-      itens: [
-        "Rinoplastia",
-        "Otoplastia",
-        "Blefaroplastia",
-        "Cantopexia",
-        "Frontoplastia",
-        "Toxina botulínica",
-      ],
-      cta: { texto: "Ver cirurgias da face", href: "/cirurgia-da-face" },
-    },
-  },
-
-  // ---------------------------------------------------------------------------
-  // § 8.5 — Rinoplastia em destaque, full-bleed vinho
-  //
-  // É aqui que o Traço resolve no perfil de rosto do logo. Ver lib/traco.ts.
-  // ---------------------------------------------------------------------------
-  rinoplastia: {
-    eyebrow: "Em destaque",
-    h2: "Rinoplastia estética e funcional",
-    corpo:
-      "Muita gente chega dizendo que não gosta do próprio nariz e descobre, na consulta, que também não respira bem por ele. Às vezes é o contrário: veio pelo septo e quer entender o que muda no rosto. Os dois caminhos cabem na mesma cirurgia, e é isso que avaliamos juntas antes de qualquer decisão.",
-    nota: "Resultados variam conforme anatomia, cicatrização e histórico de cada paciente.",
-    cta: {
-      texto: "Entender a rinoplastia",
-      href: "/cirurgia-da-face/rinoplastia",
-    },
-  },
-
-  // ---------------------------------------------------------------------------
-  // § 8.6 — A médica
+  // § 2 — A médica
   // ---------------------------------------------------------------------------
   medica: {
     eyebrow: "A médica",
     h2: "Lívia Sant'Anna",
+    papel: "Otorrinolaringologista",
+
+    apresentacao: [
+      "Formei-me pela Universidade Federal de Viçosa e fiz residência em Otorrinolaringologia no Hospital Madre Teresa, em Belo Horizonte. Depois, o fellowship em cirurgia plástica da face no Hospital UMC, em Uberlândia.",
+      "Atendo e opero como otorrinolaringologista geral — nariz, ouvido e garganta, em adultos e crianças — e realizo as cirurgias plásticas da face dentro do escopo da especialidade.",
+    ],
+
     cta: { texto: "Conhecer a trajetória", href: "/dra-livia-santanna" },
   },
 
   // ---------------------------------------------------------------------------
-  // § 8.7 — Como é a consulta
-  //
-  // Numerado 01–04 porque é sequência real, não decoração.
+  // § 3 — Experiência hospitalar
   // ---------------------------------------------------------------------------
-  consulta: {
-    eyebrow: "A consulta",
-    h2: "Como é a consulta",
-    passos: [
+  experiencia: {
+    eyebrow: "Experiência",
+    h2: "Onde eu opero",
+    texto:
+      "Cirurgia se aprende em centro cirúrgico, ao lado de quem já fez muitas. Estes são os lugares onde me formei e onde opero hoje.",
+  },
+
+  // ---------------------------------------------------------------------------
+  // § 4 — Procedimentos e atendimentos
+  // ---------------------------------------------------------------------------
+  procedimentos: {
+    eyebrow: "O que eu faço",
+    h2: "Cirurgias e atendimento",
+    texto:
+      "Nem tudo termina em cirurgia — boa parte se resolve na consulta. O que segue é o que trato e o que opero.",
+
+    tituloCirurgias: "Cirurgias que realizo",
+    tituloAtendimentos: "O que trato em consulta",
+
+    /*
+      Queixa, não diagnóstico. É a coluna em que a pessoa se reconhece — e é o
+      que faz a home passar no teste dos cinco segundos do briefing § 2.
+    */
+    atendimentos: [
       {
-        numero: "01",
-        titulo: "Conversa",
-        descricao: "Você conta o que te incomoda. Eu escuto antes de examinar.",
+        orgao: "Nariz",
+        queixas: [
+          "Nariz entupido, de um lado ou dos dois",
+          "Rinite e crises de espirro",
+          "Sinusite de repetição",
+          "Ronco e sono que não descansa",
+          "Sangramento nasal frequente",
+          "Perda de olfato",
+        ],
       },
       {
-        numero: "02",
-        titulo: "Exame",
-        descricao:
-          "Avaliação completa de via aérea e da anatomia da face. Nasofibroscopia quando indicada.",
+        orgao: "Ouvido",
+        queixas: [
+          "Otite de repetição, em criança e em adulto",
+          "Dificuldade para ouvir",
+          "Zumbido",
+          "Tontura e vertigem",
+          "Sensação de ouvido tampado",
+          "Perfuração do tímpano",
+        ],
       },
       {
-        numero: "03",
-        titulo: "Planejamento",
-        descricao:
-          "Explico o que é possível, o que não é, os riscos e o tempo de recuperação. Sem pressa e sem pressão para decidir na hora.",
-      },
-      {
-        numero: "04",
-        titulo: "Decisão",
-        descricao:
-          "Se fizer sentido para você, agendamos. Se não fizer, também está certo.",
+        orgao: "Garganta",
+        queixas: [
+          "Amigdalite de repetição",
+          "Amígdalas e adenoides aumentadas",
+          "Respiração pela boca na criança",
+          "Rouquidão que não passa",
+          "Dor de garganta persistente",
+          "Dificuldade para engolir",
+        ],
       },
     ],
+
+    cta: { texto: "Agende sua consulta", href: "/contato" },
     fecho:
       "Toda cirurgia envolve riscos. Eles são explicados individualmente na consulta e no termo de consentimento.",
   },
-
-  // ---------------------------------------------------------------------------
-  // § 8.8 — Resultados
-  //
-  // Não há imagens autorizadas na v1. Esta seção explica a ausência em vez de
-  // inventar galeria: converter a ausência em sinal de seriedade é melhor do
-  // que uma galeria fraca, e é a única opção legal.
-  // ---------------------------------------------------------------------------
-  resultados: {
-    eyebrow: "Resultados",
-    h2: "Sobre imagens de antes e depois",
-    corpo:
-      "Imagens de resultado só são publicadas com autorização formal da paciente, sem qualquer edição, e acompanhadas da explicação clínica que a legislação exige. Enquanto essa curadoria não está pronta, prefiro mostrar os casos pessoalmente na consulta, onde consigo explicar a anatomia de cada um e por que o resultado seria diferente no seu rosto.",
-  },
-
-  faq: FAQ_TRANSVERSAL,
 };

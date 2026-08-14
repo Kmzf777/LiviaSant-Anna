@@ -20,7 +20,9 @@
     "verify:cores": "tsx scripts/verificar-cores.ts",
     "verify:bodoni": "tsx scripts/verificar-bodoni.ts",
     "verify:html": "tsx scripts/verificar-html.ts",
-    "verify": "pnpm verify:termos && pnpm verify:contraste && pnpm verify:cores && pnpm verify:bodoni",
+    "verify:fotos": "node scripts/reduzir-fotos.mjs --verificar",
+    "fotos": "node scripts/reduzir-fotos.mjs",
+    "verify": "pnpm verify:termos && pnpm verify:contraste && pnpm verify:cores && pnpm verify:bodoni && pnpm verify:fotos",
     "check": "pnpm typecheck && pnpm lint && pnpm verify && pnpm test",
     "check:full": "pnpm check && pnpm build && pnpm verify:html && pnpm test:e2e"
   },
@@ -50,6 +52,7 @@
     "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4.1.13",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",

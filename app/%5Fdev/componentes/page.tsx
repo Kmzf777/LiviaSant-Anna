@@ -13,8 +13,10 @@ import { FAQ } from "@/components/ui/FAQ";
 import { Filete } from "@/components/ui/Filete";
 import { Nota } from "@/components/ui/Nota";
 import { Passos } from "@/components/ui/Passos";
+import { Galeria, type ItemGaleria } from "@/components/ui/Galeria";
 import { PlaceholderImagem } from "@/components/ui/PlaceholderImagem";
 import { RetratoArco } from "@/components/ui/RetratoArco";
+import { VideoSobClique } from "@/components/ui/VideoSobClique";
 import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
@@ -81,6 +83,54 @@ const PASSOS_AMOSTRA: readonly PassoConsulta[] = [
     titulo: "Decisão",
     descricao:
       "Se fizer sentido para você, agendamos. Se não fizer, também está certo.",
+  },
+];
+
+/**
+ * As cinco fotos de ambiente hospitalar aprovadas na curadoria do
+ * PLANO-HOME.md, nas dimensões reais dos arquivos. Não é dado fictício: é o
+ * conteúdo que a § 3 da home vai exibir, e a única forma de conferir aqui a
+ * composição de verdade — com as proporções e os pesos que ela terá em
+ * produção.
+ *
+ * Nenhuma legenda diz qual profissional é a Dra. Lívia: não é possível
+ * determinar isso com segurança em foto com máscara e touca.
+ */
+const GALERIA_AMOSTRA: readonly ItemGaleria[] = [
+  {
+    src: "/fotos/centro-cirurgico-close.jpeg",
+    alt: "Cirurgiã de lupas de aumento, touca e máscara, concentrada sobre o campo cirúrgico coberto.",
+    largura: 3024,
+    altura: 4032,
+    legenda: "Cirurgia otorrinolaringológica, com lupas de aumento",
+  },
+  {
+    src: "/fotos/centro-cirurgico-equipe-corredor.jpeg",
+    alt: "Três profissionais de pijama cirúrgico no corredor entre as salas do centro cirúrgico.",
+    largura: 3024,
+    altura: 4032,
+    legenda: "Centro cirúrgico do Hospital Madre Teresa, Belo Horizonte",
+  },
+  {
+    src: "/fotos/centro-cirurgico-endoscopia.jpeg",
+    alt: "Sala cirúrgica montada com torre de endoscopia, com o paciente coberto por campos cirúrgicos.",
+    largura: 3024,
+    altura: 4032,
+    legenda: "Torre de endoscopia montada para cirurgia nasal",
+  },
+  {
+    src: "/fotos/centro-cirurgico-microscopio.jpeg",
+    alt: "Equipe em sala cirúrgica com microscópio, com o paciente coberto por campos cirúrgicos.",
+    largura: 3024,
+    altura: 4032,
+    legenda: "Microscópio cirúrgico em procedimento de ouvido",
+  },
+  {
+    src: "/fotos/centro-cirurgico-bastidor.jpeg",
+    alt: "Dois profissionais de pijama cirúrgico e touca, lado a lado, na antessala do centro cirúrgico.",
+    largura: 3024,
+    altura: 4032,
+    legenda: "Bastidor de um dia de cirurgias",
   },
 ];
 
@@ -459,6 +509,28 @@ export default function GaleriaDeComponentes() {
               <Estado rotulo="Selo — traço cheio">
                 <Selo className="text-wine-700 h-24 w-24" />
               </Estado>
+            </div>
+          </Grupo>
+
+          {/* ------------------------------------------------------------- */}
+          <Grupo
+            titulo="Galeria"
+            nota="Composição assimétrica em ciclo de cinco: larguras diferentes, eixos diferentes e desnível vertical dentro de cada linha. Nada de grade regular de três colunas iguais, que o § 15 lista como anti-padrão. Geometria reta — o arco é exclusivo do retrato da médica. Sem lightbox, sem hover: estas fotos não levam a lugar nenhum. No celular a peça de abertura ocupa a largura toda e o resto vai em pares, para cinco retratos não virarem três telas de rolagem."
+          >
+            <Galeria itens={GALERIA_AMOSTRA} />
+          </Grupo>
+
+          {/* ------------------------------------------------------------- */}
+          <Grupo
+            titulo="VideoSobClique"
+            nota="Antes do clique não existe elemento <video> na página: só o pôster estático e o botão. Os 3,5 MB do arquivo ficam fora do caminho do LCP até alguém pedir. Depois do clique entram os controles nativos, mudo, sem autoplay e sem loop. Nada se move enquanto ninguém clica, então prefers-reduced-motion não tem o que desligar."
+          >
+            <div className="max-w-sm">
+              <VideoSobClique
+                src="/fotos/centro-cirurgico-video.mp4"
+                poster="/fotos/centro-cirurgico-video-poster.jpeg"
+                legenda="Procedimento em andamento no centro cirúrgico."
+              />
             </div>
           </Grupo>
 

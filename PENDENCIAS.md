@@ -43,6 +43,20 @@ Aparece em quatro lugares: `content/faq.ts`, e as páginas de
 - [ ] Em `blefaroplastia`: como ela conduz a documentação de campo visual
       (necessária quando a indicação é funcional e há cobertura).
 
+### 2a. Uberlândia — atendimento ou só cirurgia?
+`BLOQUEIA PUBLICAÇÃO`
+
+O site passou a anunciar **Belo Horizonte e Uberlândia** no eyebrow da home, na
+metadata e no SEO, com o Uberlândia Medical Center listado como atuação
+cirúrgica atual.
+
+- [ ] Há **consulta ambulatorial** em Uberlândia, ou apenas cirurgia?
+- [ ] Se há consulta: endereço, dias e como agendar.
+
+A diferença não é detalhe. Anunciar uma cidade e não ter onde atender ali gera
+o pior tipo de contato: a pessoa liga, se desloca, e descobre que precisa ir a
+Belo Horizonte. Enquanto isso não estiver claro, `/consultorio` só fala de BH.
+
 ### 2b. Dados da política de privacidade — `content/legal.ts`
 `BLOQUEIA PUBLICAÇÃO`
 

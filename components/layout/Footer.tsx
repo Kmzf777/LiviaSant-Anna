@@ -94,7 +94,7 @@ export function Footer({ identificacao }: Props) {
               respiro lateral, e forçar 1/1 apertaria o desenho.
             */}
             <Image
-              src="/fotos/Logo.png"
+              src="/fotos/logo-selo.png"
               alt=""
               width={571}
               height={437}

@@ -17,8 +17,12 @@ import type {
   PerguntaResposta,
   Procedimento,
 } from "./tipos";
+import type { Hospital } from "./hospitais";
 
+import { CONSULTA } from "./consulta";
 import { CONSULTORIO } from "./consultorio";
+import { HOSPITAIS } from "./hospitais";
+import { TESE } from "./tese";
 import { MEDICA } from "./medica";
 import { HOME } from "./home";
 import { HUBS } from "./hubs";
@@ -38,12 +42,37 @@ export function getConsultorio(): Consultorio {
   return CONSULTORIO;
 }
 
+/**
+ * Hospitais onde ela atuou e atua — a prova social da home.
+ *
+ * `atual: true` primeiro, porque é o que responde "onde ela opera hoje";
+ * o histórico vem depois e explica como ela chegou lá.
+ */
+export function listarHospitais(): readonly Hospital[] {
+  return [...HOSPITAIS].sort(
+    (a, b) => Number(b.atual) - Number(a.atual),
+  );
+}
+
 // -----------------------------------------------------------------------------
 // Home
 // -----------------------------------------------------------------------------
 
 export function getHome(): ConteudoHome {
   return HOME;
+}
+
+/**
+ * A tese "forma e função", que abria a home e hoje abre a rinoplastia.
+ * Ver o comentário em `content/tese.ts` para o porquê da mudança de lugar.
+ */
+export function getTese(): typeof TESE {
+  return TESE;
+}
+
+/** A jornada da consulta, em quatro passos. Consumida por `/consulta`. */
+export function getConsulta(): typeof CONSULTA {
+  return CONSULTA;
 }
 
 export function getFaqTransversal(): readonly PerguntaResposta[] {
@@ -122,3 +151,4 @@ export function listarRotas(): readonly string[] {
 }
 
 export * from "./tipos";
+export type { Hospital } from "./hospitais";

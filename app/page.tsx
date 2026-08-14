@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
 
-import { AMedica } from "@/components/sections/AMedica";
-import { ComoEaConsulta } from "@/components/sections/ComoEaConsulta";
-import { DuasFrentes } from "@/components/sections/DuasFrentes";
-import { FaixaCredenciais } from "@/components/sections/FaixaCredenciais";
-import { HeroHome } from "@/components/sections/HeroHome";
-import { Manifesto } from "@/components/sections/Manifesto";
-import { PerguntasEContato } from "@/components/sections/PerguntasEContato";
 import { RespiroTraco } from "@/components/sections/RespiroTraco";
-import { Resultados } from "@/components/sections/Resultados";
-import { RinoplastiaDestaque } from "@/components/sections/RinoplastiaDestaque";
-import { getHome, getMedica } from "@/content";
+import { AMedicaEFormacao } from "@/components/sections/home/AMedicaEFormacao";
+import { Chamada } from "@/components/sections/home/Chamada";
+import { ExperienciaHospitalar } from "@/components/sections/home/ExperienciaHospitalar";
+import { ProcedimentosEAtendimentos } from "@/components/sections/home/ProcedimentosEAtendimentos";
 import {
-  ehPendente,
-  faqPageJsonLd,
+  getHome,
+  getMedica,
+  listarHospitais,
+  listarProcedimentos,
+} from "@/content";
+import {
   grafoJsonLd,
   medicalBusinessJsonLd,
   physicianJsonLd,
@@ -21,50 +19,58 @@ import {
 } from "@/lib/jsonld";
 
 /**
- * Home.
+ * Home — landing page de conversão.
  *
- * As nove seções do briefing § 8, na ordem, alternando superfície. A alternância
- * não é ritmo decorativo: vinho é superfície e não detalhe (§ 5.2), e a troca de
- * bloco inteiro é o único recurso de destaque que este design system tem — não
- * existe cor de acento para chamar atenção.
+ * Era uma home editorial de nove seções e virou quatro, na ordem em que uma
+ * pessoa decide: reconhece o problema, confia em quem resolve, vê onde ela
+ * opera, encontra o próprio caso, agenda.
  *
- *   § 8.1  hero                       vinho
- *   § 8.2  faixa de identificação     areia
- *   § 8.3  manifesto                  areia
- *   § 8.4  as duas frentes            areia-100
- *   —      respiro do Traço           areia      (sem texto, ver RespiroTraco)
- *   § 8.5  rinoplastia em destaque    vinho
- *   § 8.6  a médica                   areia
- *   § 8.7  como é a consulta          areia-100
- *   § 8.8  resultados                 areia
- *   § 8.9  FAQ e contato              areia
+ *   § 1  chamada + retrato          vinho
+ *   § 2  a médica e a formação      areia
+ *   § 3  experiência hospitalar     areia-100
+ *   —    respiro do Traço           areia      (sem texto, ver RespiroTraco)
+ *   § 4  procedimentos e queixas    areia
+ *        fecho                      vinho
  *
- * ## O respiro entre o manifesto e a rinoplastia
+ * O motivo da mudança está no próprio briefing. A § 2 define como métrica de
+ * sucesso que *"um paciente que chega pela busca de 'amígdala' e um que chega
+ * por 'rinoplastia' precisam, em 5 segundos, saber que estão no lugar certo"*,
+ * e a abertura anterior — "Forma e função, nas mesmas mãos" — não dizia que
+ * problema ela resolve. A tese não sumiu: desceu para a página de rinoplastia,
+ * que é onde ela é argumento comercial em vez de manifesto. Ver PLANO-HOME.md.
  *
- * A faixa vazia antes do bloco de rinoplastia não é sobra de layout: o Traço
- * resolve no perfil de rosto do logo exatamente ali, e a resolução dura ~1,5
- * tela. Ver `components/sections/RespiroTraco.tsx` e o cabeçalho de
- * `components/layout/Traco.tsx`.
+ * O que saiu da home (manifesto, duas frentes, rinoplastia em destaque,
+ * resultados, FAQ) continua vivo nos hubs e nas páginas de procedimento, que é
+ * onde converte melhor. A home passa a ter uma função só.
+ *
+ * ## O respiro entre a § 3 e a § 4
+ *
+ * A faixa vazia não é sobra de layout: o Traço resolve no perfil de rosto do
+ * logo exatamente ali, e a resolução precisa de um trecho de página sem texto
+ * para não se desenhar por cima da leitura. Ver
+ * `components/sections/RespiroTraco.tsx`.
  *
  * ## Um `<h1>`, e o resto em `<h2>`
  *
- * O único H1 é o do hero. Os títulos de seção são H2, inclusive o da
- * rinoplastia — que é maior que os outros por composição (`tamanho="h1"`), não
- * por semântica. Os únicos H3 da página são os quatro passos da consulta, e
- * eles vivem dentro do H2 da seção. Nenhum salto de nível.
+ * O único H1 é o da chamada. Os três títulos de seção são H2; os dois títulos
+ * de coluna da § 4 são H3, e os rótulos de grupo dentro deles, H4. Nenhum
+ * salto de nível.
  *
- * ## Perguntas pendentes
+ * ## JSON-LD
  *
- * A FAQ visível e o `FAQPage` do JSON-LD são filtrados pelo mesmo predicado:
- * pergunta com resposta ainda em `[CONFIRMAR]` não aparece em nenhum dos dois.
- * O que o paciente lê e o que o Google lê são a mesma coisa, sempre.
+ * Sem `FAQPage`: a FAQ deixou a home e vive nas páginas de procedimento, onde
+ * as perguntas são específicas. O que o paciente lê e o que o Google lê
+ * continuam sendo a mesma coisa. `medicalBusinessJsonLd()` devolve `null`
+ * enquanto o endereço for `[CONFIRMAR]`, e `grafoJsonLd` descarta nulos — um
+ * endereço de mentira em dado estruturado é lido como verdade por buscador,
+ * mapa e agregador.
  */
 
 const home = getHome();
 
 export const metadata: Metadata = {
   // `absolute` porque o layout raiz aplica o template "%s | Lívia Sant'Anna",
-  // e o título da home já tem 51 caracteres — com o sufixo estouraria os 60.
+  // e o título da home já tem 45 caracteres — com o sufixo estouraria os 60.
   title: { absolute: home.seo.titulo },
   description: home.seo.descricao,
   alternates: { canonical: "/" },
@@ -79,13 +85,7 @@ export const metadata: Metadata = {
 export default function Home() {
   const medica = getMedica();
 
-  const perguntas = home.faq.filter((item) => !ehPendente(item.resposta));
-
-  const grafo = grafoJsonLd(
-    physicianJsonLd(medica),
-    medicalBusinessJsonLd(),
-    faqPageJsonLd(perguntas),
-  );
+  const grafo = grafoJsonLd(physicianJsonLd(medica), medicalBusinessJsonLd());
 
   return (
     <>
@@ -95,16 +95,17 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: serializarJsonLd(grafo) }}
       />
 
-      <HeroHome hero={home.hero} />
-      <FaixaCredenciais credenciais={home.credenciais} />
-      <Manifesto manifesto={home.manifesto} />
-      <DuasFrentes duasFrentes={home.duasFrentes} />
+      <Chamada hero={home.hero} />
+      <AMedicaEFormacao bloco={home.medica} medica={medica} />
+      <ExperienciaHospitalar
+        experiencia={home.experiencia}
+        hospitais={listarHospitais()}
+      />
       <RespiroTraco />
-      <RinoplastiaDestaque rinoplastia={home.rinoplastia} />
-      <AMedica bloco={home.medica} medica={medica} />
-      <ComoEaConsulta consulta={home.consulta} />
-      <Resultados resultados={home.resultados} />
-      <PerguntasEContato perguntas={perguntas} medica={medica} />
+      <ProcedimentosEAtendimentos
+        bloco={home.procedimentos}
+        procedimentos={listarProcedimentos()}
+      />
     </>
   );
 }
