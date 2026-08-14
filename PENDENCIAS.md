@@ -220,7 +220,27 @@ contraste. Parametrizar antes de usar.
 | 4 | Next.js fixado em 15, não 16 | O briefing § 4 especifica 15. O `create-next-app` hoje entrega 16.3. |
 | 5 | Reveal de seção em CSS puro, não framer-motion | Não adiciona JS ao bundle inicial. Motion fica só no menu mobile e no slider de antes/depois. |
 | 6 | Switzer sem itálico | Nesta direção o itálico não aparece: fato vai em mono, ênfase vem de superfície. Economiza ~30 kB. |
+| 8 | **O rosto do logo deixou de viajar na linha** | O § 5.8 pede que a linha "resolva-se no perfil de rosto e depois volte a ser linha". Hoje a fita corre no corredor e o rosto acontece **ancorado ao lado**, no respiro. Motivo aritmético: a fita é `fixed` e desliza ~0,66px por pixel de scroll, então qualquer zona livre deriva ~4.300px em relação ao rosto — abrir o corredor sobre ela cortaria o rosto ao meio ou deixaria buracos de ~350px na linha. Ganhou-se "nunca cruza texto" por construção e o rosto com 1,5 viewport exata. Perdeu-se a continuidade literal do gesto. **Se você preferir o gesto contínuo, é possível — ao custo de reintroduzir a colisão com o texto.** |
+| 9 | Coluna de texto no celular encolheu ~8% | O corredor do Traço custa 27px de 390. É o preço de a assinatura existir no celular sem atravessar a leitura. Alternativa: esconder o Traço abaixo de `md` e devolver os 27px. |
 | 7 | Identificadores de código em português | O briefing § 0.6 pede "inglês no código", mas as § 6 e § 11 especificam nominalmente `lib/traco.ts`, `lib/contraste.ts`, `content/tipos.ts`, `content/medica.ts`, `IdentificacaoCFM`, `AntesDepois`, `FichaTecnica`, `RetratoArco`, `BotaoWhatsApp` — todos em português. Segui as seções específicas, que são o que a entrega será conferida contra. Um híbrido (`content/tipos.ts` exportando `Procedure`) seria pior que qualquer um dos dois. **Se você preferir inglês, diga agora** — converter depois da Fase 3 fica caro. |
+
+---
+
+## Dívida técnica registrada
+
+**`components/sections/ritmo.ts` deve deixar de existir.**
+
+A rampa de espaçamento vertical do mobile vive em constantes literais aplicadas
+seção a seção, em 36 chamadas. Não é onde ela deveria estar: o lugar certo é
+`--secao-y` em `styles/theme.css`, ou o mapa `ESPACAMENTO` de
+`components/ui/Secao.tsx`.
+
+Ela nasceu assim porque os dois arquivos pertenciam a outros subagents na mesma
+rodada de correção, e editar por cima causaria conflito. Com o token corrigido,
+`ritmo.ts` some e as 36 chamadas voltam a `espacamento="normal"`.
+
+Custo de deixar como está: quem mudar o ritmo do site precisa saber que existem
+dois lugares, e o segundo não é óbvio.
 
 ---
 
