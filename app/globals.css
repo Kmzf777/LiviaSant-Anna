@@ -27,6 +27,27 @@
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+
+    /* ---------------------------------------------------------------------
+       Palavras longas podem quebrar. Isto não é detalhe tipográfico — é o
+       que impede overflow horizontal num site em português médico.
+
+       "otorrinolaringologia" em Bodoni de 42px ocupa ~380px. Num celular de
+       390px com a fonte do sistema em 150%, a coluna de texto tem 322px. Um
+       item de grid tem `min-width: auto`, então não encolhe abaixo do
+       min-content — e o min-content de um bloco é a maior palavra dele. O
+       resultado era a coluna crescer para 371px e empurrar a página.
+
+       `hyphens: auto` resolve na raiz: com `lang="pt-BR"` no `<html>`, o
+       navegador conhece os pontos de separação silábica e passa a ter onde
+       quebrar, o que derruba o min-content sem cortar palavra no meio.
+       `overflow-wrap: break-word` é a rede para o que não tem hifenização —
+       URL, e-mail, código.
+
+       Só age quando falta espaço. Em coluna larga, nada muda.
+       ------------------------------------------------------------------ */
+    hyphens: auto;
+    overflow-wrap: break-word;
   }
 
   /* Bodoni nunca em bold e nunca abaixo de 1.5rem: o hairline some.
@@ -190,6 +211,16 @@
   ) {
     display: inline-flex;
     align-items: center;
+    /* `min-width: 0` porque o `inline-flex` acima cobra um preço escondido:
+       dentro de um pai `flex`, este link vira item de flex, e item de flex tem
+       `min-width: auto` — não encolhe abaixo do próprio min-content, mesmo que
+       o pai não tenha espaço. No índice das páginas legais isso fazia uma `li`
+       de 345px numa tela de 320 com a fonte do sistema em 150%.
+
+       Com `0`, o link cede e o texto quebra, que é o que se espera de um link
+       numa lista. A área de toque de 44px não muda: ela vem do padding e do
+       `min-height`, não da largura. */
+    min-width: 0;
     padding-block: max(0px, calc((var(--alvo-toque) - 1lh) / 2));
     /* O padding sozinho erra por frações de pixel: `1lh` de 16,8px cai em
        43,98px depois do arredondamento de layout, e alvo de toque não se

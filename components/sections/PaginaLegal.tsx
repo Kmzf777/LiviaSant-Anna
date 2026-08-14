@@ -82,22 +82,43 @@ export function PaginaLegal({ pagina }: Props) {
       >
         <Container comRail>
           <div className="grid gap-10 lg:grid-cols-[16rem_1fr] lg:gap-20">
+            {/* `min-w-0` porque item de grid tem `min-width: auto` e não
+                encolhe abaixo do próprio min-content. Numa tela de 320px com
+                a fonte do sistema em 150%, o sumário media 345px numa trilha
+                de 256 e empurrava a página inteira. Liberar só o link por
+                dentro não bastava: quem não cedia era este `nav`. */}
             <nav
               aria-label="Nesta página"
-              className="lg:sticky lg:top-[calc(var(--header-h)+3rem)] lg:self-start"
+              className="min-w-0 lg:sticky lg:top-[calc(var(--header-h)+3rem)] lg:self-start"
             >
               <ul className="flex list-none flex-col gap-3">
+                {/*
+                  A `li` é bloco, não linha de flex.
+
+                  Era `flex gap-4` com o número e o link lado a lado, e essa
+                  estrutura não cabia: item de flex não encolhe abaixo do
+                  próprio min-content, e `.link-filete` virou `inline-flex`
+                  quando ganhou área de toque de 44px. Numa tela de 320px com
+                  a fonte do sistema em 150%, o sumário media 345px e empurrava
+                  a página — e nem `min-w-0` no link nem no `nav` resolviam,
+                  porque o problema era a linha existir.
+
+                  Como bloco, o número é inline e o link é uma caixa
+                  inline-level que se ajusta à largura disponível e quebra o
+                  texto por dentro. O alinhamento visual é o mesmo; o que muda
+                  é que agora existe onde quebrar.
+                */}
                 {pagina.blocos.map((bloco, indice) => (
-                  <li key={bloco.titulo} className="flex gap-4">
+                  <li key={bloco.titulo}>
                     <span
                       aria-hidden="true"
-                      className="text-micro text-ink-400 font-mono tracking-[0.14em]"
+                      className="text-micro text-ink-400 mr-3 font-mono tracking-[0.14em]"
                     >
                       {numero(indice)}
                     </span>
                     <a
                       href={`#${ancora(bloco.titulo)}`}
-                      className="link-filete text-small text-ink-600 self-start"
+                      className="link-filete text-small text-ink-600"
                     >
                       {bloco.titulo}
                     </a>

@@ -140,7 +140,14 @@
   /* Tokens fora dos namespaces do Tailwind. */
 
   --container: 1440px;
-  --gutter: clamp(1.25rem, 4vw, 5rem);
+
+  /* Piso em `px`, e não em `rem`, de propósito.
+     Margem não deve crescer com o tamanho do texto. Com a fonte do sistema em
+     150% — configuração comum de acessibilidade —, um piso de 1.25rem vira
+     30px de cada lado, e junto com o corredor do Traço tirava 96px dos 390 de
+     um celular. O texto cresce, o espaço em volta dele não; quem precisa de
+     letra maior precisa de mais lugar para ela, não de mais margem. */
+  --gutter: clamp(20px, 4vw, 5rem);
   --rail: 80px; /* rail esquerdo, some abaixo de 1024px */
 
   /* ---------------------------------------------------------------------
@@ -169,7 +176,13 @@
      O `clamp` é o que fecha a conta nos extremos, e por isso a fita é
      dimensionada A PARTIR daqui, não ao contrário: numa janela retrato o teto
      de 9vw segura o corredor, e a fita encolhe junto em vez de transbordar
-     dele. Piso de 1.5rem porque abaixo disso o fio some contra a borda.
+     dele. Piso de 24px porque abaixo disso o fio some contra a borda.
+
+     O piso é `px` e não `rem` pelo mesmo motivo do `--gutter`: com a fonte do
+     sistema em 150%, um piso de 1.5rem virava 36px e ultrapassava o próprio
+     teto de 9vw (35px num celular de 390) — em `clamp`, mínimo maior que
+     máximo faz o mínimo vencer, então o corredor CRESCIA justamente onde havia
+     menos espaço. Corredor é reserva de espaço, não tipografia.
 
      `--traco-unidade` é o pixel por unidade de viewBox. Quem precisar
      posicionar algo no vocabulário da curva — o rosto do `RespiroTraco`, por
@@ -178,7 +191,7 @@
 
   --traco-telas: 1.8; /* TRACO_TELAS.movel */
   --traco-corredor: clamp(
-    1.5rem,
+    24px,
     calc(var(--traco-telas) * 28 * 100vh / 1560),
     9vw
   );

@@ -115,7 +115,20 @@ export function Header() {
           topo dessas larguras. Agora a altura É o token.
           Coberto por tests/e2e/header.spec.ts.
         */}
-        <Container className="flex h-[var(--header-h)] items-center justify-between gap-8">
+        {/*
+          `overflow-hidden` é a rede, não a solução — mas precisa existir.
+
+          Tudo neste header é medido em `rem`: o nome em `text-[1.5rem]`, o
+          `--gutter`, o `gap`. Com a fonte do sistema em 150% — configuração
+          comum de acessibilidade no celular — o conteúdo passa a pedir ~464px
+          numa viewport de 390, porque a fonte cresce e a tela não. O resultado
+          era overflow horizontal em TODAS as 21 rotas.
+
+          A prioridade em espaço apertado é clara: o botão Menu é o único
+          acesso à navegação no celular e não pode encolher; o nome é marca e
+          pode. Daí `shrink-0` no grupo da direita e truncamento no nome.
+        */}
+        <Container className="flex h-[var(--header-h)] items-center justify-between gap-6 overflow-hidden">
           <Link
             href="/"
             aria-label="Lívia Sant'Anna — página inicial"
@@ -130,9 +143,14 @@ export function Header() {
             // duas linhas — 44/24 arredonda para 2. O `::before` estende o
             // alvo em 10px para cada lado sem tocar na caixa medida, e o
             // desenho não muda um pixel.
-            className="font-display relative text-[1.5rem] leading-none font-normal tracking-[-0.02em] whitespace-nowrap before:absolute before:inset-x-0 before:-inset-y-2.5 before:content-['']"
+            className="font-display relative flex min-w-0 text-[1.5rem] leading-none font-normal tracking-[-0.02em] before:absolute before:inset-x-0 before:-inset-y-2.5 before:content-['']"
           >
-            Lívia Sant&apos;Anna
+            {/*
+              O truncamento vai no span, não no link: `truncate` implica
+              `overflow: hidden`, e no link ele recortaria o `::before` que
+              carrega os 44px de área de toque.
+            */}
+            <span className="truncate">Lívia Sant&apos;Anna</span>
           </Link>
 
           <nav
@@ -164,7 +182,9 @@ export function Header() {
             </ul>
           </nav>
 
-          <div className="flex items-center gap-4">
+          {/* `shrink-0`: em espaço apertado quem cede é o nome, nunca o acesso
+              à navegação. Ver o comentário no Container acima. */}
+          <div className="flex shrink-0 items-center gap-4">
             {/*
               O `hidden` vai no invólucro, não no `className` do Botão.
               Passado ao Botão ele não teria efeito: `BASE` já traz
