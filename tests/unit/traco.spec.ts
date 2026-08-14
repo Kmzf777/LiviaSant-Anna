@@ -154,29 +154,39 @@ describe("continuidade", () => {
 
 describe("a resolução é um perfil de rosto", () => {
   const pontos = ancoras(TRACO_PATH.resolucao);
-  const marco = (indice: number) => {
-    const ponto = pontos[indice];
-    if (!ponto) throw new Error(`Marco ${indice} não existe.`);
-    return ponto;
-  };
 
-  // Índices das âncoras da curva. Se a geometria mudar, estes são os únicos
-  // números do teste que acompanham — e a lista de marcos abaixo é a
-  // definição operacional de "isto ainda é um rosto".
-  const testa = marco(1);
-  const sobrancelha = marco(3);
-  const nasio = marco(4);
-  const ponta = marco(7);
-  const labioSuperior = marco(10);
-  const queixo = marco(14);
+  /*
+    Os marcos são encontrados por GEOMETRIA, não por índice.
 
-  it("os marcos anatômicos aparecem na ordem certa, de cima para baixo", () => {
-    expect(testa.y).toBeLessThan(sobrancelha.y);
-    expect(sobrancelha.y).toBeLessThan(nasio.y);
-    expect(nasio.y).toBeLessThan(ponta.y);
-    expect(ponta.y).toBeLessThan(labioSuperior.y);
-    expect(labioSuperior.y).toBeLessThan(queixo.y);
-  });
+    A versão anterior deste bloco listava índices de âncora — `marco(7)` era a
+    ponta do nariz. Funcionava enquanto a curva era a aproximação desenhada à
+    mão, e quebrou no dia em que ela foi substituída pela curva medida do logo,
+    que tem outra quantidade de âncoras. O teste reprovou por contar errado, não
+    por o rosto ter deixado de ser rosto.
+
+    Procurar por extremo local é mais trabalho e sobrevive a qualquer troca da
+    geometria — inclusive à próxima, quando o vetor original do logo chegar.
+  */
+
+  /** O ponto mais avançado para dentro da página. */
+  const ponta = pontos.reduce((menor, p) => (p.x < menor.x ? p : menor));
+
+  const abaixoDaPonta = pontos.filter((p) => p.y > ponta.y);
+
+  /** Extremos locais em x, na ordem em que aparecem descendo. */
+  function extremosLocais(lista: readonly { x: number; y: number }[]) {
+    const achados: { x: number; y: number; tipo: "avanca" | "recua" }[] = [];
+    for (let i = 1; i < lista.length - 1; i++) {
+      const a = lista[i - 1]!.x;
+      const b = lista[i]!.x;
+      const c = lista[i + 1]!.x;
+      if (b < a && b <= c) achados.push({ ...lista[i]!, tipo: "avanca" });
+      if (b > a && b >= c) achados.push({ ...lista[i]!, tipo: "recua" });
+    }
+    return achados;
+  }
+
+  const depois = extremosLocais(abaixoDaPonta);
 
   it("a ponta do nariz é o ponto mais avançado de todo o traço", () => {
     const menorX = Math.min(
@@ -184,32 +194,68 @@ describe("a resolução é um perfil de rosto", () => {
         (p) => p.x,
       ),
     );
-    expect(ponta.x).toBeLessThan(nasio.x);
-    expect(ponta.x).toBeLessThan(labioSuperior.x);
+    // A tolerância cobre pontos de controle, que podem ultrapassar a âncora.
     expect(ponta.x).toBeLessThan(menorX + 10);
   });
 
-  it("o násio é uma reentrância entre a sobrancelha e o dorso", () => {
-    // Sem esse degrau o nariz parece brotar direto da testa — é ele que faz a
-    // silhueta virar rosto em vez de perfil de montanha.
-    expect(sobrancelha.x).toBeLessThan(testa.x);
-    expect(nasio.x).toBeGreaterThan(sobrancelha.x);
-    expect(nasio.x).toBeLessThan(testa.x);
-    expect(nasio.x).toBeGreaterThan(ponta.x);
+  it("a testa desce da margem até a ponta sem voltar atrás", () => {
+    /*
+      No logo, testa e dorso do nariz formam uma descida contínua: não há o
+      degrau do násio que um perfil de manual costuma ter.
+
+      Esta linha já foi o oposto — o teste antigo EXIGIA a reentrância, porque
+      a curva desenhada à mão tinha uma. Medida a curva real, a exigência
+      estava errada: era uma hipótese sobre o que faz uma silhueta ler como
+      rosto, e o desenho dela prova que não precisa. O teste passou a descrever
+      o logo em vez de descrever a expectativa de quem o aproximou.
+    */
+    const acimaDaPonta = pontos.filter((p) => p.y <= ponta.y);
+    for (let i = 1; i < acimaDaPonta.length; i++) {
+      expect(
+        acimaDaPonta[i]!.x,
+        `a testa recuou em y=${acimaDaPonta[i]!.y}`,
+      ).toBeLessThanOrEqual(acimaDaPonta[i - 1]!.x);
+    }
   });
 
-  it("o lábio superior avança menos que o nariz e mais que o queixo", () => {
-    expect(labioSuperior.x).toBeGreaterThan(ponta.x);
-    expect(labioSuperior.x).toBeLessThan(queixo.x);
+  it("abaixo do nariz há lábio, estômio e queixo — não uma reta", () => {
+    /*
+      É esta alternância que separa um perfil de um risco: depois da ponta a
+      linha recua para a base do nariz, avança no lábio superior, recua no
+      estômio e avança de novo no queixo.
+    */
+    expect(
+      depois.filter((e) => e.tipo === "avanca").length,
+      "faltam avanços abaixo do nariz (lábio superior e queixo)",
+    ).toBeGreaterThanOrEqual(2);
+    expect(
+      depois.filter((e) => e.tipo === "recua").length,
+      "falta a reentrância do estômio",
+    ).toBeGreaterThanOrEqual(1);
+
+    // Nenhum deles avança tanto quanto o nariz.
+    for (const marco of depois) {
+      expect(marco.x).toBeGreaterThan(ponta.x);
+    }
+  });
+
+  it("o lábio superior avança mais que o estômio e menos que o nariz", () => {
+    const labioSuperior = depois.find((e) => e.tipo === "avanca");
+    const estomio = depois.find(
+      (e) => e.tipo === "recua" && e.y > (labioSuperior?.y ?? 0),
+    );
+
+    expect(labioSuperior, "não achei o lábio superior").toBeDefined();
+    expect(estomio, "não achei o estômio").toBeDefined();
+    expect(labioSuperior!.x).toBeGreaterThan(ponta.x);
+    expect(labioSuperior!.x).toBeLessThan(estomio!.x);
   });
 
   it("tem proporção de rosto, não de linha esticada", () => {
-    // Do alto da testa ao mento, a excursão horizontal de um perfil real fica
-    // perto de 0,25–0,3 da altura. Fora dessa faixa o rosto lê como
-    // caricatura (largo) ou como um risco (estreito).
-    const doRosto = todosOsPontos(TRACO_PATH.resolucao).filter(
-      (ponto) => ponto.y >= testa.y && ponto.y <= queixo.y + 30,
-    );
+    // A excursão horizontal do segmento inteiro, contra a altura dele. Fora
+    // desta faixa o rosto lê como caricatura (largo) ou como um risco
+    // (estreito). Medido no logo real: 0,29.
+    const doRosto = todosOsPontos(TRACO_PATH.resolucao);
     const xs = doRosto.map((ponto) => ponto.x);
     const ys = doRosto.map((ponto) => ponto.y);
     const proporcao =

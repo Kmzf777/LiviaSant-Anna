@@ -111,23 +111,42 @@ Ainda faltam:
 ### 6. Curva oficial do logo — `lib/traco.ts`
 `DEGRADA`
 
-O Traço usa hoje uma aproximação em Bézier do perfil de rosto do logo.
+**Resolvido.** O Traço usa a curva medida do logo.
 
-- [ ] Enviar o **SVG** do logo para extrair a curva real.
+O PNG foi decodificado pixel a pixel: o aro e o texto circular ocupam um anel de
+raio 179–198, o desenho interno fica abaixo de 140, e há um vazio limpo entre os
+dois — o que permitiu isolar o rosto sem ambiguidade. Para cada linha da imagem
+tomou-se o **meio** do bloco de tinta, não a borda, porque a assinatura precisa
+da linha de eixo e não do contorno de duas bordas que um vetorizador devolveria.
 
-O PNG que chegou **não resolve isso.** O logo é o traço filete contínuo que
-desenha um perfil de rosto, e a assinatura do site inteiro deveria ser aquela
-curva — não uma parecida. De uma imagem rasterizada não se extrai geometria
-confiável: o que sai de um vetorizador automático é um contorno de duas bordas,
-não a linha de eixo único que o desenho é.
+Doze marcos medidos, convertidos por Catmull-Rom em cúbicas que passam
+exatamente por eles, espelhados (a fita corre na margem direita) e escalados
+preservando a proporção do desenho: largura ÷ altura = 0,4248, medido.
 
-Hoje a linha lê como um perfil elegante. Não lê como **o** perfil dela.
+Conferido por sobreposição na escala do logo: a curva acompanha o perfil do alto
+do crânio ao pescoço.
 
-Trocar é editar as três constantes de `TRACO_PATH`. Nenhum componente conhece a
-geometria.
+Uma descoberta da medição: **o logo não tem násio** — aquela reentrância entre
+sobrancelha e dorso que um perfil de manual tem. Ali testa e nariz descem numa
+linha contínua. A versão desenhada à mão tinha a reentrância, e havia um teste
+que a exigia. O teste descrevia a suposição, não o desenho.
 
-O SVG também resolve nitidez: o selo do rodapé renderiza a 160px de largura e o
-PNG tem 571px, então em tela de alta densidade ele já está no limite.
+### O que ainda vale um SVG de verdade
+`DEGRADA`
+
+- [ ] Vetor original do logo, para nitidez do selo no rodapé.
+
+O `Logo.svg` que chegou estava **vazio** — 438 bytes, um `<g>` sem nenhum path.
+É saída de vetorizador automático (potrace) rodado sobre o PNG: como o desenho é
+blush claro sobre fundo transparente, o limiar não encontrou nada escuro e o
+arquivo saiu sem conteúdo, sem erro. Foi removido do projeto.
+
+O que resolve é o arquivo de quem desenhou o logo — Illustrator, Figma, Corel —
+exportado como SVG. Não um novo trace do PNG.
+
+Impacto hoje: só nitidez. O selo renderiza a 160px de largura e o PNG tem 571px,
+então em tela de alta densidade está no limite. A geometria da assinatura já não
+depende mais disso.
 
 ### 7. Parágrafo pessoal da médica — `content/medica.ts`
 `DEGRADA`

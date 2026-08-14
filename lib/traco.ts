@@ -89,14 +89,17 @@ export const TRACO_UNIDADES_POR_TELA = 300;
 /**
  * A curva, em três segmentos nomeados.
  *
- * `resolucao` é o perfil de rosto do logo em escala grande. A ordem dos
- * marcos, de cima para baixo, é a anatomia: testa (bojo em x ≈ 203),
- * glabela, násio (a reentrância que ancora o nariz), dorso nasal reto,
- * ponta (x ≈ 103, o ponto mais à esquerda de todo o traço), columela,
- * filtro, lábio superior, estômio, lábio inferior, sulco mentolabial,
- * pogônio, mento e a mandíbula varrendo de volta para a margem.
+ * `resolucao` é o perfil de rosto do logo em escala grande, **medido do
+ * arquivo**, não desenhado por semelhança. A ordem dos marcos, de cima para
+ * baixo, é a anatomia: alto do crânio, testa, arco superciliar, ponta do nariz
+ * (x = 87, o ponto mais à esquerda de todo o traço), columela, lábio superior,
+ * estômio, lábio inferior, sulco mentolabial, pogônio, mento, e a mandíbula
+ * varrendo de volta para a margem.
  *
- * É uma aproximação em Bézier, não a curva oficial — ver PENDENCIAS.md.
+ * Note o que NÃO está na lista: o násio. Um perfil de manual tem aquela
+ * reentrância entre a sobrancelha e o dorso, e a versão anterior desta curva
+ * — desenhada à mão — tinha uma. O logo não tem: ali testa e nariz descem numa
+ * linha contínua. Foi a medição que corrigiu a suposição.
  */
 export const TRACO_PATH = {
   entrada: [
@@ -108,26 +111,47 @@ export const TRACO_PATH = {
     "C 215 470 214 476 214 480",
   ].join(" "),
 
+  /*
+    Extraído do logo, não desenhado à mão.
+
+    O PNG do selo foi decodificado pixel a pixel; o aro e o texto circular
+    ficam num anel de raio 179–198 e o desenho interno abaixo de 140, com um
+    vazio limpo entre os dois — o que permitiu isolar o rosto sem ambiguidade.
+    Para cada linha da imagem tomou-se o MEIO do bloco de tinta mais à direita,
+    e não a borda: a assinatura precisa da linha de eixo, que é o caminho que a
+    caneta percorreu, e não do contorno de duas bordas que um vetorizador
+    devolveria.
+
+    As âncoras abaixo são doze marcos medidos, convertidos por Catmull-Rom em
+    cúbicas que passam exatamente por eles. O rosto olha para a esquerda porque
+    a fita corre na margem direita — é o desenho espelhado, na proporção
+    original: largura ÷ altura = 0,4248, medido, não escolhido.
+
+    A entrada e a saída são autorais. O logo não volta ao corredor: a linha
+    dele segue para o cabelo. Aqui ela precisa reencontrar a pista de 26
+    unidades por onde sobe o resto da página, então o retorno toma a direção
+    inicial da mandíbula e se acomoda na vertical.
+
+    Trocar por uma extração melhor é substituir este bloco. Nada mais no
+    projeto conhece a geometria.
+  */
   resolucao: [
     "M 214 480",
-    "C 218 496 212 512 210 540", // alto do crânio, bojo para trás
-    "C 211 572 205 596 194 618", // testa desce para a frente
-    "C 188 626 176 632 174 644", // arco superciliar — a testa avança
-    "C 172 656 177 658 179 664", // násio — a reentrância que ancora o nariz
-    "C 180 670 174 678 164 690", // virada para o dorso
-    "C 150 703 132 715 123 724", // dorso nasal, quase reto
-    "C 116 729 114 734 121 737", // ponta
-    "C 128 741 135 744 142 746", // columela, base do nariz
-    "C 147 748 151 749 152 751", // subnasal
-    "C 154 756 149 760 145 764", // filtro → lábio superior
-    "C 142 768 147 770 151 772", // estômio
-    "C 155 775 150 780 146 784", // lábio inferior
-    "C 142 790 153 795 159 800", // sulco mentolabial
-    "C 163 807 157 814 154 821", // pogônio (frente do queixo)
-    "C 151 832 158 841 167 845", // mento
-    "C 177 851 187 855 196 858", // mandíbula voltando
-    "C 205 863 210 876 212 894", // saída do rosto
-    "C 214 912 214 922 214 930",
+    "C 214 500 214 518 214 534", // desce no corredor até o alto do crânio
+    "C 208 539 186 555 176 567", // crânio: o bojo peela da margem
+    "C 167 578 161 590 156 601", // testa, recuando devagar
+    "C 151 612 152 622 147 634", // testa baixa
+    "C 143 645 140 657 130 668", // arco superciliar / glabela
+    "C 120 679 92 690 87 700", // PONTA DO NARIZ — o ponto mais avançado
+    "C 82 711 101 722 103 730", // columela, base do nariz
+    "C 104 738 95 744 96 749", // filtro e lábio superior, que volta a avançar
+    "C 96 755 104 758 106 764", // estômio — a fenda entre os lábios recua
+    "C 108 770 107 778 106 785", // lábio inferior
+    "C 105 793 99 801 100 810", // sulco mentolabial e pogônio
+    "C 101 818 109 830 111 834", // mento, sob o queixo
+    "C 114 843 130 856 152 869", // mandíbula varrendo de volta
+    "C 174 882 196 898 207 913", // pescoço
+    "C 211 920 214 926 214 930", // reencontra o corredor
   ].join(" "),
 
   /**
