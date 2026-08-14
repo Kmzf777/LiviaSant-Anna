@@ -27,9 +27,22 @@ export const HOME: ConteudoHome = {
     lead: "Otorrinolaringologista com atuação em cirurgia plástica da face. Opero o nariz que respira e o nariz que se vê — e trato os dois como o mesmo problema.",
     ctaPrimario: { texto: "Agendar consulta", href: "/contato" },
     ctaSecundario: { texto: "Conhecer a médica", href: "/dra-livia-santanna" },
+    /*
+      O `alt` descreve o que se vê, não o que se quer transmitir.
+
+      "Médica confiante e acolhedora" seria interpretação — e, num site de
+      publicidade médica, adjetivo em texto alternativo é o mesmo adjetivo que
+      o § 3.2 proíbe no texto visível, só que escondido de quem enxerga. Quem
+      usa leitor de tela recebe a cena, e tira a própria conclusão.
+    */
     imagem: {
-      tipo: "pendente",
-      descricao: "Retrato de blazer preto, fundo areia, postura confiante",
+      tipo: "imagem",
+      imagem: {
+        src: "/fotos/Livia-Jaleco-preto.jpeg",
+        alt: "Lívia Sant'Anna, de blazer preto e braços cruzados, diante de um fundo claro.",
+        largura: 1024,
+        altura: 1536,
+      },
     },
   },
 

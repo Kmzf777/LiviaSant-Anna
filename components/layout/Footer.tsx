@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -11,7 +12,6 @@ import { Botao } from "@/components/ui/Botao";
 import { Container } from "@/components/ui/Container";
 import { Filete } from "@/components/ui/Filete";
 import { Nota } from "@/components/ui/Nota";
-import { PlaceholderImagem } from "@/components/ui/PlaceholderImagem";
 
 /**
  * Footer — o fecho do site.
@@ -37,10 +37,12 @@ import { PlaceholderImagem } from "@/components/ui/PlaceholderImagem";
  *
  * ## O selo
  *
- * Aparece uma única vez no site inteiro, aqui (§ 5.5). Como o SVG oficial
- * ainda não chegou (PENDENCIAS.md, item 5), o lugar dele é ocupado pelo
- * PlaceholderImagem — que é honesto sobre a ausência em vez de exibir uma
- * versão inventada do logo como se fosse a marca dela.
+ * Aparece uma única vez no site inteiro, aqui (§ 5.5) — e é o logo real, na
+ * variante clara, com transparência, sobre o vinho do rodapé.
+ *
+ * Ainda é PNG. O SVG continua valendo a pena por dois motivos: nitidez em tela
+ * de alta densidade, e a curva do perfil de rosto, que é de onde `lib/traco.ts`
+ * deveria extrair a geometria da assinatura do site. Ver PENDENCIAS.md.
  */
 
 type Props = {
@@ -78,12 +80,27 @@ export function Footer({ identificacao }: Props) {
               todas as 21 rotas. Mesma armadilha do CTA do header; ver o
               comentário em components/ui/cn.ts.
             */}
-            <div className="w-24">
-              <PlaceholderImagem
-                descricao="Logo, selo circular em vinho"
-                aspecto="1/1"
-              />
-            </div>
+            {/*
+              `alt=""` de propósito: o selo é decorativo AQUI.
+
+              Ele traz o nome dela desenhado, e o nome aparece como texto logo
+              abaixo. Descrever a imagem faria o leitor de tela anunciar
+              "Lívia Sant'Anna" duas vezes seguidas — ruído que só quem depende
+              do leitor percebe.
+
+              O arquivo é a variante clara do logo, com transparência, e por
+              isso vive sobre o vinho do rodapé sem caixa branca em volta.
+              Proporção natural 571×437: o selo é circular, mas o PNG tem
+              respiro lateral, e forçar 1/1 apertaria o desenho.
+            */}
+            <Image
+              src="/fotos/Logo.png"
+              alt=""
+              width={571}
+              height={437}
+              sizes="160px"
+              className="h-auto w-40"
+            />
             <p className="font-display text-blush-200 text-[1.5rem] leading-none font-normal tracking-[-0.02em]">
               Lívia Sant&apos;Anna
             </p>

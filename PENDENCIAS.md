@@ -81,22 +81,29 @@ Os scripts de verificação reduzem o risco; não o eliminam.
 
 ## Degradam o resultado
 
-### 5. Assets originais — `/assets-originais` não existe
+### 5. Assets originais — parcialmente entregues
 `DEGRADA`
 
-O site foi construído com placeholders (bloco areia com o selo a 8% e o texto
-`IMAGEM PENDENTE`), conforme briefing § 12.2. Os caminhos e componentes já
-apontam para os arquivos finais: trocar é substituir o arquivo.
+Três arquivos chegaram e **já estão aplicados** em `/public/fotos`:
 
-- [ ] `logo-selo-vinho.png` — e, de preferência, **o SVG**
-- [ ] `foto-blazer-preto.jpg` — hero da home
-- [ ] `foto-jaleco-vinho.jpg` — seção "A médica"
-- [ ] `foto-jaleco-scrubs.jpg` — páginas cirúrgicas e consultório
+- [x] `Logo.png` — variante clara, com transparência. Selo do rodapé, nas 21 páginas
+- [x] `Livia-Jaleco-preto.jpeg` — 1024×1536, hero da home
+- [x] `Livia-Jaleco-Branco.jpeg` — 1024×1536, seção "A médica" e `/dra-livia-santanna`
 
-Tratamento combinado para as três fotos: leve aquecimento, contraste suave, sem
-filtro pesado. Não recorte o fundo areia — ele é parte da paleta. No
-`foto-jaleco-scrubs.jpg`, desature levemente o azul do scrub, que é a única cor
-fora da paleta.
+Nenhuma página do site renderiza placeholder. O único lugar em que
+`IMAGEM PENDENTE` ainda aparece é `/_dev/componentes`, que é a galeria de
+estados dos primitivos e é noindex — e `scripts/verificar-html.ts` agora reprova
+o build se um placeholder reaparecer em qualquer página real.
+
+Ainda faltam:
+
+- [ ] **O SVG do logo.** Ver item 6 — é o que mais rende, e não é só nitidez.
+- [ ] Terceira foto (`jaleco com scrubs`), prevista no briefing § 12.1 para
+      páginas cirúrgicas e consultório. Sem ela, essas páginas seguem sem foto,
+      o que funciona: nenhuma precisa de imagem para ler bem.
+- [ ] As 11 imagens de procedimento. O template só as renderiza quando existem
+      de verdade, então a ausência não deixa buraco. Entram sozinhas quando o
+      conteúdo apontar para arquivos reais.
 
 > **Nenhuma foto de banco de imagens entra no repositório, nem provisoriamente.**
 > Se vazar para produção, destrói a credibilidade que as fotos reais constroem.
@@ -106,10 +113,21 @@ fora da paleta.
 
 O Traço usa hoje uma aproximação em Bézier do perfil de rosto do logo.
 
-- [ ] Enviar o SVG do logo para extrair a curva real.
+- [ ] Enviar o **SVG** do logo para extrair a curva real.
 
-Trocar é editar as três constantes de `TRACO_PATH`. Nenhum componente conhece
-a geometria.
+O PNG que chegou **não resolve isso.** O logo é o traço filete contínuo que
+desenha um perfil de rosto, e a assinatura do site inteiro deveria ser aquela
+curva — não uma parecida. De uma imagem rasterizada não se extrai geometria
+confiável: o que sai de um vetorizador automático é um contorno de duas bordas,
+não a linha de eixo único que o desenho é.
+
+Hoje a linha lê como um perfil elegante. Não lê como **o** perfil dela.
+
+Trocar é editar as três constantes de `TRACO_PATH`. Nenhum componente conhece a
+geometria.
+
+O SVG também resolve nitidez: o selo do rodapé renderiza a 160px de largura e o
+PNG tem 571px, então em tela de alta densidade ele já está no limite.
 
 ### 7. Parágrafo pessoal da médica — `content/medica.ts`
 `DEGRADA`

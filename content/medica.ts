@@ -58,8 +58,18 @@ export const MEDICA: Medica = {
     },
   ],
 
+  /*
+    A blusa vinho desta foto é a razão de ela ser a escolhida para a seção "A
+    médica": o tom bate com `wine-700`, então o retrato pertence à paleta em vez
+    de conviver com ela. Está no briefing § 12.1, e conferido na foto real.
+  */
   retrato: {
-    tipo: "pendente",
-    descricao: "Retrato de jaleco branco com blusa vinho, fundo areia",
+    tipo: "imagem",
+    imagem: {
+      src: "/fotos/Livia-Jaleco-Branco.jpeg",
+      alt: "Lívia Sant'Anna, de jaleco branco sobre blusa vinho, diante de um fundo claro.",
+      largura: 1024,
+      altura: 1536,
+    },
   },
 };

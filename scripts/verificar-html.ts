@@ -54,14 +54,22 @@ const REGRAS: readonly Regra[] = [
  * A regra é a mesma dos outros verificadores: a dispensa explica por que aquilo
  * é aceitável para quem lê a página, não por que é chato de consertar.
  */
-const ALLOWLIST: readonly { padrao: RegExp; porque: string }[] = [
+const ALLOWLIST: readonly {
+  padrao: RegExp;
+  /** Quando presente, a dispensa vale só nesta página. */
+  arquivo?: RegExp;
+  porque: string;
+}[] = [
   {
     padrao: /\bIMAGEM PENDENTE\b/,
+    arquivo: /_dev|componentes/,
     porque:
-      "A v1 sai sem as fotos originais (PENDENCIAS.md § 5). O placeholder é " +
-      "deliberadamente honesto sobre a ausência, e a alternativa — foto de " +
-      "banco de imagens — destruiria a credibilidade que as fotos reais " +
-      "constroem. Remova esta dispensa quando as fotos chegarem.",
+      "A galeria de componentes mostra todos os estados de cada primitivo, e o " +
+      "estado vazio do PlaceholderImagem é um deles. A rota é noindex e não é " +
+      "página do site.\n" +
+      "        Esta dispensa era geral enquanto as fotos não chegavam. Com as " +
+      "fotos aplicadas, ela passou a valer só aqui — e qualquer placeholder que " +
+      "reapareça numa página real volta a reprovar o build, que é o ponto.",
   },
 ];
 
@@ -107,7 +115,14 @@ for (const caminho of arquivos) {
 
     for (const match of html.matchAll(regra.padrao)) {
       const trecho = match[0];
-      if (ALLOWLIST.some((item) => item.padrao.test(trecho))) continue;
+      const relativo = relative(RAIZ, caminho).split(sep).join("/");
+
+      const dispensado = ALLOWLIST.some(
+        (item) =>
+          item.padrao.test(trecho) &&
+          (item.arquivo === undefined || item.arquivo.test(relativo)),
+      );
+      if (dispensado) continue;
 
       // Uma linha por ocorrência distinta: a mesma pendência costuma aparecer
       // várias vezes na página (texto visível + JSON-LD) e listar todas só
@@ -116,7 +131,7 @@ for (const caminho of arquivos) {
       vistos.add(trecho);
 
       violacoes.push({
-        arquivo: relative(RAIZ, caminho).split(sep).join("/"),
+        arquivo: relativo,
         linha: 0,
         trecho: trecho.length > 110 ? `${trecho.slice(0, 107)}…` : trecho,
         motivo: regra.motivo,
