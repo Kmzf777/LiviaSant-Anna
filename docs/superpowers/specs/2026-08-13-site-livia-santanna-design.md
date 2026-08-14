@@ -250,7 +250,7 @@ Isolados em `/public/texturas` e `/public/ilustracoes`, documentados.
 |---|---|
 | Traço custa INP no mobile | Degradação para estático no mobile, decidida na Seção 4.5 |
 | `verificar-termos.ts` com falso positivo travando o build | Allowlist explícita e comentada, nunca afrouxar o regex |
-| Placeholders vazarem para produção | `PENDENCIAS.md` + teste que falha se `PlaceholderImagem` renderizar com `NODE_ENV=production` e a flag `PERMITIR_PLACEHOLDERS` estiver ausente |
+| Placeholders vazarem para produção | `scripts/verificar-html.ts` varre o HTML construído e reprova o build. A v1 sai com placeholders de propósito (as fotos não chegaram), então `IMAGEM PENDENTE` está numa allowlist explícita e comentada — remova-a quando as fotos entrarem. **Nota:** a ideia original era uma flag `PERMITIR_PLACEHOLDERS`; ela nunca foi implementada e a varredura do HTML resolve melhor, sem variável de ambiente. |
 | Ausência das fotos reais deixar o layout mal calibrado | Placeholders com as mesmas proporções das fotos originais descritas na Seção 12.1 do briefing |
 | Rate limit em memória insuficiente | Documentado; Vercel KV no roadmap |
 

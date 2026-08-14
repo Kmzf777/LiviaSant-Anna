@@ -14,8 +14,17 @@ pnpm fontes        # baixa a Switzer da Fontshare (só na primeira vez)
 pnpm dev
 ```
 
-Copie `.env.example` para `.env.local` e preencha. O site roda sem nenhuma
-variável; o que não funciona sem elas é o envio do formulário.
+**Não configure variável de ambiente nenhuma.** O site roda, builda e faz deploy
+sem nenhuma — inclusive na Vercel, que informa o próprio domínio ao projeto.
+
+A única coisa que precisa de configuração é o **envio** do formulário de
+contato, e só no dia em que o site for ao ar. Até lá, o formulário valida e
+mostra os erros normalmente; o que ele não faz é despachar o e-mail. Ver
+`.env.example`.
+
+> Variável **vazia** não é o mesmo que variável **ausente**. Um campo criado e
+> em branco no painel da Vercel derrubou o primeiro deploy deste projeto. Se não
+> for usar, não crie o campo.
 
 ### Se o build estiver lento
 
