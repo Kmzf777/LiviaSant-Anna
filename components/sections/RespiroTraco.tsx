@@ -1,78 +1,188 @@
 import { Secao } from "@/components/ui/Secao";
+import {
+  TRACO_COMPRIMENTO_RESOLUCAO,
+  TRACO_FOLGA_COMPRIMENTO,
+  TRACO_PATH,
+  TRACO_SEGMENTOS,
+  TRACO_VIEWBOX,
+  limites,
+} from "@/lib/traco";
 
 /**
- * O respiro do Traço — a pausa teatral entre o manifesto e a rinoplastia.
+ * O respiro do Traço — a pausa teatral, e o único lugar do site em que a
+ * assinatura usa a largura toda.
  *
- * Não é decoração nem "espaço a mais". É um contrato explícito, escrito no
- * topo de `components/layout/Traco.tsx`:
+ * O briefing § 5.8 pede duas coisas que brigam entre si: que o traço
+ * *"resolva-se no perfil de rosto do logo, a mesma curva em escala grande"*, e
+ * que ele *"nunca cruze texto"*. O rosto precisa de 137 unidades de excursão
+ * horizontal — cinco vezes o corredor que o `Container` reserva. As duas
+ * regras só cabem juntas num trecho de página sem texto nenhum. É este.
  *
- *   > A pausa teatral — a `resolucao` dura ~1,5 tela e é o único momento em
- *   > que o traço entra na coluna de conteúdo. Entre o manifesto (§ 8.3) e a
- *   > rinoplastia (§ 8.5), a home deve reservar um respiro sem texto de
- *   > ~1,2 tela (`data-superficie="areia"`, sem conteúdo).
+ * A faixa se marca com `data-traco="livre"`: leia como *"aqui a assinatura
+ * pode sair do corredor"*. Escrever qualquer coisa dentro dela reabre o
+ * defeito que o corredor existe para fechar.
  *
- * É aqui que a linha filete resolve no perfil de rosto do logo, em escala
- * grande, sem competir com leitura nenhuma. Escrever qualquer coisa nesta
- * faixa faz o rosto se desenhar por cima de texto — que é a única forma de o
- * único momento teatral do site ficar feio.
+ * ## Por que o rosto é ancorado aqui, e não carregado pela fita
  *
- * ## Por que a altura varia
+ * A versão anterior desenhava o rosto no meio da fita `fixed` que percorre a
+ * página, e gastava 160vh de areia vazia tentando fazer os dois se
+ * encontrarem. Não dá — e a aritmética estava escrita no próprio arquivo:
  *
- * A `resolucao` só acontece por completo a partir de 768px: abaixo disso o
- * Traço degrada para desenho único na entrada (§ 4.5 do spec) e uma tela e
- * meia de areia vazia seria só peso morto no celular. A faixa acompanha:
- * curta no telefone, inteira onde o rosto se desenha.
+ *   A fita se desloca ~0,33px por pixel de scroll; a seção, 1px. A deriva
+ *   entre as duas é de ~0,66px por pixel. O rosto fica visível por ~6.400px
+ *   de scroll, o que faz a faixa deslizar ~4.300px em relação a ele. Para
+ *   contê-lo do início ao fim seriam necessárias mais de seis telas de página
+ *   vazia.
  *
- * ## Por que 1,6 tela, e não 1,2
+ * Ancorado, o encontro é exato: o rosto está sempre inteiro dentro da zona
+ * livre, em qualquer altura de tela, e o respiro passa a ser dimensionado pelo
+ * desenho em vez de por tentativa. A continuidade com a fita se mantém pela
+ * escala — o rosto é medido na mesma `--traco-unidade`, então é literalmente a
+ * mesma curva no mesmo tamanho que passa na margem, só que solta.
  *
- * O valor foi medido, não estimado. O Traço é uma fita `fixed` que percorre a
- * página inteira: a posição do rosto é uma FRAÇÃO do scroll total, não uma
- * âncora presa a uma seção. Com 1,2 tela de respiro, o crânio se desenhava
- * aqui, mas o nariz e o queixo caíam ~470px adiante — em cima da coluna de
- * texto de "A médica" (§ 8.6). Cruzar texto é a única coisa que o § 5.8
- * proíbe à assinatura.
+ * ## Abaixo de `md`, sem rosto
  *
- * A aritmética: cada pixel acrescentado ACIMA de "A médica" empurra a seção
- * em 1px e o rosto em ~0,59px (a fração dele no documento maior). O ganho
- * líquido é de ~0,41px por pixel, então corrigir 470px de sobreposição custa
- * cerca de 1.100px de respiro a mais. Daí o salto de 100vh para 160vh.
- *
- * Ele é grande e é para ser: são duas telas em que a página não diz nada e
- * uma linha de 1px desenha um rosto. O § 5.8 chama isso de "o único momento
- * teatral do site" — teatro precisa de palco vazio.
- *
- * Se a página encolher ou crescer muito (uma seção a mais, um texto que
- * dobre), este número precisa ser remedido. O teste `tests/unit/home.spec.tsx`
- * garante que a faixa continua existindo e vazia; a altura certa se confere
- * olhando, com `scripts/capturar.mjs`.
- *
- * ## O que este respiro NÃO resolve
- *
- * Ele garante que o rosto se DESENHA sobre espaço limpo. Não garante que o
- * rosto já desenhado saia de cena antes de "A médica": a fita é `fixed` e sobe
- * a ~0,48px por pixel de scroll, então um ponto dela fica visível por cerca de
- * 2.400px de documento. Cobrir isso inteiro exigiria mais de três telas de
- * areia vazia — mais caro do que o defeito que evita.
- *
- * O que sobra é a cauda da resolução (queixo e mandíbula voltando para a
- * margem) passando ATRÁS do texto de "A médica", em x ≈ 1.060–1.350 numa tela
- * de 1440. É o mesmo comportamento que o traço tem em todas as outras seções,
- * e é a razão de `Container` ser `z-[2]`: a linha nunca cobre uma letra. Para
- * reduzir o encontro, aquela seção e a dos Passos param na coluna 11 em vez de
- * 12, deixando as duas colunas da direita como pista do Traço.
+ * O perfil precisa de ~0,26 × altura de excursão horizontal. Num corredor de
+ * ~27px o rosto sairia irreconhecível, e uma tela e meia de areia vazia no
+ * celular lê como "a página acabou". Abaixo de 768px a faixa vira uma pausa
+ * curta e o Traço é linha condutora e nada mais — degradação honesta, não
+ * desligamento: a fita continua subindo a página inteira ao lado do texto.
  *
  * Sem `aria-label` e sem heading de propósito: é uma `div`, não uma landmark.
  * Uma região anunciada e vazia é ruído para quem usa leitor de tela.
  */
+
+const ROSTO = TRACO_PATH.resolucao;
+const CAIXA = limites(ROSTO);
+
+/** Folga em volta do desenho, em unidades de viewBox. */
+const MARGEM = 3;
+
+const VB_X = CAIXA.minX - MARGEM;
+const VB_LARGURA = CAIXA.maxX - CAIXA.minX + MARGEM * 2;
+const VB_Y = TRACO_SEGMENTOS.resolucao.de;
+const VB_ALTURA = TRACO_SEGMENTOS.resolucao.ate - TRACO_SEGMENTOS.resolucao.de;
+
+/**
+ * Distância entre a borda direita do desenho e a borda direita do container,
+ * em unidades de viewBox — a mesma que a fita guarda, para que o rosto caia
+ * exatamente sobre a pista por onde a linha passa.
+ */
+const RECUO = TRACO_VIEWBOX.largura - (VB_X + VB_LARGURA);
+
+const COMPRIMENTO = (
+  TRACO_COMPRIMENTO_RESOLUCAO * TRACO_FOLGA_COMPRIMENTO
+).toFixed(1);
+
+/**
+ * Como em `Traco.tsx`, o CSS mora junto do componente porque cada número dele
+ * sai da geometria de `lib/traco.ts`. Trocar a curva oficial não pode exigir
+ * lembrar de acertar um arquivo de estilo à mão.
+ */
+const FOLHA = `
+.respiro-traco {
+  display: flex;
+  align-items: center;
+  min-height: 22vh;
+  --respiro-comprimento: calc(${COMPRIMENTO} * var(--traco-unidade));
+}
+
+.respiro-traco__palco {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline-end: calc(${RECUO} * var(--traco-unidade));
+  pointer-events: none;
+
+  /* A linha do tempo do desenho é a passagem DO ROSTO pela tela, não a da
+     seção: assim o traço termina de se desenhar no mesmo ponto do gesto em
+     qualquer altura de viewport. */
+  view-timeline-name: --respiro-rosto;
+  view-timeline-axis: block;
+}
+
+.respiro-traco__rosto {
+  display: none;
+  width: calc(${VB_LARGURA} * var(--traco-unidade));
+  height: calc(${VB_ALTURA} * var(--traco-unidade));
+  pointer-events: none;
+}
+
+.respiro-traco__linha {
+  fill: none;
+  stroke: var(--color-wine-700);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: var(--respiro-comprimento);
+  /* Completo por padrão. Quem não tiver \`view()\` — e quem pedir menos
+     movimento — recebe o desenho pronto, que é a degradação certa: o rosto é
+     o conteúdo, a animação é o acabamento. */
+  stroke-dashoffset: 0;
+}
+
+@media (min-width: 768px) {
+  .respiro-traco {
+    /* Dimensionada pelo desenho, não por palpite: o rosto inteiro mais uma
+       margem de respiro em cima e embaixo. */
+    min-height: calc(${VB_ALTURA} * var(--traco-unidade) + 16vh);
+  }
+
+  .respiro-traco__rosto {
+    display: block;
+  }
+}
+
+@keyframes respiro-traco-desenhar {
+  from { stroke-dashoffset: var(--respiro-comprimento); }
+  to   { stroke-dashoffset: 0; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .respiro-traco__linha {
+      animation: respiro-traco-desenhar linear both;
+      animation-timeline: --respiro-rosto;
+      animation-range: cover 10% cover 65%;
+    }
+  }
+}
+`;
+
 export function RespiroTraco() {
   return (
-    <Secao
-      superficie="areia"
-      as="div"
-      espacamento="nenhum"
-      className="min-h-[30vh] md:min-h-[80vh] lg:min-h-[160vh]"
-    >
-      {null}
-    </Secao>
+    <>
+      {/* Fora da faixa de propósito: dentro, ela deixaria de ser uma faixa
+          sem texto — inclusive para `tests/unit/home.spec.tsx`, que confere
+          isso lendo o `textContent` da seção. */}
+      <style dangerouslySetInnerHTML={{ __html: FOLHA }} />
+
+      <Secao
+        superficie="areia"
+        as="div"
+        espacamento="nenhum"
+        className="respiro-traco"
+      >
+        <div
+          className="respiro-traco__palco"
+          data-traco="livre"
+          aria-hidden="true"
+        >
+          <svg
+            className="respiro-traco__rosto"
+            viewBox={`${VB_X} ${VB_Y} ${VB_LARGURA} ${VB_ALTURA}`}
+            preserveAspectRatio="xMidYMid meet"
+            fill="none"
+            focusable="false"
+            aria-hidden="true"
+          >
+            <path className="respiro-traco__linha" d={ROSTO} />
+          </svg>
+        </div>
+      </Secao>
+    </>
   );
 }

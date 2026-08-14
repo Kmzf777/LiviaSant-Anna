@@ -4,6 +4,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Filete } from "@/components/ui/Filete";
 import { Secao } from "@/components/ui/Secao";
 import type { ConteudoHome } from "@/content/tipos";
+import { RITMO_SECAO_COMPACTA } from "./ritmo";
 
 /**
  * § 8.2 — Faixa de identificação. Areia, altura baixa.
@@ -36,7 +37,8 @@ export function FaixaCredenciais({ credenciais }: Props) {
   return (
     <Secao
       superficie="areia"
-      espacamento="compacto"
+      espacamento="nenhum"
+      className={RITMO_SECAO_COMPACTA}
       aria-label="Identificação profissional e formação"
     >
       <Container>

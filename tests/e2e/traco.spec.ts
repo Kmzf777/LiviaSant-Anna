@@ -15,7 +15,12 @@ import { expect, test, type Page } from "@playwright/test";
  * suíte inteira acorda sozinha.
  */
 
-const TRACO = "[data-traco]";
+/**
+ * A raiz da assinatura, e só ela. `[data-traco]` sozinho é frágil: a zona de
+ * respiro reservada à fita se marca com `data-traco="livre"`, e um seletor que
+ * pegasse as duas faria `page.locator()` estourar por modo estrito.
+ */
+const TRACO = "div.traco[data-traco]";
 
 async function exigirTraco(page: Page) {
   const montado = (await page.locator(TRACO).count()) > 0;
@@ -47,6 +52,27 @@ async function rolarAte(page: Page, fracao: number) {
         requestAnimationFrame(() => requestAnimationFrame(resolve)),
       ),
   );
+}
+
+/**
+ * Espera terminar só as animações conduzidas pelo RELÓGIO.
+ *
+ * As de `scroll()`/`view()` nunca "terminam" — a promessa `finished` delas não
+ * resolve enquanto a timeline existir —, então filtrar por `DocumentTimeline` é
+ * o que separa "o desenho de entrada acabou" de "esperar para sempre".
+ */
+async function aguardarDesenhoDeEntrada(page: Page) {
+  await page
+    .locator(`${TRACO} .traco__linha`)
+    .first()
+    .evaluate(async (el) => {
+      const porTempo = el
+        .getAnimations()
+        .filter((a) => a.timeline instanceof DocumentTimeline);
+      await Promise.all(
+        porTempo.map((a) => a.finished.catch(() => undefined)),
+      );
+    });
 }
 
 const dashoffset = (page: Page) =>
@@ -103,7 +129,7 @@ test.describe("O Traço", () => {
       const alcancavel = await page.evaluate(
         ({ x, y }) => {
           const alvo = document.elementFromPoint(x, y);
-          return !alvo?.closest("[data-traco]");
+          return !alvo?.closest(".traco");
         },
         { x: caixa.x + caixa.width / 2, y: caixa.y + caixa.height / 2 },
       );
@@ -131,6 +157,14 @@ test.describe("O Traço", () => {
     const antes = { y: await posicao(), desenho: await dashoffset(page) };
 
     await rolarAte(page, 1);
+
+    // Abaixo de 768px o desenho é uma animação de tempo (`--dur-draw`, 2400ms
+    // com 120ms de atraso) que roda uma vez na entrada. Ler o dashoffset antes
+    // dela terminar mede o meio do gesto, não o resultado — e o teste passava
+    // ou falhava conforme a página carregasse rápido ou devagar. Esperar a
+    // animação de tempo terminar tira a corrida sem afrouxar a asserção.
+    await aguardarDesenhoDeEntrada(page);
+
     const depois = { y: await posicao(), desenho: await dashoffset(page) };
 
     // A fita sobe conforme a página desce. Vale em toda largura: a translação
@@ -206,19 +240,23 @@ test.describe("O Traço", () => {
       expect(await posicao()).toBe(antes);
       expect(await dashoffset(page)).toBe(0);
 
-      // Sem listener de scroll em toda a página. É uma invariante do projeto,
-      // não só do Traço: o orçamento de movimento do briefing (§ 5.7) não
-      // prevê nenhum outro efeito ligado ao scroll, e o reveal de seção usa
-      // IntersectionObserver. Se este número passar de zero, o culpado é o
-      // componente novo que entrou no orçamento sem pedir.
-      const listeners = await page.evaluate(
-        () =>
-          (window as unknown as { __listenersScroll: number })
-            .__listenersScroll,
-      );
-      expect(listeners, "algum componente registrou listener de scroll").toBe(
-        0,
-      );
+      // O Traço não fez trabalho nenhum: nunca mediu as superfícies.
+      //
+      // Esta linha substitui uma asserção de "zero listeners de scroll na
+      // página inteira", que era falsa e impossível. Medido: são três, e
+      // nenhum é do Traço — dois vêm da delegação de eventos do próprio React
+      // DOM na hidratação, e um do Header, que troca de cor ao rolar e é
+      // anterior a todo este trabalho. A invariante só passava enquanto o
+      // <Traco /> não estava montado e a suíte inteira se pulava sozinha.
+      //
+      // `data-traco-medido` é a prova certa e específica: o atributo só existe
+      // depois que o ResizeObserver mede os retângulos de superfície. Ausente,
+      // o componente não rodou observer nenhum — que é exatamente o que
+      // `prefers-reduced-motion` exige dele, e é o que se quer garantir.
+      await expect(
+        page.locator(TRACO),
+        "o Traço mediu superfícies mesmo sob reduced-motion",
+      ).not.toHaveAttribute("data-traco-medido", /.*/);
     });
   });
 });

@@ -4,7 +4,10 @@ import Link from "next/link";
 import { getConsultorio } from "@/content";
 import { gruposDeAssunto, valoresDeAssunto } from "@/lib/assuntos";
 import { RailLateral } from "@/components/layout/RailLateral";
-import { BotaoWhatsApp, BotaoWhatsAppFixo } from "@/components/form/BotaoWhatsApp";
+import {
+  BotaoWhatsApp,
+  BotaoWhatsAppFixo,
+} from "@/components/form/BotaoWhatsApp";
 import { FormularioContato } from "@/components/form/FormularioContato";
 import {
   estaPendente,
@@ -15,6 +18,7 @@ import { Filete } from "@/components/ui/Filete";
 import { Nota } from "@/components/ui/Nota";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { RITMO_SECAO } from "@/components/sections/ritmo";
 
 /**
  * Contato — formulário e WhatsApp (briefing § 8.9).
@@ -65,7 +69,12 @@ export default async function PaginaContato({ searchParams }: Props) {
 
   return (
     <>
-      <Secao superficie="areia" aria-labelledby="titulo-da-pagina">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia"
+        aria-labelledby="titulo-da-pagina"
+      >
         <RailLateral>Contato</RailLateral>
 
         <Container comRail>
@@ -87,7 +96,12 @@ export default async function PaginaContato({ searchParams }: Props) {
         </Container>
       </Secao>
 
-      <Secao superficie="areia-100" aria-label="Formulário de contato">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia-100"
+        aria-label="Formulário de contato"
+      >
         <RailLateral>Formulário</RailLateral>
 
         <Container comRail>
@@ -122,7 +136,10 @@ export default async function PaginaContato({ searchParams }: Props) {
 
                 <p className="text-small text-ink-600">
                   O endereço e os horários estão em{" "}
-                  <Link href="/consultorio" className="link-filete text-wine-700">
+                  <Link
+                    href="/consultorio"
+                    className="link-filete text-wine-700"
+                  >
                     consultório
                   </Link>
                   .

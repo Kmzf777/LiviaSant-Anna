@@ -101,7 +101,9 @@ export function MenuMobile({ aberto, aoFechar, itens, rotaAtual }: Props) {
       onKeyDown={aoTeclar}
       className="bg-wine-700 fixed inset-0 z-50 flex flex-col overflow-y-auto lg:hidden"
     >
-      <div className="flex items-center justify-between px-[var(--gutter)] py-5">
+      {/* A faixa do topo tem a altura do header (`--header-h`): abrir o menu
+          não pode deslocar o nome nem o botão, senão a transição pisca. */}
+      <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between px-[var(--gutter)]">
         <span className="font-display text-blush-200 text-[1.5rem] leading-none font-normal tracking-[-0.02em]">
           Lívia Sant&apos;Anna
         </span>
@@ -110,7 +112,9 @@ export function MenuMobile({ aberto, aoFechar, itens, rotaAtual }: Props) {
           ref={fechar}
           type="button"
           onClick={aoFechar}
-          className="text-micro text-blush-200 font-mono tracking-[0.14em] uppercase"
+          // 44px de alvo, como o botão que abriu. `-mr-2 pr-2` estende para a
+          // goteira sem mover a palavra.
+          className="text-micro text-blush-200 -mr-2 flex min-h-11 items-center pr-2 font-mono tracking-[0.14em] uppercase"
         >
           Fechar
         </button>

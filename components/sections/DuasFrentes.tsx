@@ -6,6 +6,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { cn } from "@/components/ui/cn";
 import type { CardFrente, ConteudoHome } from "@/content/tipos";
+import { RITMO_SECAO } from "./ritmo";
 
 /**
  * § 8.4 — As duas frentes. Areia-100.
@@ -43,10 +44,22 @@ type Props = {
 
 export function DuasFrentes({ duasFrentes }: Props) {
   return (
-    <Secao superficie="areia-100" aria-label="As duas frentes de atendimento">
+    <Secao
+      superficie="areia-100"
+      espacamento="nenhum"
+      className={RITMO_SECAO}
+      aria-label="As duas frentes de atendimento"
+    >
       <Container>
-        <div className="grid gap-y-20 lg:grid-cols-2 lg:gap-y-0">
-          <Frente frente={duasFrentes.otorrino} index={0} className="lg:pr-16" />
+        {/* No mobile os dois cards viram uma pilha, e cada um já abre com o
+            próprio filete: 56px separam sem que a pilha se solte em dois
+            blocos órfãos. */}
+        <div className="grid gap-y-14 lg:grid-cols-2 lg:gap-y-0">
+          <Frente
+            frente={duasFrentes.otorrino}
+            index={0}
+            className="lg:pr-16"
+          />
           <Frente
             frente={duasFrentes.face}
             index={1}
@@ -75,7 +88,7 @@ function Frente({
     >
       <Filete />
 
-      <div className="mt-10">
+      <div className="mt-8 lg:mt-10">
         <Eyebrow>{frente.eyebrow}</Eyebrow>
       </div>
 
@@ -83,7 +96,7 @@ function Frente({
         {frente.titulo}
       </h2>
 
-      <p className="text-lead text-ink-600 mt-8 max-w-[34ch]">
+      <p className="text-lead text-ink-600 mt-6 max-w-[34ch] lg:mt-8">
         {frente.resumo}
       </p>
 
@@ -91,7 +104,7 @@ function Frente({
           A medida é a mesma do resumo acima, e não a largura da coluna: um
           filete indo até a borda do container entraria na faixa por onde o
           Traço passa, e a assinatura não divide lugar com régua de lista. */}
-      <ul className="mt-12 flex w-full max-w-[34ch] list-none flex-col">
+      <ul className="mt-9 flex w-full max-w-[34ch] list-none flex-col lg:mt-12">
         {frente.itens.map((item) => (
           <li
             key={item}
@@ -102,7 +115,7 @@ function Frente({
         ))}
       </ul>
 
-      <div className="mt-12">
+      <div className="mt-9 lg:mt-12">
         <Botao href={frente.cta.href} variante="filete">
           {frente.cta.texto}
         </Botao>

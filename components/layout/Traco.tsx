@@ -3,22 +3,41 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import {
-  TRACO_COMPRIMENTO,
+  TRACO_COMPRIMENTO_CONDUZIDO,
+  TRACO_CORREDOR,
   TRACO_FIM_TELA,
   TRACO_FOLGA_COMPRIMENTO,
   TRACO_INICIO_TELA,
-  TRACO_TELAS,
   TRACO_VIEWBOX,
-  caminhoCompleto,
+  caminhoConduzido,
 } from "@/lib/traco";
 
 /**
  * O Traço — a assinatura do site (§ 5.8 do briefing, § 4 do spec).
  *
  * Uma fita SVG fixa e recortada à viewport. Dentro dela, um caminho de 1px
- * que se desenha conforme o scroll e, entre o manifesto e a rinoplastia,
- * resolve no perfil de rosto do logo. A geometria mora em `lib/traco.ts` —
- * este arquivo não conhece uma única coordenada.
+ * que se desenha conforme o scroll. A geometria mora em `lib/traco.ts` — este
+ * arquivo não conhece uma única coordenada.
+ *
+ * ---------------------------------------------------------------------------
+ * O CORREDOR — a regra que manda em tudo aqui
+ * ---------------------------------------------------------------------------
+ *
+ * § 5.8: *"Nunca cruza texto. Nunca compete com a leitura."* A fita cumpre
+ * isso por construção, não por sorte: ela desenha `caminhoConduzido()`, cujo
+ * percurso inteiro cabe nas 26 unidades de viewBox que o `Container` reserva
+ * como `--traco-corredor` à direita de todo o site. Um `clip-path` na medida
+ * do corredor fecha a conta — se a geometria e o token um dia divergirem, a
+ * linha aparece cortada, que é um defeito visível, em vez de invadir a
+ * coluna de texto, que é o defeito que este arquivo existe para impedir.
+ *
+ * A resolução em perfil de rosto NÃO viaja nesta fita. Ela precisa de 137
+ * unidades de excursão — cinco corredores — e mora ancorada na zona
+ * `data-traco="livre"` do `RespiroTraco`, o único trecho de página sem texto.
+ * O porquê de não dar para carregá-la aqui está no cabeçalho daquele arquivo:
+ * a fita é `fixed` e desliza ~0,66px por pixel de scroll em relação às seções,
+ * então nenhuma faixa vazia de tamanho pagável a acompanha enquanto ela está
+ * em cena.
  *
  * ---------------------------------------------------------------------------
  * COMO MONTAR
@@ -55,11 +74,11 @@ import {
  *    context própria (`transform`, `opacity`, `isolation`, `z-index` numérico)
  *    tira o traço da equação inteira — evite nas seções full-bleed.
  *
- * 3. A pausa teatral — a `resolucao` dura ~1,5 tela e é o único momento em que
- *    o traço entra na coluna de conteúdo. Entre o manifesto (§ 8.3) e a
- *    rinoplastia (§ 8.5), a home deve reservar um respiro sem texto de
- *    ~1,2 tela (`data-superficie="areia"`, sem conteúdo). É lá que o rosto se
- *    desenha inteiro, sem competir com leitura nenhuma. Ver PENDENCIAS.md.
+ * 3. A pausa teatral — entre o manifesto (§ 8.3) e a rinoplastia (§ 8.5), a
+ *    home reserva uma faixa sem texto marcada com `data-traco="livre"`
+ *    (`RespiroTraco`). É o único lugar da página em que a assinatura pode usar
+ *    a largura toda, e é lá que o perfil de rosto se desenha — na escala desta
+ *    fita, medida na mesma `--traco-unidade`, para ler como a mesma linha.
  *
  * ---------------------------------------------------------------------------
  * COMO O PROGRESSO É CALCULADO
@@ -99,7 +118,7 @@ import {
  * o traço continuar visível sobre as seções vinho sem uma linha de JS.
  */
 
-const CAMINHO = caminhoCompleto();
+const CAMINHO = caminhoConduzido();
 
 /** Abaixo disso o Traço roda em modo estático e nenhum JS é registrado. */
 const LARGURA_MINIMA_JS = 768;
@@ -374,7 +393,12 @@ function suportaLinhaDoTempo(): boolean {
  * das constantes de `lib/traco.ts`. Trocar a curva oficial não pode exigir
  * lembrar de sincronizar um arquivo de estilo à mão.
  *
- * A ordem dos blocos é a cascata: base, escala, caminho preferido, fallback,
+ * A escala não está aqui: `--traco-telas` mora em `styles/theme.css`, junto do
+ * `--traco-corredor` que sai dela e que o `Container` reserva. São o mesmo
+ * número visto de dois lados, e separá-los seria a maneira mais rápida de a
+ * fita voltar a cruzar texto.
+ *
+ * A ordem dos blocos é a cascata: base, caminho preferido, fallback,
  * degradação no celular, reduced-motion. Cada bloco só sobrescreve o anterior.
  */
 const FOLHA = `
@@ -390,8 +414,14 @@ const FOLHA = `
   pointer-events: none;
   contain: layout paint style;
 
-  --traco-telas: ${TRACO_TELAS.movel};
-  --traco-altura: calc(var(--traco-telas) * 100vh);
+  /* A fita é dimensionada A PARTIR do corredor, e não o contrário.
+     \`--traco-corredor\` (styles/theme.css) já sai de \`--traco-telas\`; fazer o
+     caminho de volta por aqui é o que garante que o \`clamp\` dele também
+     limite a fita. Se a fita crescesse por conta própria, um teto no corredor
+     viraria uma linha cortada — ou, pior, um corredor menor do que a curva. */
+  --traco-altura: calc(
+    var(--traco-corredor) * ${TRACO_VIEWBOX.altura} / ${TRACO_CORREDOR}
+  );
   --traco-largura: calc(var(--traco-altura) * ${TRACO_VIEWBOX.largura} / ${TRACO_VIEWBOX.altura});
   --traco-y-inicial: calc(${TRACO_INICIO_TELA} * 100vh);
   --traco-y-final: calc(${TRACO_FIM_TELA} * 100vh - var(--traco-altura));
@@ -408,7 +438,7 @@ const FOLHA = `
      grande demais em vez de pequeno demais: o traço termina de se desenhar
      antes do fim do scroll e fica completo. Degrada, não quebra. */
   --traco-comprimento: calc(
-    var(--traco-altura) * ${(TRACO_COMPRIMENTO * TRACO_FOLGA_COMPRIMENTO).toFixed(1)} /
+    var(--traco-altura) * ${(TRACO_COMPRIMENTO_CONDUZIDO * TRACO_FOLGA_COMPRIMENTO).toFixed(1)} /
       ${TRACO_VIEWBOX.altura}
   );
 }
@@ -416,11 +446,21 @@ const FOLHA = `
 .traco__fita {
   position: absolute;
   top: 0;
-  right: 0;
+  /* Ancorada na borda direita do CONTAINER, não da viewport: acima de 1440px
+     o container para de crescer e a fita tem de parar com ele, senão ela sai
+     do corredor que o Container reservou e vai morar na sobra da tela. */
+  right: max(0px, calc((100% - var(--container)) / 2));
   width: var(--traco-largura);
   height: var(--traco-altura);
   pointer-events: none;
   transform: translate3d(0, var(--traco-y-inicial), 0);
+
+  /* O recorte de segurança. A curva já cabe no corredor por geometria
+     (\`TRACO_CORREDOR\` = ${TRACO_CORREDOR} unidades de viewBox); isto aqui é o que
+     garante que continue cabendo se alguém trocar a curva sem reler o token.
+     A translação da fita é só vertical, então a faixa recortada fica parada
+     no mesmo x da tela. */
+  clip-path: inset(0 0 0 calc(100% - var(--traco-corredor)));
 }
 
 .traco__linha {
@@ -455,14 +495,6 @@ const FOLHA = `
   .traco__grupo--vinho {
     visibility: visible;
   }
-}
-
-@media (min-width: 768px) {
-  .traco { --traco-telas: ${TRACO_TELAS.tablet}; }
-}
-
-@media (min-width: 1280px) {
-  .traco { --traco-telas: ${TRACO_TELAS.amplo}; }
 }
 
 @keyframes traco-percorrer {

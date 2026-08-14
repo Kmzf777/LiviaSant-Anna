@@ -17,22 +17,46 @@
  * `resolucao` ocupa 450 unidades — exatamente as ~1,5 telas que o briefing
  * pede para o momento teatral.
  *
- * O eixo x cresce para a direita. A fita é ancorada na borda direita da
- * viewport, então x alto = margem direita, x baixo = para dentro da página.
- * A linha "em repouso" mora em x ≈ 210–228 (margem); só durante a `resolucao`
- * ela entra até x ≈ 103, e é lá que o rosto acontece.
+ * O eixo x cresce para a direita. A fita é ancorada na borda direita do
+ * container, então x alto = margem direita, x baixo = para dentro da página.
  *
  * ---------------------------------------------------------------------------
- * Os três segmentos
+ * O corredor — por que a linha em repouso é tão comportada
+ * ---------------------------------------------------------------------------
+ *
+ * O briefing § 5.8 fecha com uma regra dura: *"Nunca cruza texto. Nunca
+ * compete com a leitura."* Ela não é decorativa. Medida em 21 rotas, a versão
+ * anterior desta curva cruzava 85% dos blocos de texto a 390px, 51% a 768 e
+ * 12% a 1440 — a fita passeava por meia largura de tela e o texto ia até a
+ * borda do `Container`.
+ *
+ * A correção é estrutural, não página a página: **o site reserva um corredor
+ * à direita** (`--traco-corredor`, em `styles/theme.css`), e a fita vive
+ * inteiramente dentro dele. Para isso, todo o percurso em repouso mora em
+ * x ∈ [214, 234] — 26 unidades de viewBox, `TRACO_BANDA_REPOUSO`. O corredor
+ * é dimensionado a partir desse número; se a curva mudar, ele muda junto.
+ *
+ * ---------------------------------------------------------------------------
+ * Os segmentos
  * ---------------------------------------------------------------------------
  *
  *   entrada     y    0 → 480    hero → manifesto        (1,6 tela)
- *   resolucao   y  480 → 930    manifesto → rinoplastia (1,5 tela)
+ *   resolucao   y  480 → 930    o perfil de rosto       (1,5 tela)
+ *   conduzido   y  480 → 930    a alternativa de repouso ao rosto
  *   saida       y  930 → 1560   rinoplastia → footer    (2,1 telas)
  *
+ * `resolucao` e `conduzido` ocupam a MESMA faixa vertical e têm os mesmos dois
+ * extremos: são duas leituras do mesmo trecho. A fita que percorre a página
+ * inteira usa `conduzido` — cabe no corredor. O rosto, que precisa de 137
+ * unidades de excursão (5,3× o corredor), é desenhado à parte, ancorado na
+ * zona sem texto do `RespiroTraco` (`data-traco="livre"`), onde não há leitura
+ * com que competir. Ver o cabeçalho de `components/sections/RespiroTraco.tsx`
+ * para a aritmética que torna impossível carregar o rosto na fita móvel.
+ *
  * Os segmentos são contínuos: cada um começa exatamente onde o anterior
- * termina, e `caminhoCompleto()` costura os três em um único `d`. O teste
- * `tests/unit/traco.spec.ts` reprova se as emendas se soltarem.
+ * termina, e `caminhoCompleto()` / `caminhoConduzido()` costuram os três em um
+ * único `d`. O teste `tests/unit/traco.spec.ts` reprova se as emendas se
+ * soltarem.
  *
  * ---------------------------------------------------------------------------
  * Alfabeto
@@ -76,17 +100,17 @@ export const TRACO_UNIDADES_POR_TELA = 300;
  */
 export const TRACO_PATH = {
   entrada: [
-    "M 228 0",
-    "C 228 48 224 84 220 124",
-    "C 216 166 210 196 210 236",
-    "C 210 280 216 312 215 352",
-    "C 214 396 205 428 199 458",
-    "C 197 470 196 476 196 480",
+    "M 234 0",
+    "C 234 46 230 82 226 122",
+    "C 222 164 216 196 215 236",
+    "C 214 280 221 314 224 352",
+    "C 227 396 220 430 216 458",
+    "C 215 470 214 476 214 480",
   ].join(" "),
 
   resolucao: [
-    "M 196 480",
-    "C 200 496 209 512 210 540", // alto do crânio, bojo para trás
+    "M 214 480",
+    "C 218 496 212 512 210 540", // alto do crânio, bojo para trás
     "C 211 572 205 596 194 618", // testa desce para a frente
     "C 188 626 176 632 174 644", // arco superciliar — a testa avança
     "C 172 656 177 658 179 664", // násio — a reentrância que ancora o nariz
@@ -102,17 +126,34 @@ export const TRACO_PATH = {
     "C 163 807 157 814 154 821", // pogônio (frente do queixo)
     "C 151 832 158 841 167 845", // mento
     "C 177 851 187 855 196 858", // mandíbula voltando
-    "C 205 863 210 876 210 894", // saída do rosto
-    "C 210 912 209 922 208 930",
+    "C 205 863 210 876 212 894", // saída do rosto
+    "C 214 912 214 922 214 930",
+  ].join(" "),
+
+  /**
+   * A alternativa de repouso ao rosto — o que a fita móvel desenha no lugar
+   * dele.
+   *
+   * Mesmos extremos que `resolucao` — (214, 480) e (214, 930) — e a mesma
+   * faixa vertical, mas sem sair do corredor: é a "linha condutora e nada
+   * mais" de que fala o PLANO-MOBILE. Um único bojo largo, no ritmo da
+   * `entrada` e da `saida`, para que a emenda não se perceba.
+   */
+  conduzido: [
+    "M 214 480",
+    "C 214 512 220 542 225 578",
+    "C 230 618 233 654 231 692",
+    "C 229 730 222 762 218 800",
+    "C 215 838 214 878 214 930",
   ].join(" "),
 
   saida: [
-    "M 208 930",
-    "C 207 958 211 986 214 1024",
-    "C 217 1070 209 1104 207 1150",
-    "C 205 1200 214 1238 217 1288",
-    "C 220 1342 211 1382 210 1436",
-    "C 209 1486 215 1524 217 1560",
+    "M 214 930",
+    "C 214 958 219 986 223 1024",
+    "C 227 1070 220 1106 217 1152",
+    "C 214 1200 222 1240 226 1290",
+    "C 230 1342 220 1384 217 1436",
+    "C 215 1486 221 1524 224 1560",
   ].join(" "),
 } as const;
 
@@ -132,12 +173,25 @@ export const TRACO_FOLGA_COMPRIMENTO = 1.02;
 /**
  * Altura da fita, em telas, por faixa de largura.
  *
- * A largura da fita é derivada da altura pelo aspecto do viewBox, então esta
- * é a única alavanca de escala do Traço. No celular ela encolhe para o rosto
- * caber na tela; em telas largas ela cresce e o traço passa a viver na
- * margem, fora da coluna de texto.
+ * A largura da fita é derivada da altura pelo aspecto do viewBox, e a largura
+ * do corredor é derivada da largura da fita: esta é a única alavanca de escala
+ * do Traço. Mexer aqui move o corredor, e portanto a margem direita de todo o
+ * site — é uma decisão de composição, não um ajuste local.
+ *
+ * No celular a fita encolhe: um corredor de 5% da tela já é presença
+ * suficiente para um fio de 1px, e cada pixel a mais sai da medida de leitura,
+ * que a 390px já é curta.
  */
-export const TRACO_TELAS = { movel: 2.4, tablet: 3.4, amplo: 5.2 } as const;
+export const TRACO_TELAS = { movel: 1.8, tablet: 3, amplo: 5.2 } as const;
+
+/**
+ * Largura do corredor, em unidades de viewBox, incluindo a folga.
+ *
+ * `TRACO_BANDA_REPOUSO` (abaixo) mede o quanto a curva em repouso realmente
+ * ocupa; esta constante acrescenta a folga com que o corredor é dimensionado,
+ * para que a linha nunca encoste no recorte de segurança.
+ */
+export const TRACO_CORREDOR_FOLGA = 2;
 
 /** Onde o topo da fita fica na viewport quando o scroll está em 0. */
 export const TRACO_INICIO_TELA = 0.55;
@@ -245,6 +299,56 @@ export function caminhoCompleto(): string {
   return [entrada, semMoveInicial(resolucao), semMoveInicial(saida)].join(" ");
 }
 
+/**
+ * O caminho que a fita móvel desenha: o mesmo percurso, com `conduzido` no
+ * lugar do rosto.
+ *
+ * É este — e não `caminhoCompleto()` — que aparece na tela do começo ao fim da
+ * página, porque é o único que cabe no corredor. O rosto vive em
+ * `RespiroTraco`.
+ */
+export function caminhoConduzido(): string {
+  const { entrada, conduzido, saida } = TRACO_PATH;
+  return [entrada, semMoveInicial(conduzido), semMoveInicial(saida)].join(" ");
+}
+
+/** Caixa que contém todos os pontos de um caminho, em unidades de viewBox. */
+export function limites(d: string): {
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+} {
+  const pontos = todosOsPontos(d);
+  const xs = pontos.map((ponto) => ponto.x);
+  const ys = pontos.map((ponto) => ponto.y);
+  return {
+    minX: Math.min(...xs),
+    maxX: Math.max(...xs),
+    minY: Math.min(...ys),
+    maxY: Math.max(...ys),
+  };
+}
+
+/**
+ * Quantas unidades de viewBox, medidas a partir da borda direita, a fita em
+ * repouso ocupa.
+ *
+ * É a ponte entre a geometria e o layout: `--traco-corredor`, em
+ * `styles/theme.css`, é exatamente `(TRACO_BANDA_REPOUSO +
+ * TRACO_CORREDOR_FOLGA)` unidades convertidas em pixels, e o `Container`
+ * reserva esse tanto de margem à direita em todas as larguras.
+ *
+ * É calculado a partir da curva, não digitado: quem trocar `TRACO_PATH` pela
+ * curva oficial do logo move o corredor junto, sem precisar saber que ele
+ * existe. O recorte de segurança em `Traco.tsx` garante o resto.
+ */
+export const TRACO_BANDA_REPOUSO =
+  TRACO_VIEWBOX.largura - limites(caminhoConduzido()).minX;
+
+/** Corredor reservado, em unidades de viewBox. Base de `--traco-corredor`. */
+export const TRACO_CORREDOR = TRACO_BANDA_REPOUSO + TRACO_CORREDOR_FOLGA;
+
 function semMoveInicial(segmento: string): string {
   const comandos = analisarCaminho(segmento);
   if (comandos[0]?.tipo !== "M") {
@@ -297,6 +401,18 @@ export function comprimentoAproximado(d: string, amostras = 64): number {
  * `components/layout/Traco.tsx`.
  */
 export const TRACO_COMPRIMENTO = comprimentoAproximado(caminhoCompleto(), 256);
+
+/** Idem, para o caminho que a fita realmente desenha. */
+export const TRACO_COMPRIMENTO_CONDUZIDO = comprimentoAproximado(
+  caminhoConduzido(),
+  256,
+);
+
+/** Comprimento só do rosto — o dasharray do desenho ancorado no respiro. */
+export const TRACO_COMPRIMENTO_RESOLUCAO = comprimentoAproximado(
+  TRACO_PATH.resolucao,
+  256,
+);
 
 function cubica(p0: Ponto, p1: Ponto, p2: Ponto, p3: Ponto, t: number): Ponto {
   const u = 1 - t;

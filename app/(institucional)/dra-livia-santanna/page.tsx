@@ -10,6 +10,7 @@ import { RetratoArco } from "@/components/ui/RetratoArco";
 import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { RITMO_SECAO } from "@/components/sections/ritmo";
 
 /**
  * A médica — a trajetória (briefing § 8.6).
@@ -40,7 +41,12 @@ export default function PaginaMedica() {
 
   return (
     <>
-      <Secao superficie="areia" aria-labelledby="titulo-da-pagina">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia"
+        aria-labelledby="titulo-da-pagina"
+      >
         <RailLateral>A médica</RailLateral>
 
         <Container comRail>
@@ -59,7 +65,12 @@ export default function PaginaMedica() {
         </Container>
       </Secao>
 
-      <Secao superficie="areia-100" aria-label="Trajetória">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia-100"
+        aria-label="Trajetória"
+      >
         <RailLateral>Trajetória</RailLateral>
 
         <Container comRail>
@@ -85,7 +96,12 @@ export default function PaginaMedica() {
         </Container>
       </Secao>
 
-      <Secao superficie="areia" aria-labelledby="titulo-formacao">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia"
+        aria-labelledby="titulo-formacao"
+      >
         <RailLateral>Formação</RailLateral>
 
         <Container comRail>

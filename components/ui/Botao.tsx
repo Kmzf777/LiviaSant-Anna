@@ -64,9 +64,21 @@ export type BotaoProps = PropsLink | PropsBotao;
 // Classes
 // -----------------------------------------------------------------------------
 
+/**
+ * `min-h-[var(--alvo-toque)]` na base, e não só na variante filete.
+ *
+ * O `tamanho="compacto"` media 155×**40** — quatro pixels abaixo do mínimo de
+ * toque. Escapou de duas redes ao mesmo tempo: da auditoria de mobile, que roda
+ * até 430px, e do projeto `mobile-390` do Playwright, porque o único uso é o CTA
+ * do header, que só aparece de `md` para cima (`hidden md:inline-flex`). Quem
+ * pegou foi o projeto `tablet-768`, em 21 rotas.
+ *
+ * Na base porque a regra vale para todo botão: `tamanho="base"` já dava 46px e
+ * não muda um pixel.
+ */
 const BASE =
-  "inline-flex items-center justify-center rounded-filete font-body " +
-  "text-small font-medium leading-none no-underline " +
+  "inline-flex min-h-[var(--alvo-toque)] items-center justify-center " +
+  "rounded-filete font-body text-small font-medium leading-none no-underline " +
   "transition-colors duration-fast ease-out";
 
 const TAMANHO: Record<Tamanho, string> = {
@@ -99,16 +111,30 @@ const SOLIDO = [
  * Filete inferior. Não é um botão fantasma com borda em volta: é texto com uma
  * régua de 1px embaixo, e o underline em `currentColor` cresce da esquerda no
  * hover — a segunda das três animações que o orçamento do § 5.7 permite.
+ *
+ * ## Por que o desenho mora num span
+ *
+ * O `py-1` desta variante dava um alvo de 124×**23** — metade do mínimo de
+ * toque. Crescer a caixa do próprio `<a>` até 44px levaria o `border-b` junto,
+ * e o filete descolaria do texto: deixaria de ser uma régua sob a palavra para
+ * virar a borda de uma caixa. Então a caixa clicável cresce e o desenho fica
+ * onde estava — texto, filete e underline dentro de um span que o `<a>` centra
+ * verticalmente nos 44px.
+ *
+ * O span leva `link-filete-sem-alvo` porque o alvo já é do pai; sem isso, a
+ * regra de `globals.css` daria 44px ao span também e o botão teria 67px.
  */
-const FILETE = [
-  "filete link-filete rounded-none border-b px-0 py-1 text-wine-700",
+const FILETE_ALVO = [
+  "min-h-[var(--alvo-toque)] px-0 py-0 text-wine-700",
   "[[data-superficie=vinho]_&]:text-blush-200",
   "disabled:cursor-not-allowed disabled:text-ink-400",
 ].join(" ");
 
+const FILETE_DESENHO = "filete link-filete link-filete-sem-alvo border-b";
+
 const TAMANHO_FILETE: Record<Tamanho, string> = {
-  base: "px-0 py-1",
-  compacto: "px-0 py-0.5",
+  base: "py-1",
+  compacto: "py-0.5",
 };
 
 function classesDe(
@@ -118,7 +144,7 @@ function classesDe(
 ): string {
   return variante === "solido"
     ? cn(BASE, TAMANHO[tamanho], SOLIDO, className)
-    : cn(BASE, TAMANHO_FILETE[tamanho], FILETE, className);
+    : cn(BASE, "rounded-none", FILETE_ALVO, className);
 }
 
 // -----------------------------------------------------------------------------
@@ -134,6 +160,26 @@ export function Botao(props: BotaoProps) {
 
   const classes = classesDe(variante, tamanho, className);
 
+  /*
+    Na variante filete o `style` vai para o span, não para o `<a>`: ele existe
+    para abrir o underline à mão (`{ backgroundSize: "100% 1px" }`, ver o
+    comentário na prop) e o underline mora no span. No sólido segue no
+    elemento clicável, como sempre.
+   */
+  const conteudo =
+    variante === "filete" ? (
+      <span
+        className={cn(FILETE_DESENHO, TAMANHO_FILETE[tamanho])}
+        style={style}
+      >
+        {children}
+      </span>
+    ) : (
+      children
+    );
+
+  const estiloExterno = variante === "filete" ? undefined : style;
+
   if (props.href !== undefined) {
     const { href, prefetch, rel, target, onClick, ...resto } = props;
     return (
@@ -144,10 +190,10 @@ export function Botao(props: BotaoProps) {
         target={target}
         onClick={onClick}
         aria-label={resto["aria-label"]}
-        style={style}
+        style={estiloExterno}
         className={classes}
       >
-        {children}
+        {conteudo}
       </Link>
     );
   }
@@ -164,8 +210,13 @@ export function Botao(props: BotaoProps) {
   } = props;
 
   return (
-    <button type={type} style={style} className={classes} {...atributos}>
-      {children}
+    <button
+      type={type}
+      style={estiloExterno}
+      className={classes}
+      {...atributos}
+    >
+      {conteudo}
     </button>
   );
 }

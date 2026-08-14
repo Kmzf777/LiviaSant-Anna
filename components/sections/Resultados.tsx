@@ -4,6 +4,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import type { ConteudoHome } from "@/content/tipos";
+import { RITMO_SECAO } from "./ritmo";
 
 /**
  * § 8.8 — Resultados / antes e depois. Areia.
@@ -34,12 +35,17 @@ type Props = {
 
 export function Resultados({ resultados }: Props) {
   return (
-    <Secao superficie="areia" aria-labelledby="resultados-titulo">
+    <Secao
+      superficie="areia"
+      espacamento="nenhum"
+      className={RITMO_SECAO}
+      aria-labelledby="resultados-titulo"
+    >
       <Container>
         <Reveal>
           <Filete />
 
-          <div className="mt-14 grid gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
+          <div className="mt-10 grid gap-y-10 lg:mt-14 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
             <div className="lg:col-span-5">
               <SectionTitle
                 id="resultados-titulo"

@@ -6,6 +6,13 @@
    ========================================================================== */
 
 @layer base {
+  :root {
+    /* Alvo de toque mínimo (WCAG 2.5.5). Fica aqui, e não em styles/theme.css,
+       porque quem consome é a camada de utilitários deste arquivo — mover para
+       o theme na próxima passada de tokens. */
+    --alvo-toque: 44px;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
@@ -148,6 +155,64 @@
 
   .link-filete:hover,
   .link-filete:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* ---------------------------------------------------------------------
+     Área de toque (WCAG 2.5.5)
+
+     `.link-filete` era texto com filete e mais nada: 15–18px de altura, bem
+     abaixo dos 44px que um polegar acerta. A correção precisa dar altura ao
+     ALVO sem mexer na CAIXA VISUAL — o filete continua colado ao texto, na
+     mesma posição e com a mesma espessura.
+
+     Como: o padding cresce igual acima e abaixo, e o fundo passa a se ancorar
+     à caixa de CONTEÚDO (`background-origin: content-box`). É essa âncora que
+     mantém o traço rente ao texto em vez de afundar com a caixa — e ela
+     funciona também quando o link quebra em duas linhas, porque o fim da caixa
+     de conteúdo é o fim da última linha.
+
+     `1lh` é a altura de linha do próprio elemento: o padding é exatamente o
+     que falta para 44px, e é zero quando o texto já é alto o bastante (os
+     itens do menu mobile, em display).
+
+     Duas exceções, e as duas estão na norma:
+
+     1. Link dentro de frase — a "inline exception" do próprio 2.5.5. Expandir
+        um link no meio de um parágrafo empurraria a linha e faria os alvos de
+        linhas vizinhas se sobreporem, que é o defeito que estamos corrigindo.
+     2. `.link-filete-sem-alvo`, quando o alvo é responsabilidade de um pai
+        maior — o caso do `Botao` na variante filete, onde o `<a>` é que carrega
+        os 44px e o span interno só desenha.
+     --------------------------------------------------------------------- */
+  .link-filete:where(
+    :not(.link-filete-sem-alvo, :is(p, blockquote, dd, figcaption) *)
+  ) {
+    display: inline-flex;
+    align-items: center;
+    padding-block: max(0px, calc((var(--alvo-toque) - 1lh) / 2));
+    /* O padding sozinho erra por frações de pixel: `1lh` de 16,8px cai em
+       43,98px depois do arredondamento de layout, e alvo de toque não se
+       mede "quase". O `min-height` fecha a conta sem deslocar nada. */
+    min-height: var(--alvo-toque);
+    background-origin: content-box;
+  }
+
+  /* O alvo centra o texto na própria caixa. Onde o link divide a linha com um
+     irmão — o número do índice das páginas legais —, o irmão precisa
+     acompanhar, ou o número fica pendurado no topo. Em `li` que não é flex a
+     declaração não tem efeito nenhum. */
+  li:has(> .link-filete) {
+    align-items: center;
+  }
+
+  /* O filete do `Botao` mora num span interno para não descer junto com os
+     44px; quem recebe ponteiro e foco continua sendo o elemento clicável.
+     A variante de grupo cobre o card inteiro clicável do CardProcedimento,
+     cujo `group-hover:bg-[length:100%_1px]` mira o `<a>`, não o span. */
+  :is(a, button):hover > .link-filete,
+  :is(a, button):focus-visible > .link-filete,
+  :is(.group:hover, .group:focus-within) :is(a, button) > .link-filete {
     background-size: 100% 1px;
   }
 

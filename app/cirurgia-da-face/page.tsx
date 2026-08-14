@@ -15,6 +15,12 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 import { RailLateral } from "@/components/layout/RailLateral";
 import { breadcrumbJsonLd, grafoJsonLd, serializarJsonLd } from "@/lib/jsonld";
 import type { ItemTrilha } from "@/lib/jsonld";
+import {
+  RITMO_HERO,
+  RITMO_RESPIRO,
+  RITMO_SECAO,
+  RITMO_SECAO_COMPACTA,
+} from "@/components/sections/ritmo";
 
 /**
  * Hub de cirurgia da face — briefing § 7.
@@ -89,7 +95,7 @@ export default function HubCirurgiaDaFace() {
         superficie="areia"
         espacamento="nenhum"
         aria-labelledby="hub-titulo"
-        className="pt-[calc(var(--secao-y)*0.55)] pb-[calc(var(--secao-y)*0.7)]"
+        className={RITMO_HERO}
       >
         <Container comRail>
           <nav aria-label="Trilha de navegação">
@@ -123,7 +129,7 @@ export default function HubCirurgiaDaFace() {
             </div>
           </div>
 
-          <Filete className="mt-[calc(var(--secao-y)*0.55)]" />
+          <Filete className={RITMO_RESPIRO} />
         </Container>
       </Secao>
 
@@ -134,7 +140,12 @@ export default function HubCirurgiaDaFace() {
           porque é a resposta para a pergunta que essa audiência traz e não
           faz: por que uma otorrinolaringologista opera a face.
           --------------------------------------------------------------- */}
-      <Secao superficie="vinho" aria-label="A premissa">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="vinho"
+        aria-label="A premissa"
+      >
         <RailLateral>{hub.nome}</RailLateral>
         <Container comRail>
           <div className="grid gap-x-16 gap-y-12 lg:grid-cols-12">
@@ -167,7 +178,12 @@ export default function HubCirurgiaDaFace() {
           com título e um parágrafo cada que o § 15 manda refazer. A linha
           inteira é o link: o alvo de toque é a linha, não o nome.
           --------------------------------------------------------------- */}
-      <Secao superficie="areia" aria-labelledby="hub-procedimentos">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia"
+        aria-labelledby="hub-procedimentos"
+      >
         <RailLateral>{hub.nome}</RailLateral>
         <Container comRail>
           <SectionTitle
@@ -216,7 +232,8 @@ export default function HubCirurgiaDaFace() {
           --------------------------------------------------------------- */}
       <Secao
         superficie="areia-100"
-        espacamento="compacto"
+        espacamento="nenhum"
+        className={RITMO_SECAO_COMPACTA}
         aria-labelledby="hub-medica"
       >
         <Container comRail>
@@ -257,7 +274,12 @@ export default function HubCirurgiaDaFace() {
       </Secao>
 
       {/* --------------------------------------------------------------- */}
-      <Secao superficie="vinho" aria-labelledby="hub-cta">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="vinho"
+        aria-labelledby="hub-cta"
+      >
         <Container comRail>
           <div className="grid gap-x-16 gap-y-12 lg:grid-cols-12">
             <div className="lg:col-span-6">

@@ -114,112 +114,110 @@ export default async function Image() {
   ];
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        backgroundColor: VINHO,
+        padding: 72,
+      }}
+    >
+      {/* Eyebrow em mono. Caixa alta no texto, não em CSS. */}
       <div
         style={{
-          width: "100%",
-          height: "100%",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          backgroundColor: VINHO,
-          padding: 72,
+          fontFamily: mono,
+          fontSize: 20,
+          letterSpacing: 3,
+          color: ROSA,
         }}
       >
-        {/* Eyebrow em mono. Caixa alta no texto, não em CSS. */}
+        {home.hero.eyebrow.toLocaleUpperCase("pt-BR")}
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 48,
+        }}
+      >
         <div
           style={{
             display: "flex",
-            fontFamily: mono,
-            fontSize: 20,
-            letterSpacing: 3,
-            color: ROSA,
+            flexDirection: "column",
+            fontFamily: display,
+            fontSize: 88,
+            lineHeight: 1.02,
+            letterSpacing: -2,
+            color: BLUSH,
           }}
         >
-          {home.hero.eyebrow.toLocaleUpperCase("pt-BR")}
+          {home.hero.h1.map((linha) => (
+            <div key={linha} style={{ display: "flex" }}>
+              {linha}
+            </div>
+          ))}
         </div>
 
+        {/* Selo: dois anéis de 1px e o monograma. */}
         <div
           style={{
             display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            gap: 48,
+            alignItems: "center",
+            justifyContent: "center",
+            width: 168,
+            height: 168,
+            flexShrink: 0,
+            borderRadius: "50%",
+            border: `1px solid ${BLUSH}`,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              fontFamily: display,
-              fontSize: 88,
-              lineHeight: 1.02,
-              letterSpacing: -2,
-              color: BLUSH,
-            }}
-          >
-            {home.hero.h1.map((linha) => (
-              <div key={linha} style={{ display: "flex" }}>
-                {linha}
-              </div>
-            ))}
-          </div>
-
-          {/* Selo: dois anéis de 1px e o monograma. */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 168,
-              height: 168,
-              flexShrink: 0,
+              width: 148,
+              height: 148,
               borderRadius: "50%",
               border: `1px solid ${BLUSH}`,
+              fontFamily: display,
+              fontSize: 68,
+              color: BLUSH,
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 148,
-                height: 148,
-                borderRadius: "50%",
-                border: `1px solid ${BLUSH}`,
-                fontFamily: display,
-                fontSize: 68,
-                color: BLUSH,
-              }}
-            >
-              L
-            </div>
-          </div>
-        </div>
-
-        {/* Bloco de identificação: fonte, tamanho e cor uniformes (§ 3.1). */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 24,
-          }}
-        >
-          <div style={{ display: "flex", height: 1, backgroundColor: ROSA }} />
-          <div
-            style={{
-              display: "flex",
-              fontFamily: mono,
-              fontSize: 20,
-              letterSpacing: 0.5,
-              color: AREIA,
-            }}
-          >
-            {`${identificacao.nome} — Médica — ${identificacao.crm} · ${identificacao.especialidade} — ${identificacao.rqe}`}
+            L
           </div>
         </div>
       </div>
-    ),
+
+      {/* Bloco de identificação: fonte, tamanho e cor uniformes (§ 3.1). */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 24,
+        }}
+      >
+        <div style={{ display: "flex", height: 1, backgroundColor: ROSA }} />
+        <div
+          style={{
+            display: "flex",
+            fontFamily: mono,
+            fontSize: 20,
+            letterSpacing: 0.5,
+            color: AREIA,
+          }}
+        >
+          {`${identificacao.nome} — Médica — ${identificacao.crm} · ${identificacao.especialidade} — ${identificacao.rqe}`}
+        </div>
+      </div>
+    </div>,
     {
       ...size,
       // A chave `fonts` é omitida quando nenhuma das duas chegou: o satori

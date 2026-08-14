@@ -9,6 +9,7 @@ import {
   estaPendente,
   ParagrafoPendente,
 } from "./DadoPendente";
+import { RITMO_SECAO } from "./ritmo";
 
 /**
  * O render das duas páginas legais.
@@ -48,7 +49,12 @@ type Props = {
 export function PaginaLegal({ pagina }: Props) {
   return (
     <>
-      <Secao superficie="areia" aria-labelledby="titulo-da-pagina">
+      <Secao
+        superficie="areia"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby="titulo-da-pagina"
+      >
         <RailLateral>{pagina.eyebrow}</RailLateral>
 
         <Container comRail>
@@ -62,13 +68,20 @@ export function PaginaLegal({ pagina }: Props) {
             {pagina.h1}
           </SectionTitle>
 
-          <p className="text-lead text-ink-600 medida mt-10">{pagina.lead}</p>
+          <p className="text-lead text-ink-600 medida mt-8 lg:mt-10">
+            {pagina.lead}
+          </p>
         </Container>
       </Secao>
 
-      <Secao superficie="areia-100" aria-label="Conteúdo">
+      <Secao
+        superficie="areia-100"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-label="Conteúdo"
+      >
         <Container comRail>
-          <div className="grid gap-14 lg:grid-cols-[16rem_1fr] lg:gap-20">
+          <div className="grid gap-10 lg:grid-cols-[16rem_1fr] lg:gap-20">
             <nav
               aria-label="Nesta página"
               className="lg:sticky lg:top-[calc(var(--header-h)+3rem)] lg:self-start"
@@ -99,9 +112,9 @@ export function PaginaLegal({ pagina }: Props) {
                   key={bloco.titulo}
                   id={ancora(bloco.titulo)}
                   aria-labelledby={`${ancora(bloco.titulo)}-titulo`}
-                  className="scroll-mt-[calc(var(--header-h)+2rem)] pb-14"
+                  className="scroll-mt-[calc(var(--header-h)+2rem)] pb-10 lg:pb-14"
                 >
-                  {indice > 0 ? <Filete className="mb-14" /> : null}
+                  {indice > 0 ? <Filete className="mb-10 lg:mb-14" /> : null}
 
                   <div className="flex items-baseline gap-4">
                     <span

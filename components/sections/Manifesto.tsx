@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import type { ConteudoHome } from "@/content/tipos";
+import { RITMO_SECAO } from "./ritmo";
 
 /**
  * § 8.3 — Manifesto. Areia, muito respiro.
@@ -29,11 +30,19 @@ type Props = {
 
 export function Manifesto({ manifesto }: Props) {
   return (
-    <Secao superficie="areia" aria-labelledby="manifesto-titulo">
+    <Secao
+      superficie="areia"
+      espacamento="nenhum"
+      className={RITMO_SECAO}
+      aria-labelledby="manifesto-titulo"
+    >
       <RailLateral>{manifesto.eyebrow}</RailLateral>
 
       <Container comRail>
-        <div className="grid gap-y-16 lg:grid-cols-12 lg:gap-x-[var(--gutter)] lg:gap-y-28">
+        {/* O parágrafo de apoio abre com um filete: no mobile ele é a régua
+            que separa, e 40px bastam. As 7rem do desktop existem porque lá os
+            dois blocos disputam a mesma linha da grade. */}
+        <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)] lg:gap-y-28">
           <Reveal className="lg:col-span-9">
             <SectionTitle
               id="manifesto-titulo"

@@ -10,6 +10,7 @@ import { Passos } from "@/components/ui/Passos";
 import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { RITMO_SECAO } from "@/components/sections/ritmo";
 
 /**
  * A consulta — como funciona e preparo (briefing § 7 e § 8.7).
@@ -57,7 +58,12 @@ export default function PaginaConsulta() {
 
   return (
     <>
-      <Secao superficie="areia" aria-labelledby="titulo-da-pagina">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia"
+        aria-labelledby="titulo-da-pagina"
+      >
         <RailLateral>{consulta.eyebrow}</RailLateral>
 
         <Container comRail>
@@ -77,7 +83,12 @@ export default function PaginaConsulta() {
         </Container>
       </Secao>
 
-      <Secao superficie="areia-100" aria-label="Etapas da consulta">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia-100"
+        aria-label="Etapas da consulta"
+      >
         <RailLateral>Etapas</RailLateral>
 
         <Container comRail>
@@ -96,7 +107,12 @@ export default function PaginaConsulta() {
         </Container>
       </Secao>
 
-      <Secao superficie="areia" aria-labelledby="titulo-preparo">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia"
+        aria-labelledby="titulo-preparo"
+      >
         <RailLateral>Preparo</RailLateral>
 
         <Container comRail>

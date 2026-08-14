@@ -15,6 +15,7 @@ import { Filete } from "@/components/ui/Filete";
 import { Nota } from "@/components/ui/Nota";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { RITMO_SECAO } from "@/components/sections/ritmo";
 
 /**
  * Consultório — onde atendo, mapa, horários (briefing § 8.9).
@@ -67,7 +68,12 @@ export default function PaginaConsultorio() {
 
   return (
     <>
-      <Secao superficie="areia" aria-labelledby="titulo-da-pagina">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia"
+        aria-labelledby="titulo-da-pagina"
+      >
         <RailLateral>Consultório</RailLateral>
 
         <Container comRail>
@@ -89,7 +95,12 @@ export default function PaginaConsultorio() {
         </Container>
       </Secao>
 
-      <Secao superficie="areia-100" aria-labelledby="titulo-endereco">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia-100"
+        aria-labelledby="titulo-endereco"
+      >
         <RailLateral>Endereço</RailLateral>
 
         <Container comRail>
@@ -146,7 +157,12 @@ export default function PaginaConsultorio() {
         </Container>
       </Secao>
 
-      <Secao superficie="areia" aria-labelledby="titulo-horarios">
+      <Secao
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        superficie="areia"
+        aria-labelledby="titulo-horarios"
+      >
         <RailLateral>Atendimento</RailLateral>
 
         <Container comRail>
@@ -162,9 +178,7 @@ export default function PaginaConsultorio() {
 
           <div className="mt-14 grid gap-12 md:grid-cols-2 lg:gap-20">
             <div className="flex flex-col gap-6">
-              <h3 className="text-h3 font-body font-medium">
-                Dias e horários
-              </h3>
+              <h3 className="text-h3 font-body font-medium">Dias e horários</h3>
 
               {/* Chave é o índice puro: `horario.dias` pode ser um marcador de
                   pendência, e chave de React vai serializada no payload RSC

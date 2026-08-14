@@ -57,7 +57,7 @@ export function HeroHome({ hero }: Props) {
       className="-mt-[var(--header-h)] flex min-h-[90vh] items-end overflow-hidden pt-[calc(var(--header-h)+clamp(2.5rem,7vh,6rem))] pb-[clamp(2.5rem,7vh,6rem)]"
     >
       <Container>
-        <div className="grid w-full items-end gap-y-14 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
+        <div className="grid w-full items-end gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)] lg:gap-y-14">
           <div className="lg:col-span-12">
             <Eyebrow>{hero.eyebrow}</Eyebrow>
 
@@ -78,7 +78,7 @@ export function HeroHome({ hero }: Props) {
           <div className="lg:col-span-6 lg:self-start">
             <p className="medida text-lead text-sand-50">{hero.lead}</p>
 
-            <div className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-6">
+            <div className="mt-8 flex flex-wrap items-center gap-x-10 gap-y-6 lg:mt-10">
               <Botao href={hero.ctaPrimario.href}>
                 {hero.ctaPrimario.texto}
               </Botao>

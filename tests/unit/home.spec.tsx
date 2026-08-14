@@ -132,7 +132,24 @@ describe("home — estrutura", () => {
     // desenhar por cima da leitura. Ver components/layout/Traco.tsx.
     expect(respiro?.textContent?.trim()).toBe("");
     expect(respiro?.dataset["superficie"]).toBe("areia");
-    expect(respiro?.className).toContain("lg:min-h-[160vh]");
+
+    // A faixa é declarada por atributo, não por uma altura literal.
+    //
+    // Antes esta linha assertava `lg:min-h-[160vh]`. O número era o resultado
+    // de uma tentativa de fazer o rosto encontrar uma zona livre que deriva
+    // ~4.300px em relação a ele — e não encontrava. Hoje o rosto é ancorado
+    // AQUI, e a altura da faixa é derivada da geometria da curva
+    // (`450 × --traco-unidade`), não escolhida a olho.
+    //
+    // Assertar o valor amarrava o teste ao número; assertar o contrato amarra
+    // ao que importa: existe uma faixa sem texto, e ela é a que o Traço lê.
+    //
+    // O atributo mora no palco dentro da seção, não na seção: quem precisa da
+    // medida é o desenho do rosto, e o e2e o localiza pelo mesmo seletor.
+    expect(
+      respiro?.querySelector('[data-traco="livre"]'),
+      "a faixa livre precisa se declarar por data-traco, que é como o Traço a encontra",
+    ).not.toBeNull();
   });
 });
 

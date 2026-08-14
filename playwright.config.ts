@@ -9,6 +9,12 @@ import { defineConfig, devices } from "@playwright/test";
  *
  * Os três breakpoints do briefing § 13 são projetos separados para que uma
  * falha diga em qual largura o layout quebrou.
+ *
+ * O quarto, `mobile-320`, entrou com a rede de testes de mobile: é o piso que
+ * ainda importa (iPhone SE, e qualquer telefone com zoom de sistema), é a
+ * largura em que `scripts/auditar-mobile.mjs` mediu o diagnóstico, e é onde
+ * uma coluna de texto que "cabe" em 390 deixa de caber. Custa uma passada a
+ * mais na suíte e paga por si na primeira régua de 1px que estourar.
  */
 
 const PORTA = 3100;
@@ -39,6 +45,10 @@ export default defineConfig({
   },
 
   projects: [
+    {
+      name: "mobile-320",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 320, height: 568 } },
+    },
     {
       name: "mobile-390",
       use: { ...devices["Desktop Chrome"], viewport: { width: 390, height: 844 } },

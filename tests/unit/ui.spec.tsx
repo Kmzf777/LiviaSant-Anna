@@ -167,13 +167,18 @@ describe("Botao", () => {
   });
 
   it("na variante filete usa o underline que cresce da esquerda", () => {
-    render(
+    const { container } = render(
       <Botao href="/dra-livia-santanna" variante="filete">
         Conhecer a médica
       </Botao>,
     );
 
-    expect(screen.getByRole("link").className).toContain("link-filete");
+    // O desenho (filete + underline) mora num span interno; o `<a>` carrega
+    // só a área de toque de 44px. Ver o comentário em ui/Botao.tsx.
+    const desenho = container.querySelector("a > span");
+    expect(desenho?.className).toContain("link-filete");
+    expect(desenho?.className).toContain("border-b");
+    expect(screen.getByRole("link").className).toContain("min-h-");
   });
 });
 

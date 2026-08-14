@@ -4,6 +4,8 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Nota } from "@/components/ui/Nota";
 import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
+import { cn } from "@/components/ui/cn";
+import { RITMO_RESPIRO } from "../ritmo";
 import { FluxoDeAr } from "./FluxoDeAr";
 
 /**
@@ -65,10 +67,13 @@ export function AberturaRinoplastia() {
       superficie="vinho"
       espacamento="nenhum"
       aria-label={EYEBROW}
-      className="-mt-[var(--header-h)] pt-[calc(var(--header-h)+var(--secao-y)*0.75)] pb-[calc(var(--secao-y)*0.85)]"
+      // O puxão e a compensação continuam sendo o contrato com o Header; o
+      // que mudou é a base do cálculo, que agora responde à largura em vez da
+      // altura da tela. Ver components/sections/ritmo.ts.
+      className="-mt-[var(--header-h)] pt-[calc(var(--header-h)+clamp(3.5rem,2.25rem_+_5vw,var(--secao-y))*0.9)] pb-[calc(clamp(3.5rem,2.25rem_+_5vw,var(--secao-y))*1.1)]"
     >
       <Container comRail>
-        <div className="grid items-center gap-x-16 gap-y-16 lg:grid-cols-12">
+        <div className="grid items-center gap-x-16 gap-y-10 lg:grid-cols-12 lg:gap-y-16">
           <Reveal className="lg:col-span-6">
             <Eyebrow>{EYEBROW}</Eyebrow>
 
@@ -99,7 +104,12 @@ export function AberturaRinoplastia() {
           </Reveal>
         </div>
 
-        <div className="mt-[calc(var(--secao-y)*0.6)] grid gap-x-16 gap-y-10 lg:grid-cols-12">
+        <div
+          className={cn(
+            RITMO_RESPIRO,
+            "grid gap-x-16 gap-y-8 lg:grid-cols-12 lg:gap-y-10",
+          )}
+        >
           <Reveal index={2} className="lg:col-span-6">
             <p className="medida text-lead text-sand-50">
               {home.manifesto.apoio}

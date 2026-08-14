@@ -74,7 +74,11 @@ export function Mapa({ url, endereco, className }: Props) {
   if (!embed) {
     return (
       <div
-        className={cn(MOLDURA, "bg-sand-200 flex flex-col justify-end", className)}
+        className={cn(
+          MOLDURA,
+          "bg-sand-200 flex flex-col justify-end",
+          className,
+        )}
         style={{ aspectRatio: "16/9" }}
       >
         <div className="flex flex-col gap-3 p-6">
@@ -116,7 +120,10 @@ export function Mapa({ url, endereco, className }: Props) {
   }
 
   return (
-    <div className={cn(MOLDURA, "bg-sand-200", className)} style={{ aspectRatio: "16/9" }}>
+    <div
+      className={cn(MOLDURA, "bg-sand-200", className)}
+      style={{ aspectRatio: "16/9" }}
+    >
       <button
         type="button"
         onClick={() => setCarregado(true)}

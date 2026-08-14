@@ -14,6 +14,12 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { RailLateral } from "@/components/layout/RailLateral";
+import {
+  RITMO_HERO,
+  RITMO_RESPIRO,
+  RITMO_SECAO,
+  RITMO_SECAO_COMPACTA,
+} from "@/components/sections/ritmo";
 import { AntesDepois } from "./AntesDepois";
 import { FichaTecnica } from "./FichaTecnica";
 import { RiscosELimites } from "./RiscosELimites";
@@ -140,7 +146,7 @@ function Duas({
   readonly children: ReactNode;
 }) {
   return (
-    <div className="grid gap-x-16 gap-y-10 lg:grid-cols-12">
+    <div className="grid gap-x-16 gap-y-8 lg:grid-cols-12 lg:gap-y-10">
       <div className="lg:col-span-4">{titulo}</div>
       <div className="lg:col-span-6 lg:col-start-6">{children}</div>
     </div>
@@ -211,7 +217,13 @@ function Caso({
   readonly indice: number;
 }) {
   return (
-    <div className={indice > 0 ? "border-sand-200 mt-20 border-t pt-20" : ""}>
+    <div
+      className={
+        indice > 0
+          ? "border-sand-200 mt-12 border-t pt-12 lg:mt-20 lg:pt-20"
+          : ""
+      }
+    >
       <AntesDepois
         antes={caso.antes}
         depois={caso.depois}
@@ -296,7 +308,7 @@ export function PaginaProcedimento({
         superficie="areia"
         espacamento="nenhum"
         aria-labelledby="procedimento-titulo"
-        className="pt-[calc(var(--secao-y)*0.55)] pb-[calc(var(--secao-y)*0.7)]"
+        className={RITMO_HERO}
       >
         <Container comRail>
           <Trilha
@@ -305,7 +317,7 @@ export function PaginaProcedimento({
             nome={procedimento.nome}
           />
 
-          <div className="mt-14 grid gap-x-16 gap-y-12 lg:grid-cols-12">
+          <div className="mt-10 grid gap-x-16 gap-y-10 lg:mt-14 lg:grid-cols-12 lg:gap-y-12">
             <div className="lg:col-span-7">
               <Eyebrow>{procedimento.eyebrow}</Eyebrow>
               <h1
@@ -318,18 +330,26 @@ export function PaginaProcedimento({
 
             <div className="lg:col-span-4 lg:col-start-8 lg:pt-3">
               <p className="medida text-lead">{procedimento.lead}</p>
-              <div className="mt-10">
+              <div className="mt-8 lg:mt-10">
                 <Botao href="/contato">{procedimento.ctaFinal}</Botao>
               </div>
             </div>
           </div>
 
-          <Filete className="mt-[calc(var(--secao-y)*0.55)]" />
+          {/* O hero e "O que é" são a MESMA superfície: sem troca de fundo
+              para marcar a fronteira, o filete é o único sinal — e ele
+              pertence ao hero, então fica perto do que fecha. */}
+          <Filete className={RITMO_RESPIRO} />
         </Container>
       </Secao>
 
       {/* --------------------------------------------------------------- */}
-      <Secao superficie="areia" aria-labelledby="secao-o-que-e">
+      <Secao
+        superficie="areia"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby="secao-o-que-e"
+      >
         <RailLateral>{procedimento.nome}</RailLateral>
         <Container comRail>
           <Duas
@@ -342,7 +362,7 @@ export function PaginaProcedimento({
             <Paragrafos textos={oQueE} destacarPrimeiro />
 
             {procedimento.imagem.tipo === "imagem" ? (
-              <figure className="mt-16">
+              <figure className="mt-10 lg:mt-16">
                 <Image
                   src={procedimento.imagem.imagem.src}
                   alt={procedimento.imagem.imagem.alt}
@@ -358,7 +378,12 @@ export function PaginaProcedimento({
       </Secao>
 
       {/* --------------------------------------------------------------- */}
-      <Secao superficie="areia-100" aria-labelledby="secao-indicacoes">
+      <Secao
+        superficie="areia-100"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby="secao-indicacoes"
+      >
         <RailLateral>{procedimento.nome}</RailLateral>
         <Container comRail>
           <Duas
@@ -393,7 +418,12 @@ export function PaginaProcedimento({
           trecho mais técnico e o que mais se beneficia de sair da leitura
           corrida e virar bloco.
           --------------------------------------------------------------- */}
-      <Secao superficie="vinho" aria-labelledby="secao-como-e-feito">
+      <Secao
+        superficie="vinho"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby="secao-como-e-feito"
+      >
         <RailLateral>{procedimento.nome}</RailLateral>
         <Container comRail>
           <Duas
@@ -415,7 +445,8 @@ export function PaginaProcedimento({
       {/* --------------------------------------------------------------- */}
       <Secao
         superficie="areia"
-        espacamento="compacto"
+        espacamento="nenhum"
+        className={RITMO_SECAO_COMPACTA}
         aria-labelledby="secao-ficha"
       >
         <Container comRail>
@@ -440,7 +471,12 @@ export function PaginaProcedimento({
       </Secao>
 
       {/* --------------------------------------------------------------- */}
-      <Secao superficie="areia-100" aria-labelledby="secao-recuperacao">
+      <Secao
+        superficie="areia-100"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby="secao-recuperacao"
+      >
         <RailLateral>{procedimento.nome}</RailLateral>
         <Container comRail>
           <Duas
@@ -481,7 +517,7 @@ export function PaginaProcedimento({
           tinta do resto. Superfície areia: a superfície do texto que vende
           a cirurgia é a mesma do texto que a limita.
           --------------------------------------------------------------- */}
-      <Secao superficie="areia">
+      <Secao superficie="areia" espacamento="nenhum" className={RITMO_SECAO}>
         <RailLateral>{procedimento.nome}</RailLateral>
         <Container comRail>
           <RiscosELimites
@@ -498,13 +534,18 @@ export function PaginaProcedimento({
           ético, não deslize de conteúdo (§ 3.3).
           --------------------------------------------------------------- */}
       {procedimento.antesDepois.length > 0 ? (
-        <Secao superficie="areia" aria-labelledby="secao-antes-depois">
+        <Secao
+          superficie="areia"
+          espacamento="nenhum"
+          className={RITMO_SECAO}
+          aria-labelledby="secao-antes-depois"
+        >
           <Container comRail>
             <SectionTitle
               as="h2"
               id="secao-antes-depois"
               eyebrow={EYEBROWS.antesDepois}
-              classNameBloco="mb-16"
+              classNameBloco="mb-10 lg:mb-16"
             >
               {TITULOS.antesDepois}
             </SectionTitle>
@@ -517,7 +558,12 @@ export function PaginaProcedimento({
       ) : null}
 
       {/* --------------------------------------------------------------- */}
-      <Secao superficie="areia-100" aria-labelledby="secao-faq">
+      <Secao
+        superficie="areia-100"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby="secao-faq"
+      >
         <RailLateral>{procedimento.nome}</RailLateral>
         <Container comRail>
           <Duas
@@ -536,7 +582,8 @@ export function PaginaProcedimento({
       {relacionados.length > 0 ? (
         <Secao
           superficie="areia"
-          espacamento="compacto"
+          espacamento="nenhum"
+          className={RITMO_SECAO_COMPACTA}
           aria-labelledby="secao-relacionados"
         >
           <Container comRail>
@@ -574,9 +621,14 @@ export function PaginaProcedimento({
       ) : null}
 
       {/* --------------------------------------------------------------- */}
-      <Secao superficie="vinho" aria-labelledby="secao-cta">
+      <Secao
+        superficie="vinho"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby="secao-cta"
+      >
         <Container comRail>
-          <div className="grid gap-x-16 gap-y-12 lg:grid-cols-12">
+          <div className="grid gap-x-16 gap-y-8 lg:grid-cols-12 lg:gap-y-12">
             <div className="lg:col-span-6">
               <SectionTitle as="h2" id="secao-cta" eyebrow="Próximo passo">
                 {`Conversar sobre ${procedimento.nome.toLowerCase()}`}
@@ -586,14 +638,14 @@ export function PaginaProcedimento({
             <div className="lg:col-span-4 lg:col-start-8">
               <p className="medida text-body text-sand-50">{CTA_CORPO}</p>
 
-              <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5">
+              <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5 lg:mt-10">
                 <Botao href="/contato">{procedimento.ctaFinal}</Botao>
                 <Botao href={`/${procedimento.hub}`} variante="filete">
                   {`Ver ${hubNome.toLowerCase()}`}
                 </Botao>
               </div>
 
-              <Nota className="mt-12">
+              <Nota className="mt-10 lg:mt-12">
                 Resultados variam conforme anatomia, cicatrização e histórico de
                 cada paciente.
               </Nota>

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { cn } from "@/components/ui/cn";
+import { RITMO_RAIL } from "@/components/sections/ritmo";
 
 /**
  * RailLateral — a coluna estreita da esquerda.
@@ -37,7 +38,11 @@ export function RailLateral({ children, decorativo = true, className }: Props) {
     <div
       aria-hidden={decorativo || undefined}
       className={cn(
-        "pointer-events-none absolute top-[var(--secao-y)]",
+        // O topo acompanha o padding-top da seção (ver sections/ritmo.ts), e
+        // não `--secao-y` cru: os dois divergem abaixo de 1440 e o eyebrow
+        // vertical descolaria do primeiro parágrafo que ele rotula.
+        "pointer-events-none absolute",
+        RITMO_RAIL,
         "left-[max(var(--gutter),calc((100%_-_var(--container))/2))]",
         "hidden w-[var(--rail)] justify-start lg:flex",
         className,

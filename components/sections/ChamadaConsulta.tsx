@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { BotaoWhatsApp } from "@/components/form/BotaoWhatsApp";
+import { RITMO_SECAO } from "./ritmo";
 
 /**
  * O fecho das páginas institucionais.
@@ -43,6 +44,8 @@ export function ChamadaConsulta({
   return (
     <Secao
       superficie={superficie}
+      espacamento="nenhum"
+      className={RITMO_SECAO}
       aria-labelledby="chamada-consulta"
     >
       <Container comRail>

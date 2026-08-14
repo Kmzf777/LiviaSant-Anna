@@ -7,6 +7,7 @@ import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { CTA_AGENDAR } from "@/content/nav";
 import type { Medica, PerguntaResposta } from "@/content/tipos";
+import { RITMO_RESPIRO, RITMO_SECAO } from "./ritmo";
 
 /**
  * § 8.9 — FAQ transversal e fecho da página. Areia.
@@ -44,9 +45,14 @@ type Props = {
 
 export function PerguntasEContato({ perguntas, medica }: Props) {
   return (
-    <Secao superficie="areia" aria-labelledby="faq-titulo">
+    <Secao
+      superficie="areia"
+      espacamento="nenhum"
+      className={RITMO_SECAO}
+      aria-labelledby="faq-titulo"
+    >
       <Container>
-        <div className="grid gap-y-14 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
+        <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)] lg:gap-y-14">
           <div className="lg:col-span-4">
             <SectionTitle
               id="faq-titulo"
@@ -63,10 +69,13 @@ export function PerguntasEContato({ perguntas, medica }: Props) {
           </Reveal>
         </div>
 
-        <Reveal className="mt-[var(--secao-y)]">
+        {/* Dois blocos numa seção só: o respiro entre eles precisa ser menor
+            que o limite da seção, senão a FAQ e o contato leem como duas
+            seções e o filete deixa de ser a fronteira. */}
+        <Reveal className={RITMO_RESPIRO}>
           <Filete />
 
-          <div className="mt-14 grid gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
+          <div className="mt-10 grid gap-y-10 lg:mt-14 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
             <div className="lg:col-span-5">
               <SectionTitle eyebrow="Contato" as="h2" tamanho="h2">
                 Marcar uma consulta

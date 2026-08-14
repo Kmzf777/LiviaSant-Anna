@@ -36,10 +36,18 @@ export function CampoConsentimento({ id, nome, erro, aoAlterar }: Props) {
       {/*
         O controle mora dentro do `<label>`, e não ao lado dele com `htmlFor`.
         As duas formas são válidas, mas esta amplia a área de clique para o
-        texto inteiro — o que importa numa caixa de 20px tocada com o polegar.
+        texto inteiro — o que importa numa caixa de 24px tocada com o polegar.
         O `htmlFor` continua ali por redundância barata.
+
+        O alvo de toque deste consentimento é o rótulo inteiro, não o quadrado:
+        tocar o texto marca a caixa. O `min-h` garante os 44px mesmo quando a
+        frase cabe numa linha só, que é o caso a partir de `md` — sem ele o
+        alvo encolheria justamente onde ninguém repara, no desktop.
       */}
-      <label htmlFor={id} className="flex items-start gap-4">
+      <label
+        htmlFor={id}
+        className="flex min-h-[var(--alvo-toque)] items-start gap-4"
+      >
         <input
           id={id}
           name={nome}
@@ -53,8 +61,12 @@ export function CampoConsentimento({ id, nome, erro, aoAlterar }: Props) {
           // associação, que ele não resolve através de `htmlFor`.
           aria-labelledby={idRotulo}
           onChange={aoAlterar}
+          // 24px é o mínimo do 2.5.8 (AA) para o controle em si. Os 44px do
+          // 2.5.5 vêm do rótulo, que envolve a caixa e é clicável inteiro —
+          // ampliar o quadrado até 44 daria um controle desproporcional numa
+          // interface que não tem nenhum outro elemento desse tamanho.
           className={cn(
-            "accent-wine-700 mt-1 h-5 w-5 shrink-0",
+            "accent-wine-700 h-6 w-6 shrink-0",
             erro && "outline-wine-700 outline-2 outline-offset-2",
           )}
         />
@@ -71,7 +83,9 @@ export function CampoConsentimento({ id, nome, erro, aoAlterar }: Props) {
         marca ou desmarca a caixa — a pessoa volta da política com o
         consentimento invertido sem ter pedido nada.
       */}
-      <p className="text-small text-ink-600 max-w-[62ch] pl-9">
+      {/* `pl-10` = a caixa de 24px mais o `gap-4`: o parágrafo continua no
+          mesmo eixo do texto do rótulo. */}
+      <p className="text-small text-ink-600 max-w-[62ch] pl-10">
         Você pode pedir a exclusão dos seus dados quando quiser. O tratamento
         está descrito na{" "}
         <Link

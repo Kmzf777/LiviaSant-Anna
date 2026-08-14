@@ -6,6 +6,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import type { ConteudoHome } from "@/content/tipos";
+import { RITMO_SECAO } from "./ritmo";
 
 /**
  * § 8.5 — Rinoplastia em destaque. Full-bleed vinho.
@@ -42,7 +43,12 @@ type Props = {
 
 export function RinoplastiaDestaque({ rinoplastia }: Props) {
   return (
-    <Secao superficie="vinho" aria-labelledby="rinoplastia-titulo">
+    <Secao
+      superficie="vinho"
+      espacamento="nenhum"
+      className={RITMO_SECAO}
+      aria-labelledby="rinoplastia-titulo"
+    >
       <RailLateral>{rinoplastia.eyebrow}</RailLateral>
 
       <Container comRail>
@@ -57,11 +63,11 @@ export function RinoplastiaDestaque({ rinoplastia }: Props) {
               {rinoplastia.h2}
             </SectionTitle>
 
-            <p className="medida text-lead text-sand-50 mt-12">
+            <p className="medida text-lead text-sand-50 mt-9 lg:mt-12">
               {rinoplastia.corpo}
             </p>
 
-            <div className="mt-14 flex flex-col items-start gap-10">
+            <div className="mt-10 flex flex-col items-start gap-8 lg:mt-14 lg:gap-10">
               <Botao href={rinoplastia.cta.href}>{rinoplastia.cta.texto}</Botao>
               <Nota>{rinoplastia.nota}</Nota>
             </div>

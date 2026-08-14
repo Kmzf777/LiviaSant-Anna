@@ -5,6 +5,7 @@ import { RetratoArco } from "@/components/ui/RetratoArco";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import type { ConteudoHome, Medica } from "@/content/tipos";
+import { RITMO_SECAO } from "./ritmo";
 
 /**
  * § 8.6 — A médica. Areia.
@@ -35,9 +36,14 @@ type Props = {
 
 export function AMedica({ bloco, medica }: Props) {
   return (
-    <Secao superficie="areia" aria-labelledby="medica-titulo">
+    <Secao
+      superficie="areia"
+      espacamento="nenhum"
+      className={RITMO_SECAO}
+      aria-labelledby="medica-titulo"
+    >
       <Container>
-        <div className="grid gap-y-16 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
+        <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)] lg:gap-y-16">
           <Reveal className="lg:col-span-4">
             <RetratoArco
               imagem={medica.retrato}
@@ -66,7 +72,7 @@ export function AMedica({ bloco, medica }: Props) {
               </p>
             ))}
 
-            <dl className="mt-14 flex flex-col">
+            <dl className="mt-10 flex flex-col lg:mt-14">
               {medica.formacao.map((item) => (
                 <div
                   key={item.rotulo}
@@ -82,7 +88,7 @@ export function AMedica({ bloco, medica }: Props) {
               ))}
             </dl>
 
-            <div className="mt-12">
+            <div className="mt-10 lg:mt-12">
               <Botao href={bloco.cta.href} variante="filete">
                 {bloco.cta.texto}
               </Botao>

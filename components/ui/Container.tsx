@@ -13,6 +13,24 @@ import { cn } from "./cn";
  * posicionado em relação à seção, não ao container, justamente para que o
  * texto continue alinhado ao mesmo eixo com e sem ele.
  *
+ * ## O corredor do Traço
+ *
+ * O padding direito é `--gutter + --traco-corredor` em todas as larguras.
+ * Aquele naco a mais não é margem sobrando: é a faixa em que a fita do Traço
+ * vive, e é o que faz o briefing § 5.8 — *"nunca cruza texto"* — valer por
+ * construção, sem que nenhuma página precise saber que a assinatura existe.
+ *
+ * Foi assim que o defeito nasceu, aliás: antes, cada página estreitava a
+ * própria coluna à mão para desviar da fita. Resolvia um trecho de desktop e
+ * nada do celular, onde não há coluna a estreitar. Medido em três larguras,
+ * 85% dos blocos de texto a 390px eram atravessados pela linha. A reserva
+ * mora aqui, num arquivo só, porque o problema nunca foi de página.
+ *
+ * A assimetria é deliberada e é a composição do site: o texto tem um eixo à
+ * esquerda e uma pista à direita, onde uma linha de 1px sobe a página inteira.
+ * Quem quiser mexer, mexa em `--traco-telas` (`styles/theme.css`) — corredor,
+ * fita e rosto do respiro se movem juntos.
+ *
  * ## Por que `relative z-[2]`
  *
  * O Traço mora entre o fundo da seção e o texto dela. São três camadas, e a
@@ -52,8 +70,8 @@ export function Container({
     <Tag
       id={id}
       className={cn(
-        "relative z-[2] mx-auto w-full max-w-[var(--container)] px-[var(--gutter)]",
-        comRail && "lg:pl-[calc(var(--gutter)+var(--rail))]",
+        "relative z-[2] mx-auto w-full max-w-[var(--container)] ps-[var(--gutter)] pe-[calc(var(--gutter)+var(--traco-corredor))]",
+        comRail && "lg:ps-[calc(var(--gutter)+var(--rail))]",
         className,
       )}
     >

@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import type { ConteudoHome } from "@/content/tipos";
+import { RITMO_SECAO } from "./ritmo";
 
 /**
  * § 8.7 — Como é a consulta. Areia-100, componente `Passos`.
@@ -30,11 +31,16 @@ type Props = {
 
 export function ComoEaConsulta({ consulta }: Props) {
   return (
-    <Secao superficie="areia-100" aria-labelledby="consulta-titulo">
+    <Secao
+      superficie="areia-100"
+      espacamento="nenhum"
+      className={RITMO_SECAO}
+      aria-labelledby="consulta-titulo"
+    >
       <RailLateral>{consulta.eyebrow}</RailLateral>
 
       <Container comRail>
-        <div className="grid gap-y-14 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
+        <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)] lg:gap-y-14">
           <div className="lg:col-span-4">
             <div className="lg:sticky lg:top-[calc(var(--header-h)+3rem)]">
               <SectionTitle

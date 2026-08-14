@@ -56,11 +56,10 @@
      aprende a diferença sem que ninguém explique.
      ------------------------------------------------------------------ */
 
-  --font-display:
-    var(--fonte-bodoni), Georgia, "Times New Roman", Times, serif;
+  --font-display: var(--fonte-bodoni), Georgia, "Times New Roman", Times, serif;
   --font-body:
-    var(--fonte-switzer), -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
+    var(--fonte-switzer), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   --font-mono:
     var(--fonte-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -144,6 +143,47 @@
   --gutter: clamp(1.25rem, 4vw, 5rem);
   --rail: 80px; /* rail esquerdo, some abaixo de 1024px */
 
+  /* ---------------------------------------------------------------------
+     O corredor do Traço
+
+     O briefing § 5.8 exige que a assinatura "nunca cruze texto". Isso não é
+     um ajuste de página: é uma faixa que o site inteiro reserva. `Container`
+     acrescenta `--traco-corredor` ao padding direito em TODA largura, e a
+     fita vive inteiramente dentro dela. Nenhuma seção precisa saber que o
+     Traço existe.
+
+     A geometria manda na largura, não o contrário. A fita mede
+     `--traco-telas` alturas de tela; o viewBox tem 1560 unidades de altura;
+     a curva em repouso ocupa 28 unidades a partir da borda direita
+     (`TRACO_CORREDOR`, calculado em lib/traco.ts a partir da própria curva).
+     Daí:
+
+       corredor = telas × 100vh × 28 / 1560
+
+     Os números abaixo espelham `TRACO_TELAS` e `TRACO_CORREDOR` de
+     `lib/traco.ts` — se a curva oficial do logo entrar e o corredor mudar de
+     tamanho, é aqui que ele acompanha. `Traco.tsx` mantém um recorte de
+     segurança nesta mesma medida: divergir faz a linha aparecer cortada,
+     nunca faz ela invadir a leitura.
+
+     O `clamp` é o que fecha a conta nos extremos, e por isso a fita é
+     dimensionada A PARTIR daqui, não ao contrário: numa janela retrato o teto
+     de 9vw segura o corredor, e a fita encolhe junto em vez de transbordar
+     dele. Piso de 1.5rem porque abaixo disso o fio some contra a borda.
+
+     `--traco-unidade` é o pixel por unidade de viewBox. Quem precisar
+     posicionar algo no vocabulário da curva — o rosto do `RespiroTraco`, por
+     exemplo — mede nela.
+     ------------------------------------------------------------------ */
+
+  --traco-telas: 1.8; /* TRACO_TELAS.movel */
+  --traco-corredor: clamp(
+    1.5rem,
+    calc(var(--traco-telas) * 28 * 100vh / 1560),
+    9vw
+  );
+  --traco-unidade: calc(var(--traco-corredor) / 28);
+
   --secao-y: clamp(5rem, 12vh, 11rem); /* padding vertical de seção */
 
   /* Altura do header sticky.
@@ -167,4 +207,18 @@
 
   /* Escrito pelo Traço (0 → 1). Fallback estático quando não há JS. */
   --traco-progresso: 1;
+}
+
+/* A fita cresce com a largura da tela, e o corredor com ela. Os pontos de
+   quebra são os mesmos de `Traco.tsx`; os valores, os de `TRACO_TELAS`. */
+@media (min-width: 768px) {
+  :root {
+    --traco-telas: 3; /* TRACO_TELAS.tablet */
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --traco-telas: 5.2; /* TRACO_TELAS.amplo */
+  }
 }

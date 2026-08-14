@@ -81,7 +81,7 @@ export default function RootLayout({
         {/* Primeiro nó focável da página. */}
         <a
           href="#conteudo"
-          className="focus:bg-wine-700 focus:text-sand-50 sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:not-sr-only focus:px-4 focus:py-2"
+          className="focus:bg-wine-700 focus:text-sand-50 sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2"
         >
           Pular para o conteúdo
         </a>

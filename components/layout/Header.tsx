@@ -76,7 +76,9 @@ export function Header() {
     );
 
     const lida = primeira?.dataset["superficie"];
-    setSuperficieTopo(lida === "vinho" || lida === "areia-100" ? lida : "areia");
+    setSuperficieTopo(
+      lida === "vinho" || lida === "areia-100" ? lida : "areia",
+    );
 
     // A seção só está sob o header se o topo dela, em coordenadas de documento,
     // cabe dentro da altura dele. Um pixel de folga para arredondamento.
@@ -120,7 +122,15 @@ export function Header() {
             // `whitespace-nowrap`: em 390px o nome quebrava em duas linhas e
             // empurrava a altura do header de 80 para 86px, desalinhando o
             // `--header-h` que o hero usa para se encaixar embaixo dele.
-            className="font-display text-[1.5rem] leading-none font-normal tracking-[-0.02em] whitespace-nowrap"
+            //
+            // A área de toque vem de um pseudo-elemento, e não de altura no
+            // próprio link. A caixa dele mede 164×24: crescer para 44px de
+            // altura reprovaria `tests/e2e/header.spec.ts`, que divide a
+            // altura real pelo font-size para provar que o nome não quebrou em
+            // duas linhas — 44/24 arredonda para 2. O `::before` estende o
+            // alvo em 10px para cada lado sem tocar na caixa medida, e o
+            // desenho não muda um pixel.
+            className="font-display relative text-[1.5rem] leading-none font-normal tracking-[-0.02em] whitespace-nowrap before:absolute before:inset-x-0 before:-inset-y-2.5 before:content-['']"
           >
             Lívia Sant&apos;Anna
           </Link>
@@ -172,7 +182,13 @@ export function Header() {
               onClick={() => setMenuAberto(true)}
               aria-expanded={menuAberto}
               aria-haspopup="dialog"
-              className="text-micro flex items-center gap-3 py-2 font-mono tracking-[0.14em] uppercase lg:hidden"
+              // 44px de altura mínima: no celular este botão é o ÚNICO acesso
+              // à navegação, e ele media 33. Cabe folgado dentro dos 80px de
+              // `--header-h`, que é altura fixa e continua sendo — o Container
+              // é `items-center`, então um filho de 44px não estica nada e
+              // `tests/e2e/header.spec.ts` segue passando.
+              // `-mr-2 pr-2` empurra o alvo até a goteira sem mover o texto.
+              className="text-micro -mr-2 flex min-h-11 items-center gap-3 pr-2 font-mono tracking-[0.14em] uppercase lg:hidden"
             >
               {/* Duas réguas de 1px: o mesmo filete que separa as seções. */}
               <span

@@ -13,6 +13,12 @@ import { Nota } from "@/components/ui/Nota";
 import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import {
+  RITMO_HERO,
+  RITMO_RESPIRO,
+  RITMO_SECAO,
+  RITMO_SECAO_COMPACTA,
+} from "./ritmo";
 
 /**
  * HubProcedimentos — o layout dos hubs.
@@ -90,7 +96,7 @@ const NOTA_RESULTADOS =
  * ressalva, e ela remeter à seção de riscos de cada página.
  */
 const NOTA_RISCOS: Record<HubSlug, string> = {
-  "otorrinolaringologia":
+  otorrinolaringologia:
     "Toda cirurgia envolve riscos. Cada página traz a seção de riscos e " +
     "limites do procedimento, e eles são avaliados caso a caso na consulta e " +
     "no termo de consentimento.",
@@ -158,7 +164,7 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
         superficie="areia"
         espacamento="nenhum"
         aria-labelledby={ID_TITULO}
-        className="pt-[calc(var(--secao-y)*0.55)] pb-[calc(var(--secao-y)*0.7)]"
+        className={RITMO_HERO}
       >
         <Container comRail>
           <nav aria-label="Trilha de navegação">
@@ -173,7 +179,7 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
             </ol>
           </nav>
 
-          <div className="mt-14 grid gap-x-16 gap-y-12 lg:grid-cols-12">
+          <div className="mt-10 grid gap-x-16 gap-y-10 lg:mt-14 lg:grid-cols-12 lg:gap-y-12">
             <div className="lg:col-span-7">
               <Eyebrow>{hub.eyebrow}</Eyebrow>
               <h1
@@ -186,13 +192,16 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
 
             <div className="lg:col-span-5 lg:pt-3">
               <p className="medida text-lead">{hub.lead}</p>
-              <div className="mt-10">
+              <div className="mt-8 lg:mt-10">
                 <Botao href="/contato">{hub.ctaFinal}</Botao>
               </div>
             </div>
           </div>
 
-          <Filete className="mt-[calc(var(--secao-y)*0.55)]" />
+          {/* Hero e "A premissa" trocam de superfície; este filete é o que
+              fecha o hero, então ele fica perto do CTA e longe do que vem
+              depois — e não boiando no meio dos dois. */}
+          <Filete className={RITMO_RESPIRO} />
         </Container>
       </Secao>
 
@@ -200,11 +209,16 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
           Vinho, e cedo: é a resposta para a pergunta que a audiência traz e
           quase nunca faz em voz alta.
           --------------------------------------------------------------- */}
-      <Secao superficie="vinho" aria-label={EYEBROW_PREMISSA}>
+      <Secao
+        superficie="vinho"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-label={EYEBROW_PREMISSA}
+      >
         <RailLateral>{EYEBROW_PREMISSA}</RailLateral>
 
         <Container comRail>
-          <div className="grid gap-x-16 gap-y-12 lg:grid-cols-12">
+          <div className="grid gap-x-16 gap-y-8 lg:grid-cols-12 lg:gap-y-12">
             <Reveal className="lg:col-span-6">
               <Eyebrow className="mb-8">{EYEBROW_PREMISSA}</Eyebrow>
 
@@ -233,7 +247,12 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
           Linhas separadas por filete, não a grade de três ícones de linha com
           título e um parágrafo cada que o § 15 manda refazer.
           --------------------------------------------------------------- */}
-      <Secao superficie="areia" aria-labelledby={ID_LISTA}>
+      <Secao
+        superficie="areia"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby={ID_LISTA}
+      >
         <RailLateral>{TITULO_LISTA}</RailLateral>
 
         <Container comRail>
@@ -241,7 +260,7 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
             as="h2"
             id={ID_LISTA}
             eyebrow={EYEBROW_LISTA}
-            classNameBloco="mb-16 lg:mb-20"
+            classNameBloco="mb-10 lg:mb-20"
           >
             {TITULO_LISTA}
           </SectionTitle>
@@ -259,7 +278,7 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
             ))}
           </ul>
 
-          <Nota tom="atencao" className="mt-16">
+          <Nota tom="atencao" className="mt-10 lg:mt-16">
             {NOTA_RISCOS[hub.slug]}
           </Nota>
         </Container>
@@ -270,11 +289,12 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
           --------------------------------------------------------------- */}
       <Secao
         superficie="areia-100"
-        espacamento="compacto"
+        espacamento="nenhum"
+        className={RITMO_SECAO_COMPACTA}
         aria-labelledby={ID_MEDICA}
       >
         <Container comRail>
-          <div className="grid gap-x-16 gap-y-10 lg:grid-cols-12">
+          <div className="grid gap-x-16 gap-y-8 lg:grid-cols-12 lg:gap-y-10">
             <div className="lg:col-span-4">
               <SectionTitle as="h2" id={ID_MEDICA} eyebrow={EYEBROW_MEDICA}>
                 {TITULO_MEDICA}
@@ -284,7 +304,7 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
             <div className="lg:col-span-7 lg:col-start-6">
               <p className="medida text-lead">{medica.descricaoAtuacao}.</p>
 
-              <dl className="filete mt-12 border-t">
+              <dl className="filete mt-8 border-t lg:mt-12">
                 {medica.formacao.map((item) => (
                   <div
                     key={item.rotulo}
@@ -300,7 +320,7 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
                 ))}
               </dl>
 
-              <div className="mt-10">
+              <div className="mt-8 lg:mt-10">
                 <Botao href="/dra-livia-santanna" variante="filete">
                   {CTA_MEDICA}
                 </Botao>
@@ -311,9 +331,14 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
       </Secao>
 
       {/* --------------------------------------------------------- CTA final */}
-      <Secao superficie="vinho" aria-labelledby={ID_CTA}>
+      <Secao
+        superficie="vinho"
+        espacamento="nenhum"
+        className={RITMO_SECAO}
+        aria-labelledby={ID_CTA}
+      >
         <Container comRail>
-          <div className="grid gap-x-16 gap-y-12 lg:grid-cols-12">
+          <div className="grid gap-x-16 gap-y-8 lg:grid-cols-12 lg:gap-y-12">
             <div className="lg:col-span-6">
               <SectionTitle as="h2" id={ID_CTA} eyebrow={EYEBROW_CTA}>
                 {`Conversar sobre ${hub.nome.toLocaleLowerCase("pt-BR")}`}
@@ -330,7 +355,7 @@ export function HubProcedimentos({ hub, procedimentos }: Props) {
                 </Botao>
               </div>
 
-              <Nota className="mt-12">{NOTA_RESULTADOS}</Nota>
+              <Nota className="mt-10 lg:mt-12">{NOTA_RESULTADOS}</Nota>
             </div>
           </div>
         </Container>

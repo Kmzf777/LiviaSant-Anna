@@ -54,11 +54,11 @@ export function Footer({ identificacao }: Props) {
   return (
     <footer
       data-superficie="vinho"
-      className="bg-wine-900 pt-[calc(var(--secao-y)/1.6)] pb-12"
+      className="bg-wine-900 pt-[calc(clamp(3.5rem,2.25rem_+_5vw,var(--secao-y))/1.4)] pb-12"
     >
       <Container>
         {/* Chamada de fecho. Assimétrica: texto à esquerda, ação à direita. */}
-        <div className="flex flex-col gap-8 pb-14 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-8 pb-10 md:flex-row md:items-end md:justify-between md:pb-14">
           <p className="font-display text-h2 text-blush-200 max-w-[26ch] font-normal">
             Uma consulta antes de qualquer decisão.
           </p>
@@ -67,13 +67,23 @@ export function Footer({ identificacao }: Props) {
 
         <Filete />
 
-        <div className="grid gap-12 py-14 md:grid-cols-[auto_1fr] md:gap-16">
-          <div className="flex flex-col gap-6">
-            <PlaceholderImagem
-              descricao="Logo, selo circular em vinho"
-              aspecto="1/1"
-              className="w-24"
-            />
+        <div className="grid gap-10 py-10 md:grid-cols-[auto_1fr] md:gap-16 md:py-14">
+          <div className="flex flex-col items-start gap-6">
+            {/*
+              A largura vai no invólucro, não no `className` do placeholder.
+              Passada a ele não tinha efeito: a base traz `w-full`, e o
+              Tailwind emite essa regra depois de `w-24` — o selo do rodapé
+              ocupava a coluna inteira (350×350 em 390px) em vez dos 96px
+              pedidos, e o quadrado vazio virava o maior bloco sem conteúdo de
+              todas as 21 rotas. Mesma armadilha do CTA do header; ver o
+              comentário em components/ui/cn.ts.
+            */}
+            <div className="w-24">
+              <PlaceholderImagem
+                descricao="Logo, selo circular em vinho"
+                aspecto="1/1"
+              />
+            </div>
             <p className="font-display text-blush-200 text-[1.5rem] leading-none font-normal tracking-[-0.02em]">
               Lívia Sant&apos;Anna
             </p>
