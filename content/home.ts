@@ -44,7 +44,7 @@ export const HOME: ConteudoHome = {
       tipo: "imagem",
       imagem: {
         src: "/fotos/livia-blazer-preto.jpeg",
-        alt: "Lívia Sant'Anna, de blazer preto e braços cruzados, diante de um fundo claro.",
+        alt: "Dra. Lívia Sant'Anna, de blazer preto e braços cruzados, diante de um fundo claro.",
         largura: 1024,
         altura: 1536,
       },
@@ -56,7 +56,10 @@ export const HOME: ConteudoHome = {
   // ---------------------------------------------------------------------------
   medica: {
     eyebrow: "A médica",
-    h2: "Lívia Sant'Anna",
+    // Com "Dra.", por decisão do cliente em 16/08/2026. Este é o título de
+    // display — persuasão. O bloco normativo do CFM, logo abaixo dele na mesma
+    // seção, continua sem título: ver `IdentificacaoCFM` e COMPLIANCE-CFM.md.
+    h2: "Dra. Lívia Sant'Anna",
     papel: "Otorrinolaringologista",
 
     /*

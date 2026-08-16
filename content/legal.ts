@@ -43,7 +43,7 @@ export const PAGINAS_INSTITUCIONAIS: readonly PaginaInstitucional[] = [
       {
         titulo: "Quem trata os seus dados",
         paragrafos: [
-          "O responsável pelo tratamento dos dados pessoais coletados neste site é Lívia Sant'Anna, médica inscrita no CRM-MG 83.288, com consultório em Belo Horizonte, Minas Gerais.",
+          "O responsável pelo tratamento dos dados pessoais coletados neste site é a Dra. Lívia Sant'Anna, médica inscrita no CRM-MG 83.288, com consultório em Belo Horizonte, Minas Gerais.",
           "[CONFIRMAR: razão social, CNPJ e endereço completo que devem constar como controlador — pessoa física ou clínica.]",
           "Esta política se aplica ao site e ao formulário de contato dele. Não se aplica ao prontuário médico, que é regido pelas normas do Conselho Federal de Medicina e pela legislação de saúde, com regras próprias de sigilo e de guarda.",
         ],

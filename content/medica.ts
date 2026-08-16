@@ -79,7 +79,7 @@ export const MEDICA: Medica = {
     tipo: "imagem",
     imagem: {
       src: "/fotos/livia-jaleco-branco.jpeg",
-      alt: "Lívia Sant'Anna, de jaleco branco sobre blusa vinho, diante de um fundo claro.",
+      alt: "Dra. Lívia Sant'Anna, de jaleco branco sobre blusa vinho, diante de um fundo claro.",
       largura: 1024,
       altura: 1536,
     },

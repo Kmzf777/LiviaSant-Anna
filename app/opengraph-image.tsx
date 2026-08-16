@@ -30,7 +30,7 @@ import { getHome, getMedica } from "@/content";
  */
 
 export const alt =
-  "Lívia Sant'Anna — otorrinolaringologia e cirurgia da face em Belo Horizonte";
+  "Dra. Lívia Sant'Anna — otorrinolaringologia e cirurgia da face em Belo Horizonte";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

@@ -29,7 +29,7 @@ type Props = {
 export function Selo({
   className,
   decorativo = true,
-  titulo = "Selo Lívia Sant'Anna",
+  titulo = "Selo Dra. Lívia Sant'Anna",
 }: Props) {
   return (
     <svg

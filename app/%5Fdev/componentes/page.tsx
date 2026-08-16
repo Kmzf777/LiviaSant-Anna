@@ -367,7 +367,7 @@ export default function GaleriaDeComponentes() {
           >
             <div className="grid gap-8 md:grid-cols-2">
               <Estado rotulo="Com atribuição">
-                <Citacao atribuicao="Lívia Sant'Anna">
+                <Citacao atribuicao="Dra. Lívia Sant'Anna">
                   O nariz é o centro do rosto e a porta da respiração.
                 </Citacao>
               </Estado>

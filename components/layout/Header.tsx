@@ -131,7 +131,7 @@ export function Header() {
         <Container className="flex h-[var(--header-h)] items-center justify-between gap-6 overflow-hidden">
           <Link
             href="/"
-            aria-label="Lívia Sant'Anna — página inicial"
+            aria-label="Dra. Lívia Sant'Anna — página inicial"
             // `whitespace-nowrap`: em 390px o nome quebrava em duas linhas e
             // empurrava a altura do header de 80 para 86px, desalinhando o
             // `--header-h` que o hero usa para se encaixar embaixo dele.

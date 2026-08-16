@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { getMedica, type Seo } from "@/content";
+import { SITE } from "@/lib/site";
 import { IdentificacaoCFM } from "@/components/medical/IdentificacaoCFM";
 import { RailLateral } from "@/components/layout/RailLateral";
 import { ChamadaConsulta } from "@/components/sections/ChamadaConsulta";
@@ -107,7 +108,12 @@ export default function PaginaMedica() {
             eyebrow="A médica"
             id="titulo-da-pagina"
           >
-            {medica.identificacao.nome}
+            {/* `SITE.nomeSeo` e não `identificacao.nome`: este é o H1 de
+                display, e o cliente pediu o "Dra." no nome visível
+                (16/08/2026). `identificacao.nome` continua sem título porque
+                alimenta o bloco normativo do CFM — ver COMPLIANCE-CFM.md § 1 e
+                o teste em tests/unit/conteudo.spec.ts. */}
+            {SITE.nomeSeo}
           </SectionTitle>
 
           <p className="text-lead text-ink-600 mt-10 max-w-[38ch]">
