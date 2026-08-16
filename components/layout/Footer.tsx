@@ -101,8 +101,12 @@ export function Footer({ identificacao }: Props) {
               sizes="160px"
               className="h-auto w-40"
             />
+            {/* Aqui o nome completo cabe em qualquer largura: no celular esta
+                coluna é a única da grade e ocupa o container inteiro, sem
+                botão dividindo a linha — ao contrário do Header e do
+                MenuMobile, onde o "Dra." só entra a partir de `sm`. */}
             <p className="font-display text-blush-200 text-[1.5rem] leading-none font-normal tracking-[-0.02em]">
-              Lívia Sant&apos;Anna
+              Dra. Lívia Sant&apos;Anna
             </p>
           </div>
 

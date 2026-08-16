@@ -104,7 +104,11 @@ export function MenuMobile({ aberto, aoFechar, itens, rotaAtual }: Props) {
       {/* A faixa do topo tem a altura do header (`--header-h`): abrir o menu
           não pode deslocar o nome nem o botão, senão a transição pisca. */}
       <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between px-[var(--gutter)]">
-        <span className="font-display text-blush-200 text-[1.5rem] leading-none font-normal tracking-[-0.02em]">
+        {/* O "Dra." some abaixo de `sm` pela mesma razão do Header: esta linha
+            divide a largura com o botão de fechar, e num aparelho de 320px o
+            nome completo não cabe. Ver o comentário em Header.tsx. */}
+        <span className="font-display text-blush-200 truncate text-[1.5rem] leading-none font-normal tracking-[-0.02em]">
+          <span className="hidden sm:inline">Dra.&nbsp;</span>
           Lívia Sant&apos;Anna
         </span>
 

@@ -149,8 +149,29 @@ export function Header() {
               O truncamento vai no span, não no link: `truncate` implica
               `overflow: hidden`, e no link ele recortaria o `::before` que
               carrega os 44px de área de toque.
+
+              ## O "Dra." e o orçamento de largura do header
+
+              O nome cresceu cinco caracteres em 16/08/2026, a pedido do
+              cliente, e este é o elemento mais apertado do site: divide a
+              linha com o botão Menu, que é `shrink-0` porque é o único acesso
+              à navegação no celular.
+
+              Em vez de encolher a fonte — a Bodoni não desce de 1.5rem, § 5.3,
+              e `scripts/verificar-bodoni.ts` reprova —, o título vai num span
+              próprio que some abaixo de `sm`. Nas telas mais estreitas fica
+              "Lívia Sant'Anna", como era; de 640px para cima, o nome completo.
+
+              É melhor que a alternativa: com o "Dra." dentro do mesmo span
+              truncado, um aparelho de 320px mostraria "Dra. Lívia Sa…", que
+              erra o nome dela em vez de abreviá-lo. Preferir o nome correto e
+              curto ao nome completo e cortado é a mesma regra que governa as
+              legendas das fotos.
             */}
-            <span className="truncate">Lívia Sant&apos;Anna</span>
+            <span className="truncate">
+              <span className="hidden sm:inline">Dra.&nbsp;</span>
+              Lívia Sant&apos;Anna
+            </span>
           </Link>
 
           <nav
