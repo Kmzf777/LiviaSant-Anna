@@ -29,19 +29,49 @@ import "./globals.css";
  * uma, que o bloco existe e é tipograficamente uniforme.
  */
 
+/**
+ * ## O sufixo do título mora aqui, e só aqui
+ *
+ * Quinze arquivos de `content/` repetiam `"… | Lívia Sant'Anna"` dentro do
+ * próprio `seo.titulo`, e por isso toda página precisava de
+ * `title: { absolute: … }` para o template não duplicar o nome. Duas fontes
+ * para a mesma decisão: acrescentar o "Dra." exigiria quinze edições e a
+ * décima sexta página nasceria sem ele.
+ *
+ * Agora `seo.titulo` declara só a parte distintiva e o template costura o
+ * nome. O orçamento é aritmético: `" | Dra. Lívia Sant'Anna"` custa 23
+ * caracteres, então a base cabe em 37 para o título final ficar nos 60 que o
+ * Google exibe. `tests/unit/seo.spec.ts` mede o título final de toda rota.
+ */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.nome} — Otorrinolaringologia e cirurgia da face`,
-    template: `%s | ${SITE.nome}`,
+    // "Otorrino", e não "Otorrinolaringologia", pela mesma aritmética: com o
+    // nome já dentro do título, o termo por extenso levaria o default a 61
+    // caracteres. É o padrão que a home adotou (PENDENCIAS.md, decisão 3).
+    default: `${SITE.nomeSeo} — Otorrino e cirurgia da face`,
+    template: `%s | ${SITE.nomeSeo}`,
   },
   description: SITE.descricaoPadrao,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    siteName: SITE.nome,
+    siteName: SITE.nomeSeo,
     url: SITE.url,
+    /*
+      O `og:title` tem template próprio, e ele precisa ser declarado aqui.
+
+      O Next resolve o `og:title` de uma página com o template de OpenGraph do
+      pai — não com o de `title`. Sem esta declaração, as páginas que definem
+      `openGraph.title` saíam com o título sem o nome dela na prévia do
+      WhatsApp, enquanto as que não definiam herdavam o título completo. Duas
+      formas diferentes de prévia no mesmo site, e nada acusava.
+    */
+    title: {
+      default: `${SITE.nomeSeo} — Otorrino e cirurgia da face`,
+      template: `%s | ${SITE.nomeSeo}`,
+    },
   },
   robots: {
     index: true,
@@ -89,7 +119,14 @@ export default function RootLayout({
         <Traco />
         <Header />
 
-        <main id="conteudo">{children}</main>
+        {/* O `pb` no celular reserva a altura da barra de CTA fixa
+            (`BotaoWhatsAppFixo`), que é `position: fixed` e por isso não ocupa
+            espaço no fluxo. Sem ele a barra cobriria o fim da última seção — e
+            no rodapé, o bloco de identificação do CFM, que a Resolução
+            2.336/2023 exige visível. Some a partir de `lg`, junto com a barra. */}
+        <main id="conteudo" className="pb-[5.5rem] lg:pb-0">
+          {children}
+        </main>
 
         <Footer identificacao={<IdentificacaoCFM sobre="vinho" />} />
       </body>

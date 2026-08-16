@@ -34,27 +34,39 @@ export const MEDICA: Medica = {
     // precisa vir dela.
   ],
 
+  /*
+    Os três primeiros itens são formação; os dois últimos são vínculo de
+    trabalho. Na página eles convivem na mesma lista de propósito — quem lê quer
+    a trajetória inteira de uma vez. Fora dela, `academico` separa os dois: só
+    os três primeiros viram `alumniOf` no JSON-LD e só eles aparecem sob
+    "Formação" no /llms.txt. Ver o comentário de `ItemFormacao` em tipos.ts.
+  */
   formacao: [
     {
       rotulo: "Graduação",
       descricao: "Universidade Federal de Viçosa",
+      academico: true,
     },
     {
       rotulo: "Residência",
       descricao: "Otorrinolaringologia · Hospital Madre Teresa · Belo Horizonte",
+      academico: true,
     },
     {
       rotulo: "Fellowship",
       descricao: "Cirurgia plástica da face · Hospital UMC · Uberlândia",
+      academico: true,
     },
     {
       rotulo: "Equipes",
       descricao:
         "Hospital Vila da Serra · Instituto de Otorrinolaringologia · Belo Horizonte",
+      academico: false,
     },
     {
       rotulo: "Cirurgias",
       descricao: "Hospital Mater Dei",
+      academico: false,
     },
   ],
 

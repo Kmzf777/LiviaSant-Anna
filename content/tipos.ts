@@ -217,6 +217,20 @@ export type ItemFormacao = {
   /** Rótulo em mono, caixa alta: GRADUAÇÃO, RESIDÊNCIA, FELLOWSHIP… */
   readonly rotulo: string;
   readonly descricao: string;
+  /**
+   * `true` só quando a instituição de fato a formou.
+   *
+   * A lista mistura duas coisas que na página convivem bem — onde ela estudou
+   * e onde ela trabalha — e que fora dela não podem se misturar. `alumniOf`, no
+   * schema.org, declara `EducationalOrganization`: emitir "Hospital Mater Dei"
+   * ali afirma ao Google que ela se formou num lugar onde ela opera. É uma
+   * afirmação falsa em dado estruturado, do tipo que nada no site desmente.
+   *
+   * Por isso é um campo, e não uma lista de rótulos conhecidos em `lib/`: um
+   * item novo obriga quem o escreve a decidir o que ele é, em vez de herdar a
+   * classificação errada por descuido.
+   */
+  readonly academico: boolean;
 };
 
 export type Medica = {
@@ -329,6 +343,16 @@ export type ConteudoHome = {
     readonly papel: string;
     readonly apresentacao: NaoVazio<string>;
     readonly cta: Link;
+    /**
+     * A saída para a página dela, em peso de link e não de botão.
+     *
+     * Existe separado de `cta` porque os dois competem: o botão desta seção
+     * chegou a ser "Conhecer a trajetória", que era o único CTA do meio da
+     * home e mandava o lead para fora do funil no ponto em que ele acabara de
+     * decidir que confia. O botão agenda; este link continua oferecendo o
+     * aprofundamento a quem o quiser.
+     */
+    readonly ctaSecundario: Link;
   };
 
   /** § 3 — onde ela opera. Os hospitais vêm de `listarHospitais()`. */
@@ -336,6 +360,8 @@ export type ConteudoHome = {
     readonly eyebrow: string;
     readonly h2: string;
     readonly texto: string;
+    /** Toda seção da home termina em ação. Ver PLANO-CONVERSAO-SEO.md. */
+    readonly cta: Link;
   };
 
   /** § 4 — o que ela faz, e o fecho. */

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { getConsulta } from "@/content";
+import { getConsulta, type Seo } from "@/content";
 import { RailLateral } from "@/components/layout/RailLateral";
 import { ChamadaConsulta } from "@/components/sections/ChamadaConsulta";
 import { ParagrafoPendente } from "@/components/sections/DadoPendente";
@@ -11,6 +11,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { RITMO_SECAO } from "@/components/sections/ritmo";
+import { breadcrumbJsonLd, grafoJsonLd, serializarJsonLd } from "@/lib/jsonld";
+import type { ItemTrilha } from "@/lib/jsonld";
 
 /**
  * A consulta — como funciona e preparo (briefing § 7 e § 8.7).
@@ -31,11 +33,23 @@ import { RITMO_SECAO } from "@/components/sections/ritmo";
  * o ar.
  */
 
+/* SEO em objeto próprio — ver a nota em `dra-livia-santanna/page.tsx`. */
+const SEO: Seo = {
+  titulo: "Como é a consulta",
+  descricao:
+    "As quatro etapas da consulta com a otorrinolaringologista: conversa, exame, planejamento e decisão. Sem pressa e sem pressão para decidir na hora.",
+};
+
 export const metadata: Metadata = {
-  title: "Como é a consulta",
-  description:
-    "As quatro etapas da consulta: conversa, exame, planejamento e decisão. Sem pressa e sem pressão para decidir na hora.",
+  title: SEO.titulo,
+  description: SEO.descricao,
   alternates: { canonical: "/consulta" },
+  openGraph: {
+    type: "article",
+    title: SEO.titulo,
+    description: SEO.descricao,
+    url: "/consulta",
+  },
 };
 
 const ATALHOS = [
@@ -56,8 +70,20 @@ const ATALHOS = [
 export default function PaginaConsulta() {
   const consulta = getConsulta();
 
+  const trilha: readonly ItemTrilha[] = [
+    { nome: "Início", href: "/" },
+    { nome: "A consulta", href: "/consulta" },
+  ];
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializarJsonLd(grafoJsonLd(breadcrumbJsonLd(trilha))),
+        }}
+      />
+
       <Secao
         espacamento="nenhum"
         className={RITMO_SECAO}

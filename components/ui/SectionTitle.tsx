@@ -15,6 +15,12 @@ import { Eyebrow } from "./Eyebrow";
  * `tamanho` só oferece degraus de 1.5rem para cima. A Bodoni nunca desce disso
  * (§ 5.3): abaixo, o hairline some e vira borrão. `scripts/verificar-bodoni.ts`
  * reprova a combinação, então não é possível burlar por className.
+ *
+ * O peso não aparece aqui, e é de propósito. Ele vem de `--peso-display`
+ * (`styles/theme.css`), que os degraus `text-hero`/`text-h1`/`text-h2` e a
+ * regra `.font-display` de `app/globals.css` já aplicam. Escrever `font-black`
+ * neste arquivo faria a home mudar e o rodapé não — foi essa dispersão que
+ * levou o cliente a dizer, em 15/08/2026, que a fonte não tinha mudado.
  */
 
 type Tamanho = "hero" | "h1" | "h2";
@@ -54,9 +60,10 @@ export function SectionTitle({
       <Tag
         id={id}
         className={cn(
-          // `font-display` e `font-normal` explícitos: em h3 o reset de
-          // globals.css manda a família do corpo e peso 500.
-          "font-display font-normal text-balance",
+          // `font-display` explícito porque em `as="h3"` o reset de globals.css
+          // mandaria a família do corpo e peso 500. A classe traz junto o
+          // `--peso-display`, então o h3 sai com a mesma display dos irmãos.
+          "font-display text-balance",
           TAMANHO[tamanho],
           className,
         )}

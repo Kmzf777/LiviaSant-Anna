@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { getMedica } from "@/content";
+import { getMedica, type Seo } from "@/content";
 import { IdentificacaoCFM } from "@/components/medical/IdentificacaoCFM";
 import { RailLateral } from "@/components/layout/RailLateral";
 import { ChamadaConsulta } from "@/components/sections/ChamadaConsulta";
@@ -11,6 +11,13 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { RITMO_SECAO } from "@/components/sections/ritmo";
+import {
+  breadcrumbJsonLd,
+  grafoJsonLd,
+  physicianJsonLd,
+  serializarJsonLd,
+} from "@/lib/jsonld";
+import type { ItemTrilha } from "@/lib/jsonld";
 
 /**
  * A médica — a trajetória (briefing § 8.6).
@@ -28,19 +35,63 @@ import { RITMO_SECAO } from "@/components/sections/ritmo";
  * parágrafo; ela fica melhor com dois, quando os dois forem dela.
  */
 
-export const metadata: Metadata = {
-  title: "Otorrinolaringologista em Belo Horizonte",
-  description:
+/*
+  Esta rota não tem entrada em `content/` — é página de estrutura, não de
+  conteúdo editorial. O SEO fica num objeto com o mesmo formato do `Seo` de
+  `content/tipos.ts`, e não solto dentro do `metadata`, por dois motivos: o
+  título e a descrição são usados duas vezes cada (metadata e OpenGraph), e
+  `tests/unit/seo.spec.ts` lê este objeto para medir a rota.
+
+  "BH" e não "Belo Horizonte": o layout raiz acrescenta " | Dra. Lívia
+  Sant'Anna" (23 caracteres) e o termo por extenso levaria o título final a 63.
+  Mesma decisão do hub de otorrinolaringologia.
+*/
+const SEO: Seo = {
+  titulo: "Otorrinolaringologista em BH",
+  descricao:
     "Graduação pela Universidade Federal de Viçosa, residência em otorrinolaringologia no Hospital Madre Teresa e fellowship em cirurgia plástica da face.",
-  alternates: { canonical: "/dra-livia-santanna" },
 };
 
+export const metadata: Metadata = {
+  title: SEO.titulo,
+  description: SEO.descricao,
+  alternates: { canonical: "/dra-livia-santanna" },
+  openGraph: {
+    type: "profile",
+    title: SEO.titulo,
+    description: SEO.descricao,
+    url: "/dra-livia-santanna",
+  },
+};
+
+/**
+ * ## Por que o `Physician` também sai daqui, e não só da home
+ *
+ * Esta é a página que responde "quem é ela" — em consulta de busca por nome, é
+ * ela que o Google tende a escolher, não a home. O bloco tem `@id` fixo
+ * (`ID_MEDICA`), então emitir nas duas rotas não cria duas médicas no grafo:
+ * cria a mesma entidade, declarada onde ela é o assunto da página.
+ */
 export default function PaginaMedica() {
   const medica = getMedica();
   const [primeiroParagrafo, ...demaisParagrafos] = medica.biografia;
 
+  const trilha: readonly ItemTrilha[] = [
+    { nome: "Início", href: "/" },
+    { nome: "A médica", href: "/dra-livia-santanna" },
+  ];
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializarJsonLd(
+            grafoJsonLd(physicianJsonLd(medica), breadcrumbJsonLd(trilha)),
+          ),
+        }}
+      />
+
       <Secao
         espacamento="nenhum"
         className={RITMO_SECAO}

@@ -26,7 +26,7 @@ export const PROCEDIMENTOS_CIRURGIA_FACE: readonly Procedimento[] = [
     hub: "cirurgia-da-face",
     nome: "Rinoplastia",
     seo: {
-      titulo: "Rinoplastia em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Rinoplastia em Belo Horizonte",
       descricao:
         "Rinoplastia estética e funcional com otorrinolaringologista: como é o planejamento, a cirurgia, a recuperação mês a mês e os riscos reais.",
     },
@@ -239,7 +239,7 @@ export const PROCEDIMENTOS_CIRURGIA_FACE: readonly Procedimento[] = [
     hub: "cirurgia-da-face",
     nome: "Otoplastia",
     seo: {
-      titulo: "Otoplastia em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Otoplastia em Belo Horizonte",
       descricao:
         "Cirurgia de correção das orelhas em crianças e adultos: idade indicada, como é feita, recuperação com a faixa, riscos e chance de recidiva.",
     },
@@ -401,7 +401,7 @@ export const PROCEDIMENTOS_CIRURGIA_FACE: readonly Procedimento[] = [
     hub: "cirurgia-da-face",
     nome: "Blefaroplastia",
     seo: {
-      titulo: "Blefaroplastia em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Blefaroplastia em Belo Horizonte",
       descricao:
         "Cirurgia das pálpebras superiores e inferiores: o que ela resolve, o que não resolve, como é feita, recuperação e riscos, explicados sem eufemismo.",
     },
@@ -574,7 +574,7 @@ export const PROCEDIMENTOS_CIRURGIA_FACE: readonly Procedimento[] = [
     hub: "cirurgia-da-face",
     nome: "Cantopexia",
     seo: {
-      titulo: "Cantopexia em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Cantopexia em Belo Horizonte",
       descricao:
         "Cantopexia e cantoplastia: sustentação do canto lateral do olho, quando é indicada, como é feita, recuperação e riscos. Belo Horizonte, MG.",
     },
@@ -731,7 +731,7 @@ export const PROCEDIMENTOS_CIRURGIA_FACE: readonly Procedimento[] = [
     hub: "cirurgia-da-face",
     nome: "Frontoplastia",
     seo: {
-      titulo: "Frontoplastia em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Frontoplastia em Belo Horizonte",
       descricao:
         "Cirurgia de elevação da testa e das sobrancelhas: quando é indicada, vias de acesso, recuperação semana a semana e riscos reais.",
     },

@@ -98,6 +98,18 @@ function semVazios(objeto: BlocoJsonLd): BlocoJsonLd {
  * plástica da face dentro do escopo da especialidade — declarar
  * `PlasticSurgery` aqui seria afirmar, em dado estruturado, uma especialidade
  * que o RQE dela não registra (briefing § 3.2).
+ *
+ * ## Por que `SITE.nomeSeo` e não `identificacao.nome`
+ *
+ * O `name` sai com "Dra.". Isto **não** é o bloco normativo do CFM: aquele é o
+ * `<p>` de `IdentificacaoCFM`, alimentado por `identificacao.nome`, e a
+ * exigência da Resolução 2.336/2023 é sobre a uniformidade tipográfica dele,
+ * não sobre um campo de JSON-LD. Aqui o leitor é o Google, que casa este `name`
+ * com a consulta "dra lívia sant'anna" e com o Knowledge Panel.
+ *
+ * `givenName` e `familyName` acompanham porque `name` sozinho é uma string
+ * opaca — com os dois campos, o buscador sabe qual metade é o sobrenome sem
+ * precisar adivinhar a partir de um "Dra." colado na frente.
  */
 export function physicianJsonLd(medica: Medica = getMedica()): BlocoJsonLd {
   const { identificacao } = medica;
@@ -105,7 +117,9 @@ export function physicianJsonLd(medica: Medica = getMedica()): BlocoJsonLd {
   return semVazios({
     "@type": "Physician",
     "@id": ID_MEDICA,
-    name: identificacao.nome,
+    name: SITE.nomeSeo,
+    givenName: "Lívia",
+    familyName: "Sant'Anna",
     url: SITE.url,
     description: medica.descricaoAtuacao,
     medicalSpecialty: "Otolaryngologic",
@@ -127,10 +141,22 @@ export function physicianJsonLd(medica: Medica = getMedica()): BlocoJsonLd {
         value: identificacao.rqe,
       },
     ],
-    alumniOf: medica.formacao.map((item) => ({
-      "@type": "EducationalOrganization",
-      name: item.descricao,
-    })),
+    /*
+      Só o que de fato a formou.
+
+      `medica.formacao` mistura graduação, residência e fellowship com dois
+      vínculos de trabalho ("Equipes", "Cirurgias"), porque na página essa é a
+      trajetória e ela se lê melhor junta. Mapear a lista inteira publicava
+      `EducationalOrganization: Hospital Mater Dei` — o Google lendo que ela se
+      formou no hospital onde opera. Ninguém no site desmente, e dado
+      estruturado errado não tem quem o corrija depois.
+    */
+    alumniOf: medica.formacao
+      .filter((item) => item.academico)
+      .map((item) => ({
+        "@type": "EducationalOrganization",
+        name: item.descricao,
+      })),
   });
 }
 

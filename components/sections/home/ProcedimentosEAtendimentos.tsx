@@ -215,6 +215,21 @@ function GrupoDeAtendimento({
           </li>
         ))}
       </ul>
+
+      {/* A saída para o hub, por grupo.
+
+          A lista caiu de seis queixas para três em cada órgão — o dono do site
+          chamou dezoito itens em três colunas de "informação embaralhada". As
+          que saíram não sumiram: vivem nas páginas de procedimento, onde há
+          espaço para explicá-las e onde elas trabalham para a busca. Este link
+          é o caminho até lá, e é o que transforma o corte numa porta em vez de
+          numa perda. */}
+      <Link
+        href="/otorrinolaringologia"
+        className="link-filete text-small text-wine-700 mt-5 inline-block font-mono tracking-[0.04em]"
+      >
+        Ver tratamentos de {grupo.orgao.toLowerCase()}
+      </Link>
     </div>
   );
 }

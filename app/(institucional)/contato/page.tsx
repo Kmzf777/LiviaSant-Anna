@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { getConsultorio } from "@/content";
+import { getConsultorio, type Seo } from "@/content";
 import { gruposDeAssunto, valoresDeAssunto } from "@/lib/assuntos";
 import { RailLateral } from "@/components/layout/RailLateral";
 import {
@@ -19,6 +19,8 @@ import { Nota } from "@/components/ui/Nota";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { RITMO_SECAO } from "@/components/sections/ritmo";
+import { breadcrumbJsonLd, grafoJsonLd, serializarJsonLd } from "@/lib/jsonld";
+import type { ItemTrilha } from "@/lib/jsonld";
 
 /**
  * Contato — formulário e WhatsApp (briefing § 8.9).
@@ -40,11 +42,23 @@ import { RITMO_SECAO } from "@/components/sections/ritmo";
  * outra.
  */
 
-export const metadata: Metadata = {
-  title: "Contato",
-  description:
+/* SEO em objeto próprio — ver a nota em `dra-livia-santanna/page.tsx`. */
+const SEO: Seo = {
+  titulo: "Contato",
+  descricao:
     "Escreva para o consultório da Dra. Lívia Sant'Anna em Belo Horizonte: nome, WhatsApp, assunto e mensagem. O retorno vem pelo canal que você indicar.",
+};
+
+export const metadata: Metadata = {
+  title: SEO.titulo,
+  description: SEO.descricao,
   alternates: { canonical: "/contato" },
+  openGraph: {
+    type: "website",
+    title: SEO.titulo,
+    description: SEO.descricao,
+    url: "/contato",
+  },
 };
 
 type Props = {
@@ -67,8 +81,20 @@ export default async function PaginaContato({ searchParams }: Props) {
     { rotulo: "E-mail", valor: consultorio.email },
   ];
 
+  const trilha: readonly ItemTrilha[] = [
+    { nome: "Início", href: "/" },
+    { nome: "Contato", href: "/contato" },
+  ];
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializarJsonLd(grafoJsonLd(breadcrumbJsonLd(trilha))),
+        }}
+      />
+
       <Secao
         espacamento="nenhum"
         className={RITMO_SECAO}

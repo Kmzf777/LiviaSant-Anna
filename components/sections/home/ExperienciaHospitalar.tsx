@@ -1,10 +1,10 @@
+import { Botao } from "@/components/ui/Botao";
 import { Container } from "@/components/ui/Container";
 import { Galeria } from "@/components/ui/Galeria";
 import type { ItemGaleria } from "@/components/ui/Galeria";
 import { Reveal } from "@/components/ui/Reveal";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { VideoSobClique } from "@/components/ui/VideoSobClique";
 import type { Hospital } from "@/content/hospitais";
 import type { ConteudoHome } from "@/content/tipos";
 import { RITMO_RESPIRO, RITMO_SECAO } from "../ritmo";
@@ -68,16 +68,32 @@ type Props = {
 };
 
 /**
- * As cinco fotos aprovadas de centro cirúrgico, todas 3024×4032.
+ * Duas fotos de centro cirúrgico, 3024×4032, em grade regular.
  *
- * A ordem é a da composição, não a do arquivo: `Galeria` distribui os itens em
- * slots de larguras e desníveis diferentes, e o primeiro é o único que ocupa a
- * largura inteira no celular. A foto de abertura é a do corredor porque é a
- * que situa — pessoas, ambiente, escala — antes de qualquer plano fechado.
+ * ## Por que caiu de cinco para duas
  *
- * O pôster do vídeo é um quadro extraído do próprio vídeo
- * (`centro-cirurgico-video-poster`), e não uma destas: uma foto que aparece
- * duas vezes na mesma seção lê como erro de montagem.
+ * Cinco fotos entravam num mosaico escalonado — `Galeria` distribuía os itens
+ * em slots de larguras e desníveis diferentes, cada uma começando numa altura
+ * distinta. O desenho era deliberado e o dono do site o descreveu, em áudio,
+ * como *"as fotos tudo bagunçadas"*. Ele não estava reclamando de qualidade de
+ * imagem: estava lendo desalinhamento como desleixo, que é exatamente o que um
+ * mosaico irregular comunica para quem não o reconhece como decisão de design.
+ *
+ * Duas fotos, mesma altura, mesmo topo, mesmo eixo. A primeira situa — pessoas,
+ * ambiente, escala. A segunda é o plano fechado, a melhor composição do
+ * conjunto. As outras três continuam no repositório e nada as apaga; elas só
+ * não pertencem a uma página cuja função é levar ao agendamento em trinta
+ * segundos.
+ *
+ * ## O vídeo saiu
+ *
+ * Não por peso de página: por conteúdo. O dono pediu *"tenta pôr um que não
+ * mostra tanto sangue"*, e só existe um vídeo no repositório — os originais
+ * foram descartados na curadoria (PLANO-HOME.md) e não há como inspecionar os
+ * quadros além do pôster, que está limpo. Publicar sem poder conferir é apostar
+ * com a reputação dela. `public/fotos/centro-cirurgico-video.mp4` e
+ * `VideoSobClique` continuam versionados: religar é uma linha, no dia em que
+ * houver um vídeo aprovado.
  */
 export const FOTOS_CENTRO_CIRURGICO: readonly ItemGaleria[] = [
   {
@@ -93,27 +109,6 @@ export const FOTOS_CENTRO_CIRURGICO: readonly ItemGaleria[] = [
     largura: 3024,
     altura: 4032,
     legenda: "Lupas de aumento, usadas na cirurgia que pede detalhe.",
-  },
-  {
-    src: "/fotos/centro-cirurgico-bastidor.jpeg",
-    alt: "Dois profissionais em uniforme cirúrgico e touca, na área de apoio de um centro cirúrgico.",
-    largura: 3024,
-    altura: 4032,
-    legenda: "Área de apoio do centro cirúrgico.",
-  },
-  {
-    src: "/fotos/centro-cirurgico-endoscopia.jpeg",
-    alt: "Sala cirúrgica durante um procedimento endoscópico, com a torre de vídeo ao lado da mesa e o paciente coberto pelos campos cirúrgicos.",
-    largura: 3024,
-    altura: 4032,
-    legenda: "Procedimento endoscópico, acompanhado pela torre de vídeo.",
-  },
-  {
-    src: "/fotos/centro-cirurgico-microscopio.jpeg",
-    alt: "Sala cirúrgica durante um procedimento com microscópio, com o paciente coberto pelos campos cirúrgicos.",
-    largura: 3024,
-    altura: 4032,
-    legenda: "Procedimento conduzido sob microscópio cirúrgico.",
   },
 ];
 
@@ -170,21 +165,19 @@ export function ExperienciaHospitalar({ experiencia, hospitais }: Props) {
             </ul>
           </Reveal>
 
-          {/* Quatro colunas, e não seis: o vídeo é 9/16, e cada coluna a mais
-              vira quase duas de altura. Em seis ele media mais de uma tela e
-              deixava a coluna de texto vazia ao lado. É também a largura que o
-              `sizes` do componente declara (30vw). */}
-          <Reveal index={1} className="lg:col-span-4 lg:col-start-9">
-            <VideoSobClique
-              src="/fotos/centro-cirurgico-video.mp4"
-              poster="/fotos/centro-cirurgico-video-poster.jpeg"
-              legenda="Trecho de uma cirurgia. O vídeo carrega quando você toca no play."
-            />
+          {/* As fotos sobem para a coluna da direita, onde o vídeo estava.
+
+              Antes elas ficavam numa faixa própria abaixo do registro, o que
+              dava à seção duas alturas cheias: lista, depois galeria. Ao lado
+              da lista, a seção inteira cabe numa tela e a leitura não é
+              interrompida por um bloco de mídia atravessado. */}
+          <Reveal index={1} className="lg:col-span-6 lg:col-start-7">
+            <Galeria itens={FOTOS_CENTRO_CIRURGICO} />
           </Reveal>
         </div>
 
         <Reveal className={RITMO_RESPIRO}>
-          <Galeria itens={FOTOS_CENTRO_CIRURGICO} />
+          <Botao href={experiencia.cta.href}>{experiencia.cta.texto}</Botao>
         </Reveal>
       </Container>
     </Secao>

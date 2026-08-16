@@ -6,7 +6,11 @@
    - Nenhum #000 ou #fff puro                        -> scripts/verificar-cores.ts
    - Nenhum gradiente colorido / sombra colorida     -> scripts/verificar-cores.ts
    - Contraste AA em todo par usado                  -> scripts/verificar-contraste.ts
-   - Bodoni nunca < 1.5rem, nunca bold               -> scripts/verificar-bodoni.ts
+   - Bodoni nunca < 1.5rem                           -> scripts/verificar-bodoni.ts
+
+   A segunda regra da Bodoni — "nunca em bold" — foi REVOGADA pelo cliente em
+   15/08/2026. A display agora vai no topo do eixo de peso. Ver `--peso-display`
+   abaixo e a § 2 de docs/DESIGN-SYSTEM.md.
    ========================================================================== */
 
 @theme {
@@ -63,22 +67,26 @@
   --font-mono:
     var(--fonte-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Escala fluida. lh/tracking/weight acompanham cada degrau. */
+  /* Escala fluida. lh/tracking/weight acompanham cada degrau.
+
+     Os três degraus de display carregam `--peso-display` (900). Não é o peso
+     "de título" e sim o TOPO do eixo `wght` da Bodoni Moda, que vai de 400 a
+     900 — decisão do cliente em 15/08/2026, registrada em `:root` abaixo. */
 
   --text-hero: clamp(2.75rem, 1.2rem + 6.5vw, 7rem);
   --text-hero--line-height: 0.95;
   --text-hero--letter-spacing: -0.03em;
-  --text-hero--font-weight: 400;
+  --text-hero--font-weight: var(--peso-display);
 
   --text-h1: clamp(2.25rem, 1.2rem + 4.5vw, 4.5rem);
   --text-h1--line-height: 1.02;
   --text-h1--letter-spacing: -0.025em;
-  --text-h1--font-weight: 400;
+  --text-h1--font-weight: var(--peso-display);
 
   --text-h2: clamp(1.75rem, 1.1rem + 2.8vw, 3.25rem);
   --text-h2--line-height: 1.08;
   --text-h2--letter-spacing: -0.02em;
-  --text-h2--font-weight: 400;
+  --text-h2--font-weight: var(--peso-display);
 
   --text-h3: clamp(1.25rem, 1rem + 1.1vw, 1.75rem);
   --text-h3--line-height: 1.25;
@@ -140,6 +148,28 @@
   /* Tokens fora dos namespaces do Tailwind. */
 
   --container: 1440px;
+
+  /* ---------------------------------------------------------------------
+     Peso da display — a revogação da regra "nunca em bold"
+
+     O briefing § 5.3 proibia a Bodoni em bold, e `scripts/verificar-bodoni.ts`
+     reprovava o build de quem tentasse. O dono do site pediu o contrário, em
+     áudio, em 15/08/2026: *"a fonte onde está escrito 'Lívia Sant'Anna' e os
+     outros títulos, deixa ela o mais bold que conseguir"*. A regra caiu por
+     decisão de quem manda no site, não por descuido de quem escreve CSS.
+     `PLANO-CONVERSAO-SEO.md`, decisão 2, é o registro.
+
+     900 é o topo real do eixo `wght` da Bodoni Moda (400–900), e o arquivo
+     variável com esse eixo já é o que `app/fonts.ts` baixa — não há negrito
+     sintético envolvido, e `font-synthesis-weight: none` em `app/globals.css`
+     garante que nunca haverá.
+
+     Este é o ÚNICO lugar onde o peso da display se decide. Quem precisar de um
+     título mais leve num trecho específico redefine a variável no escopo dele
+     (`[--peso-display:400]` como classe do Tailwind, ou `style`), em vez de
+     brigar com `font-normal` — ver a regra `.font-display` em globals.css.
+     ------------------------------------------------------------------ */
+  --peso-display: 900;
 
   /* Piso em `px`, e não em `rem`, de propósito.
      Margem não deve crescer com o tamanho do texto. Com a fonte do sistema em

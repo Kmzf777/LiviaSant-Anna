@@ -15,9 +15,17 @@ export const HUBS: readonly Hub[] = [
     slug: "otorrinolaringologia",
     nome: "Otorrinolaringologia",
     seo: {
-      titulo: "Otorrinolaringologia em Belo Horizonte | Lívia Sant'Anna",
+      /*
+        "BH", e não "Belo Horizonte": por extenso o título base tem 38
+        caracteres e, com o sufixo do layout raiz (23), o título final passa
+        dos 60 que o Google exibe. É o único dos dezessete que estourava.
+
+        A abreviação não é só concessão ao orçamento — "otorrino BH" é a busca
+        real (PENDENCIAS.md, decisão 3), e é o mesmo termo que a home usa.
+      */
+      titulo: "Otorrinolaringologia em BH",
       descricao:
-        "Diagnóstico e tratamento clínico e cirúrgico de nariz, ouvido e garganta, em adultos e crianças. Belo Horizonte, MG.",
+        "Diagnóstico e tratamento clínico e cirúrgico de nariz, ouvido e garganta, em adultos e crianças, em Belo Horizonte. Nem todo caso termina em cirurgia.",
     },
     eyebrow: "Função",
     h1: "Respirar, ouvir, dormir melhor",
@@ -33,7 +41,7 @@ export const HUBS: readonly Hub[] = [
     slug: "cirurgia-da-face",
     nome: "Cirurgia da face",
     seo: {
-      titulo: "Cirurgia da face em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Cirurgia da face em Belo Horizonte",
       descricao:
         "Rinoplastia, otoplastia, blefaroplastia, cantopexia e frontoplastia, conduzidas por otorrinolaringologista com atuação em cirurgia plástica da face.",
     },
@@ -51,7 +59,7 @@ export const HUBS: readonly Hub[] = [
     slug: "estetica-facial",
     nome: "Estética facial",
     seo: {
-      titulo: "Estética facial em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Estética facial em Belo Horizonte",
       descricao:
         "Toxina botulínica no terço superior e full face, com avaliação da anatomia e da expressão de cada rosto. Belo Horizonte, MG.",
     },

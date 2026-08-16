@@ -41,7 +41,9 @@ export async function generateMetadata({
   const { seo } = procedimento;
 
   return {
-    title: { absolute: seo.titulo },
+    // O nome dela entra pelo template do layout raiz, no título e no
+    // `og:title`.
+    title: seo.titulo,
     description: seo.descricao,
     alternates: { canonical: `/${HUB}/${slug}` },
     openGraph: {

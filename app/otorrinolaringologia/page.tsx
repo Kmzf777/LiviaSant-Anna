@@ -26,9 +26,10 @@ export function generateMetadata(): Metadata {
   if (!hub) return {};
 
   return {
-    // `absolute`: o título do conteúdo já traz o nome dela, e o template do
-    // layout raiz o acrescentaria uma segunda vez.
-    title: { absolute: hub.seo.titulo },
+    // Sem `absolute`: `seo.titulo` declara só a parte distintiva e o template
+    // do layout raiz acrescenta " | Dra. Lívia Sant'Anna" — aqui e no
+    // `og:title`, que o Next resolve com o mesmo template.
+    title: hub.seo.titulo,
     description: hub.seo.descricao,
     alternates: { canonical: `/${SLUG}` },
     openGraph: {

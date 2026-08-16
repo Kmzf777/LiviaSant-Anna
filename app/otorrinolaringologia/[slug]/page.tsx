@@ -48,9 +48,9 @@ export async function generateMetadata({
   const { seo } = procedimento;
 
   return {
-    // O título do conteúdo já traz o nome dela; o template do layout raiz o
-    // acrescentaria de novo.
-    title: { absolute: seo.titulo },
+    // O nome dela entra pelo template do layout raiz, no título e no
+    // `og:title`. Ver o comentário do orçamento de caracteres lá.
+    title: seo.titulo,
     description: seo.descricao,
     alternates: { canonical: `/${HUB}/${slug}` },
     openGraph: {

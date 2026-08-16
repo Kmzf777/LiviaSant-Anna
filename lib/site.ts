@@ -96,7 +96,26 @@ function resolverUrl(): string {
 }
 
 export const SITE = {
+  /**
+   * O nome sem título. É o que o bloco normativo do CFM exige — ver
+   * `content/medica.ts` e docs/COMPLIANCE-CFM.md § 1.
+   */
   nome: "Lívia Sant'Anna",
+
+  /**
+   * O nome como ele aparece para quem busca.
+   *
+   * "Dra." é o que a pessoa digita e o que ela reconhece na SERP, e a
+   * Resolução CFM 2.336/2023 não veda o título — ela veda destacá-lo *dentro*
+   * do bloco de identificação. Título de página, OpenGraph e JSON-LD estão
+   * fora desse bloco, e é só lá que este valor entra.
+   *
+   * A separação é deliberada: enquanto forem duas constantes, um `SITE.nome`
+   * dentro do `IdentificacaoCFM` continua correto e nenhum "Dra." chega ao
+   * bloco por descuido de refatoração.
+   */
+  nomeSeo: "Dra. Lívia Sant'Anna",
+
   url: resolverUrl(),
   locale: "pt-BR",
   descricaoPadrao:
@@ -106,6 +125,21 @@ export const SITE = {
 
 export function urlAbsoluta(caminho: string): string {
   return new URL(caminho, SITE.url).toString();
+}
+
+/**
+ * O título final, montado como o `title.template` do layout raiz o monta.
+ *
+ * Quase nenhuma página precisa disto: o template do Next resolve o sufixo
+ * sozinho. A exceção é a home — o Next não aplica o template do layout ao
+ * `page` do **mesmo** segmento, e o layout raiz e a home são o mesmo segmento.
+ * Sem esta função, a home seria a única rota do site sem o nome dela no título,
+ * e o defeito só apareceria no HTML construído.
+ *
+ * Também é o que `tests/unit/seo.spec.ts` usa para medir o título de toda rota.
+ */
+export function tituloSeo(base: string): string {
+  return `${base} | ${SITE.nomeSeo}`;
 }
 
 /** Exportado para teste. Não use em componente — prefira `SITE.url`. */

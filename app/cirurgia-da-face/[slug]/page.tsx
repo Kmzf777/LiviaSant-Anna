@@ -56,9 +56,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const caminho = `/${HUB}/${slug}`;
 
   return {
-    // `absolute`: o template do layout raiz acrescentaria o nome dela de novo,
-    // e o título do conteúdo (≤ 60 caracteres) já o traz.
-    title: { absolute: procedimento.seo.titulo },
+    // O template do layout raiz acrescenta o nome dela ao título e ao
+    // `og:title`; `seo.titulo` traz só a parte distintiva, em ≤ 37 caracteres.
+    title: procedimento.seo.titulo,
     description: procedimento.seo.descricao,
     alternates: { canonical: caminho },
     openGraph: {

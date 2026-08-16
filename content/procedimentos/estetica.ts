@@ -16,7 +16,7 @@ export const PROCEDIMENTOS_ESTETICA: readonly Procedimento[] = [
     hub: "estetica-facial",
     nome: "Toxina botulínica",
     seo: {
-      titulo: "Toxina botulínica em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Toxina botulínica em Belo Horizonte",
       descricao:
         "Aplicação de toxina botulínica no terço superior e full face, com avaliação da anatomia e da expressão. Como funciona, duração e riscos reais.",
     },

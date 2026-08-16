@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { getPaginaInstitucional } from "@/content";
 import { PaginaLegal } from "@/components/sections/PaginaLegal";
+import { breadcrumbJsonLd, grafoJsonLd, serializarJsonLd } from "@/lib/jsonld";
+import type { ItemTrilha } from "@/lib/jsonld";
 
 /**
  * Política de privacidade.
@@ -19,16 +21,39 @@ import { PaginaLegal } from "@/components/sections/PaginaLegal";
 
 const SLUG = "politica-de-privacidade";
 
+/* Título e descrição vêm de `content/legal.ts` — ver a nota em `aviso-legal`. */
+const pagina = getPaginaInstitucional(SLUG);
+
 export const metadata: Metadata = {
-  title: "Política de privacidade",
-  description:
-    "Quais dados este site coleta, por que, por quanto tempo, com quem são compartilhados e como exercer seus direitos como titular, conforme a LGPD.",
+  title: pagina?.seo.titulo,
+  description: pagina?.seo.descricao,
   alternates: { canonical: `/${SLUG}` },
+  openGraph: {
+    type: "article",
+    title: pagina?.seo.titulo,
+    description: pagina?.seo.descricao,
+    url: `/${SLUG}`,
+  },
 };
 
 export default function PaginaPoliticaDePrivacidade() {
-  const pagina = getPaginaInstitucional(SLUG);
   if (!pagina) notFound();
 
-  return <PaginaLegal pagina={pagina} />;
+  const trilha: readonly ItemTrilha[] = [
+    { nome: "Início", href: "/" },
+    { nome: pagina.h1, href: `/${SLUG}` },
+  ];
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializarJsonLd(grafoJsonLd(breadcrumbJsonLd(trilha))),
+        }}
+      />
+
+      <PaginaLegal pagina={pagina} />
+    </>
+  );
 }

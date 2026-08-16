@@ -1,3 +1,4 @@
+import { BotaoWhatsApp } from "@/components/form/BotaoWhatsApp";
 import { Botao } from "@/components/ui/Botao";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -64,16 +65,28 @@ export function Chamada({ hero }: Props) {
       superficie="vinho"
       espacamento="nenhum"
       aria-labelledby="chamada-titulo"
-      className="-mt-[var(--header-h)] flex min-h-[92vh] items-end overflow-hidden pt-[calc(var(--header-h)+clamp(2.5rem,7vh,6rem))] pb-[clamp(2.5rem,7vh,6rem)]"
+      className="-mt-[var(--header-h)] flex min-h-[78vh] items-center overflow-hidden pt-[calc(var(--header-h)+clamp(2rem,5vh,4rem))] pb-[clamp(2.5rem,7vh,6rem)]"
     >
       <Container>
-        <div className="grid w-full items-end gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)] lg:gap-y-14">
-          <div className="lg:col-span-12">
+        <div className="grid w-full items-center gap-y-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)]">
+          {/* Eyebrow, H1, lead e CTA na MESMA coluna, nesta ordem.
+
+              Antes o H1 ocupava as doze colunas sozinho e o lead com o botão
+              vinham numa linha abaixo, com a seção em `min-h-[92vh]` e
+              `items-end`. O efeito era o CTA nascer no chão da primeira tela:
+              visível no desktop grande, abaixo da dobra em notebook, e muito
+              abaixo no celular. O dono do site descreveu como "CTAs escondidos
+              e fracos", e era literalmente isso — a página pedia um scroll
+              antes de oferecer a ação.
+
+              78vh em vez de 92vh pela mesma razão: 92vh mais o header deixava
+              a seção maior que a viewport em qualquer notebook. */}
+          <div className="lg:col-span-7">
             <Eyebrow>{hero.eyebrow}</Eyebrow>
 
             <h1
               id="chamada-titulo"
-              className="font-display text-blush-200 mt-7 font-normal text-[clamp(1.6rem,0.5rem_+_4.7vw,4.5rem)] leading-[1.02] tracking-[-0.025em]"
+              className="font-display text-blush-200 mt-6 text-[clamp(1.9rem,0.9rem_+_3.4vw,3.75rem)] leading-[1.04] tracking-[-0.025em]"
             >
               {hero.h1.map((linha) => (
                 <span key={linha} className="block">
@@ -81,19 +94,16 @@ export function Chamada({ hero }: Props) {
                 </span>
               ))}
             </h1>
-          </div>
 
-          {/* `self-start`: a linha é tão alta quanto o retrato, e o lead
-              alinhado ao fim dela empurraria o CTA para fora da dobra. */}
-          <div className="lg:col-span-6 lg:self-start">
-            <p className="medida text-lead text-sand-50">{hero.lead}</p>
+            <p className="medida text-lead text-sand-50 mt-6">{hero.lead}</p>
 
-            <div className="mt-8 lg:mt-10">
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
               <Botao href={hero.cta.href}>{hero.cta.texto}</Botao>
+              <BotaoWhatsApp>Falar agora no WhatsApp</BotaoWhatsApp>
             </div>
           </div>
 
-          <div className="-mb-[clamp(2.5rem,7vh,6rem)] self-end lg:col-span-4 lg:col-start-9">
+          <div className="-mb-[clamp(2.5rem,7vh,6rem)] self-end lg:col-span-4 lg:col-start-9 lg:-mb-[clamp(2.5rem,7vh,6rem)]">
             <RetratoArco
               imagem={hero.imagem}
               aspecto="3/4"

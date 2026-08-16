@@ -57,23 +57,48 @@ describe("Galeria", () => {
     }
   });
 
-  it("dá um `sizes` diferente por posição — a assimetria é medida, não decorativa", () => {
+  /*
+    Este teste exigia o oposto até 15/08/2026.
+
+    A galeria era um mosaico escalonado, e o teste cobrava um `sizes` distinto
+    por posição — "se um dia isso colapsar em um valor só, a grade regular
+    voltou", dizia o comentário. A grade regular voltou, de propósito: o dono
+    do site leu o mosaico como "fotos bagunçadas" e, num site médico,
+    desalinhamento lê como descuido. Ver o comentário do `<ul>` em Galeria.tsx.
+
+    O que o teste protege continua sendo o mesmo: que exista `sizes` declarado
+    e que ele cubra o desktop. É a parte que era sobre desempenho, e essa não
+    mudou — sem largura declarada, o Next serve a maior variante para qualquer
+    viewport, e a diferença entre entregar 1920 e 640 num celular é o LCP.
+  */
+  it("declara `sizes` com breakpoint de desktop em toda foto", () => {
     const { container } = render(<Galeria itens={ITENS} />);
 
     const declarados = [...container.querySelectorAll("img")].map((img) =>
       img.getAttribute("sizes"),
     );
 
+    expect(declarados).toHaveLength(ITENS.length);
+
     for (const sizes of declarados) {
       expect(sizes).toBeTruthy();
-      // Sem largura declarada para o desktop, o Next serve a maior variante
-      // para qualquer viewport.
       expect(sizes).toContain("(min-width: 1024px)");
     }
+  });
 
-    // Três peças na mesma composição, três larguras distintas. Se um dia isso
-    // colapsar em um valor só, a grade regular voltou.
-    expect(new Set(declarados).size).toBe(ITENS.length);
+  it("alinha as peças: mesma largura e mesmo topo", () => {
+    const { container } = render(<Galeria itens={ITENS} />);
+    const lista = container.querySelector("ul");
+
+    // Duas colunas iguais e `items-start`. O que NÃO pode voltar é a peça com
+    // largura própria (`col-[7/span_4]`) ou desnível vertical (`lg:mt-28`).
+    expect(lista?.className).toContain("grid-cols-2");
+    expect(lista?.className).toContain("items-start");
+
+    for (const item of container.querySelectorAll("li")) {
+      expect(item.className).not.toMatch(/col-\[/);
+      expect(item.className).not.toMatch(/mt-\d/);
+    }
   });
 
   it("reserva a proporção do arquivo, para a foto não empurrar o layout ao chegar", () => {

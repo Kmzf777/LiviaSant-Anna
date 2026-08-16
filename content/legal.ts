@@ -30,7 +30,7 @@ export const PAGINAS_INSTITUCIONAIS: readonly PaginaInstitucional[] = [
   {
     slug: "politica-de-privacidade",
     seo: {
-      titulo: "Política de privacidade | Lívia Sant'Anna",
+      titulo: "Política de privacidade",
       descricao:
         "Quais dados este site coleta, por que, por quanto tempo, com quem são compartilhados e como exercer seus direitos como titular, conforme a LGPD.",
     },
@@ -143,7 +143,7 @@ export const PAGINAS_INSTITUCIONAIS: readonly PaginaInstitucional[] = [
   {
     slug: "aviso-legal",
     seo: {
-      titulo: "Aviso legal | Lívia Sant'Anna",
+      titulo: "Aviso legal",
       descricao:
         "Natureza informativa do conteúdo deste site, identificação profissional e as regras de publicidade médica da Resolução CFM 2.336/2023.",
     },

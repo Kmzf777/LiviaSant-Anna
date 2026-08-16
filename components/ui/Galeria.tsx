@@ -1,19 +1,17 @@
 import Image from "next/image";
 import type { JSX } from "react";
 
-import { cn } from "./cn";
-
 /**
  * Galeria — as fotos de ambiente hospitalar da § 3 da home.
  *
  * ## O que ela é, e o que ela deliberadamente não é
  *
  * Não é lightbox, não é carrossel, não é masonry com autoplay. O orçamento de
- * animação do site tem três itens (§ 5.7) e nenhum deles é uma galeria; o § 15
- * lista "ícones de linha coloridos em grade de 3 colunas" como anti-padrão e a
- * mesma objeção vale para nove fotos iguais em três colunas iguais. O que
- * sobra, e é o que o § 5.4 pede, é **composição**: larguras diferentes, eixos
- * diferentes, desníveis verticais, e o branco entre as peças fazendo trabalho.
+ * animação do site tem três itens (§ 5.7) e nenhum deles é uma galeria.
+ *
+ * Foi um mosaico escalonado até 15/08/2026, quando o cliente o leu como
+ * bagunça. Hoje é uma grade de duas colunas alinhadas — o porquê da troca está
+ * no comentário do `<ul>`, e vale a pena ler antes de reverter.
  *
  * ## A geometria
  *
@@ -51,79 +49,16 @@ export type ItemGaleria = {
   readonly legenda?: string;
 };
 
-type Slot = {
-  /**
-   * Posição no grid de 12 colunas, a partir de `lg`.
-   *
-   * Vai como `grid-column` inteiro (`col-[7/span_4]`) e não como o par
-   * `col-start-7 col-span-4`: `col-span` emite a forma abreviada
-   * `grid-column: span 4 / span 4`, que zera o `grid-column-start` se o
-   * Tailwind ordenar as duas regras nessa direção. Uma declaração só não tem
-   * como sair pela metade.
-   */
-  readonly grid: string;
-  /**
-   * Desnível vertical dentro da linha. É o que impede que duas peças na mesma
-   * linha se alinhem pelo topo e a composição vire tabela.
-   */
-  readonly desnivel: string;
-  /** `true` ocupa a largura inteira no celular; o resto vai a meia largura. */
-  readonly larguraTotalNoCelular: boolean;
-  /**
-   * Obrigatório e medido por posição. Sem isso o Next serve a maior variante
-   * para qualquer viewport — a 1440px a peça mais larga pede 36vw, a mais
-   * estreita 21vw, e a diferença entre servir 1920 e servir 640 no celular é
-   * o LCP inteiro.
-   */
-  readonly sizes: string;
-};
-
 /**
- * O ritmo da composição, em ciclo de cinco.
+ * `sizes` único, porque agora toda peça tem a mesma largura.
  *
- * As posições são escolhidas para que o auto-placement do grid resolva em três
- * linhas sem nenhuma `grid-row` explícita — 5+4, 3+5, 4 — e para que nenhuma
- * linha tenha duas peças da mesma largura. O ciclo se repete se um dia entrar
- * uma sexta foto; o que não acontece é a grade regular voltar.
+ * A galeria ocupa metade da grade (6 de 12 colunas) na § 3 e se divide em duas
+ * — cada foto pede ~23vw a partir de `lg` e ~46vw no celular, onde as duas
+ * dividem a largura do container. Sem isto o Next serve a maior variante para
+ * qualquer viewport, e a diferença entre entregar 1920 e entregar 640 num
+ * celular é o LCP inteiro.
  */
-const PADRAO: Slot = {
-  grid: "lg:col-[1/span_5]",
-  desnivel: "",
-  larguraTotalNoCelular: true,
-  sizes: "(min-width: 1024px) 38vw, 100vw",
-};
-
-const SLOTS = [
-  PADRAO,
-  {
-    grid: "lg:col-[7/span_4]",
-    desnivel: "lg:mt-28",
-    larguraTotalNoCelular: false,
-    sizes: "(min-width: 1024px) 30vw, 48vw",
-  },
-  {
-    grid: "lg:col-[2/span_3]",
-    desnivel: "",
-    larguraTotalNoCelular: false,
-    sizes: "(min-width: 1024px) 23vw, 48vw",
-  },
-  {
-    grid: "lg:col-[6/span_5]",
-    desnivel: "lg:mt-16",
-    larguraTotalNoCelular: false,
-    sizes: "(min-width: 1024px) 38vw, 48vw",
-  },
-  {
-    grid: "lg:col-[3/span_4]",
-    desnivel: "",
-    larguraTotalNoCelular: false,
-    sizes: "(min-width: 1024px) 30vw, 48vw",
-  },
-] as const satisfies readonly Slot[];
-
-function slotDe(indice: number): Slot {
-  return SLOTS[indice % SLOTS.length] ?? PADRAO;
-}
+const SIZES = "(min-width: 1024px) 23vw, 46vw";
 
 export function Galeria({
   itens,
@@ -132,29 +67,35 @@ export function Galeria({
 }): JSX.Element {
   return (
     /*
-      Duas colunas no celular, doze a partir de `lg`.
+      Grade regular: duas colunas, mesma largura, mesmo topo.
 
-      No celular a conta é de altura: cinco retratos 3/4 em largura total dariam
-      mais de três telas de rolagem seguidas, e ninguém rola uma parede de fotos
-      até o fim. Uma peça de abertura em largura total e o resto em pares resolve
-      as mesmas cinco fotos em pouco mais de uma tela.
+      ## O mosaico que estava aqui antes
+
+      As peças tinham larguras diferentes (`col-[1/span_5]`, `col-[7/span_4]`,
+      `col-[2/span_3]`…) e desníveis verticais (`lg:mt-28`, `lg:mt-16`), num
+      ciclo de cinco slots. Era a leitura literal do § 5.4 — composição em vez
+      de grade — e um comentário neste arquivo chegava a dizer que "o que não
+      acontece é a grade regular voltar".
+
+      Ela voltou, e por uma razão que vence o argumento tipográfico: o dono do
+      site olhou a página e disse *"deixou as fotos tudo bagunçadas"*. Ele não
+      estava vendo composição, estava vendo desalinhamento — e num site médico
+      desalinhamento não lê como sofisticação, lê como descuido. Numa página
+      cuja função é fazer alguém confiar o suficiente para agendar, essa
+      leitura custa caro.
+
+      O § 15 proíbe "ícones de linha coloridos em grade de 3 colunas", que é
+      outra coisa: aquilo é ornamento genérico. Duas fotografias reais de
+      centro cirúrgico, alinhadas, não são o anti-padrão que a regra descreve.
+
+      `items-start` mantém as legendas de alturas diferentes sem esticar as
+      figuras, e `grid-cols-2` vale desde o celular — as fotos são retratos 3/4
+      e duas em largura total dariam duas telas de rolagem.
     */
-    <ul className="grid list-none grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-16">
-      {itens.map((item, indice) => {
-        const slot = slotDe(indice);
-
+    <ul className="grid list-none grid-cols-2 items-start gap-x-4 gap-y-8 sm:gap-x-6 lg:gap-x-8">
+      {itens.map((item) => {
         return (
-          <li
-            key={item.src}
-            className={cn(
-              // `self-start` para o desnível existir: sem ele o item estica
-              // até a altura da linha e a margem some dentro do esticamento.
-              "self-start",
-              slot.larguraTotalNoCelular ? "col-span-2" : "col-span-1",
-              slot.grid,
-              slot.desnivel,
-            )}
-          >
+          <li key={item.src}>
             <figure className="flex flex-col gap-3">
               {/*
                 A proporção vem do arquivo, não de uma escolha de layout: a
@@ -177,7 +118,7 @@ export function Galeria({
                   alt={item.alt}
                   width={item.largura}
                   height={item.altura}
-                  sizes={slot.sizes}
+                  sizes={SIZES}
                   className="h-full w-full object-cover"
                 />
               </div>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { getConsultorio } from "@/content";
+import { getConsultorio, type Seo } from "@/content";
 import { RailLateral } from "@/components/layout/RailLateral";
 import { BotaoWhatsAppFixo } from "@/components/form/BotaoWhatsApp";
 import { ChamadaConsulta } from "@/components/sections/ChamadaConsulta";
@@ -16,6 +16,13 @@ import { Nota } from "@/components/ui/Nota";
 import { Secao } from "@/components/ui/Secao";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { RITMO_SECAO } from "@/components/sections/ritmo";
+import {
+  breadcrumbJsonLd,
+  grafoJsonLd,
+  medicalBusinessJsonLd,
+  serializarJsonLd,
+} from "@/lib/jsonld";
+import type { ItemTrilha } from "@/lib/jsonld";
 
 /**
  * Consultório — onde atendo, mapa, horários (briefing § 8.9).
@@ -40,15 +47,41 @@ import { RITMO_SECAO } from "@/components/sections/ritmo";
  * `/content` e a página passa a mostrá-los.
  */
 
-export const metadata: Metadata = {
-  title: "Consultório em Belo Horizonte",
-  description:
-    "Onde a Dra. Lívia Sant'Anna atende em Belo Horizonte: endereço, horários, estacionamento e acessibilidade do prédio.",
-  alternates: { canonical: "/consultorio" },
+/* SEO em objeto próprio — ver a nota em `dra-livia-santanna/page.tsx`. */
+const SEO: Seo = {
+  titulo: "Consultório em Belo Horizonte",
+  descricao:
+    "Onde a Dra. Lívia Sant'Anna atende em Belo Horizonte: endereço, horários de atendimento, estacionamento e acessibilidade do prédio.",
 };
 
+export const metadata: Metadata = {
+  title: SEO.titulo,
+  description: SEO.descricao,
+  alternates: { canonical: "/consultorio" },
+  openGraph: {
+    type: "website",
+    title: SEO.titulo,
+    description: SEO.descricao,
+    url: "/consultorio",
+  },
+};
+
+/**
+ * ## O `MedicalBusiness` é chamado mesmo devolvendo `null` hoje
+ *
+ * `medicalBusinessJsonLd()` recusa emitir enquanto o logradouro for
+ * `[CONFIRMAR]`, e `grafoJsonLd` descarta o nulo — hoje esta rota publica só a
+ * trilha. A chamada fica escrita assim de propósito: o dia em que
+ * `content/consultorio.ts` for preenchido, o bloco passa a existir sem que
+ * ninguém precise lembrar de voltar aqui. É o mesmo arranjo da home.
+ */
 export default function PaginaConsultorio() {
   const consultorio = getConsultorio();
+
+  const trilha: readonly ItemTrilha[] = [
+    { nome: "Início", href: "/" },
+    { nome: "Consultório", href: "/consultorio" },
+  ];
 
   const enderecoCompleto = valorConfirmado(consultorio.logradouro);
 
@@ -68,6 +101,15 @@ export default function PaginaConsultorio() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializarJsonLd(
+            grafoJsonLd(medicalBusinessJsonLd(), breadcrumbJsonLd(trilha)),
+          ),
+        }}
+      />
+
       <Secao
         espacamento="nenhum"
         className={RITMO_SECAO}

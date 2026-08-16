@@ -22,7 +22,9 @@ export function generateMetadata(): Metadata {
   if (!hub) return {};
 
   return {
-    title: { absolute: hub.seo.titulo },
+    // O sufixo com o nome dela vem do template do layout raiz, que o Next
+    // aplica também ao `og:title`.
+    title: hub.seo.titulo,
     description: hub.seo.descricao,
     alternates: { canonical: `/${SLUG}` },
     openGraph: {

@@ -126,9 +126,18 @@ export function AMedicaEFormacao({ bloco, medica }: Props) {
               ))}
             </dl>
 
-            <div className="mt-10 lg:mt-12">
-              <Botao href={bloco.cta.href} variante="filete">
-                {bloco.cta.texto}
+            {/* Botão sólido para agendar, filete para aprofundar.
+
+                Aqui havia um único `variante="filete"` escrito "Conhecer a
+                trajetória" — o único CTA do miolo da home, com peso de link e
+                apontando para fora do funil. A hierarquia agora diz o que o
+                site quer: a ação é agendar, e ler mais é a alternativa de quem
+                ainda não decidiu. */}
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8 lg:mt-12">
+              <Botao href={bloco.cta.href}>{bloco.cta.texto}</Botao>
+
+              <Botao href={bloco.ctaSecundario.href} variante="filete">
+                {bloco.ctaSecundario.texto}
               </Botao>
             </div>
           </Reveal>

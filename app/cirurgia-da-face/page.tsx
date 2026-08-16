@@ -55,9 +55,9 @@ export function generateMetadata(): Metadata {
   if (!hub) return {};
 
   return {
-    // `absolute` porque o template do layout raiz já acrescenta o nome dela, e
-    // o título do conteúdo também traz — sem isso, sai duplicado.
-    title: { absolute: hub.seo.titulo },
+    // O template do layout raiz acrescenta " | Dra. Lívia Sant'Anna" ao
+    // título e ao `og:title`. `seo.titulo` traz só a parte distintiva.
+    title: hub.seo.titulo,
     description: hub.seo.descricao,
     alternates: { canonical: `/${SLUG}` },
     openGraph: {

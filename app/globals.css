@@ -32,30 +32,63 @@
        Palavras longas podem quebrar. Isto não é detalhe tipográfico — é o
        que impede overflow horizontal num site em português médico.
 
-       "otorrinolaringologia" em Bodoni de 42px ocupa ~380px. Num celular de
-       390px com a fonte do sistema em 150%, a coluna de texto tem 322px. Um
-       item de grid tem `min-width: auto`, então não encolhe abaixo do
-       min-content — e o min-content de um bloco é a maior palavra dele. O
-       resultado era a coluna crescer para 371px e empurrar a página.
+       ## O que a tentativa anterior errou
 
-       `hyphens: auto` resolve na raiz: com `lang="pt-BR"` no `<html>`, o
-       navegador conhece os pontos de separação silábica e passa a ter onde
-       quebrar, o que derruba o min-content sem cortar palavra no meio.
-       `overflow-wrap: break-word` é a rede para o que não tem hifenização —
-       URL, e-mail, código.
+       A primeira correção (commit ed25bd9) foi `hyphens: auto` mais
+       `overflow-wrap: break-word`, e o cliente continuou vendo texto saindo da
+       tela. O motivo está na especificação, não no navegador:
 
-       Só age quando falta espaço. Em coluna larga, nada muda.
+         `overflow-wrap: break-word` permite quebrar uma palavra para EVITAR
+         transbordo, mas a CSS Text 3 é explícita em dizer que as oportunidades
+         de quebra que ele cria NÃO entram no cálculo do tamanho intrínseco.
+         Ou seja: o min-content de um parágrafo continua sendo a maior palavra
+         dele, exatamente como se `break-word` não existisse.
+
+       E min-content é o que decide largura de trilha de grid. Uma `<div class=
+       "grid">` sem `grid-template-columns` no celular tem UMA trilha `auto`,
+       cujo mínimo é o maior min-content entre os itens. Basta um item com uma
+       palavra impossível de hifenizar para a trilha inteira — e com ela a
+       página — assumir a largura daquela palavra.
+
+       Medido em /aviso-legal, 320px de viewport com a fonte do sistema em
+       150%: o documento tinha 365px. O culpado não era "Otorrinolaringologia"
+       (252px, hifenizável), era o domínio `publicidademedica.cfm.org.br.`, que
+       mede 345px e não tem uma única sílaba onde o hifenizador possa agir. A
+       trilha virou 345px e TODO bloco da página passou a medir 345px.
+
+       ## Por que `anywhere` e não `break-word`
+
+       `overflow-wrap: anywhere` quebra igual a `break-word` na hora de
+       renderizar — a diferença é só que as oportunidades que ele cria CONTAM
+       no min-content. Com ele, o min-content de um bloco de texto deixa de ser
+       "a maior palavra" e passa a ser "um caractere". Medido no mesmo domínio:
+       212px com `break-word`, 13px com `anywhere`.
+
+       Isso é o que fecha o problema na raiz, e é o que torna desnecessário
+       espalhar `min-width: 0` por item de grid: não existe mais min-content
+       grande para o `min-width: auto` proteger.
+
+       `hyphens: auto` fica: onde o navegador tem dicionário de pt-BR, a quebra
+       sai no ponto silábico com hífen, que é mais bonita que um corte seco.
+       Ela é a preferência; `anywhere` é o piso. E o piso importa: dicionário
+       de hifenização é componente baixado à parte no Chrome, e num aparelho
+       que não o tem `hyphens: auto` não faz absolutamente nada.
+
+       Só agem quando falta espaço. Em coluna larga, nada muda.
        ------------------------------------------------------------------ */
     hyphens: auto;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
   }
 
-  /* Bodoni nunca em bold e nunca abaixo de 1.5rem: o hairline some.
-     Verificado por scripts/verificar-bodoni.ts. */
+  /* Bodoni nunca abaixo de 1.5rem: o hairline some. Verificado por
+     scripts/verificar-bodoni.ts.
+
+     O peso vem de `--peso-display` (900). A regra "nunca em bold" do § 5.3 foi
+     revogada pelo cliente em 15/08/2026 — ver styles/theme.css. */
   h1,
   h2 {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: var(--peso-display);
     font-optical-sizing: auto;
   }
 
@@ -139,6 +172,46 @@
   /* Medida de linha em texto corrido: 62–70 caracteres. */
   .medida {
     max-width: var(--container-medida);
+  }
+}
+
+/* =============================================================================
+   O peso da display
+
+   Uma regra, e é a que faz a decisão do cliente de 15/08/2026 valer no site
+   inteiro em vez de arquivo por arquivo.
+
+   ## Por que a família também manda no peso
+
+   `font-display` é utilitário de FAMÍLIA, e emprestar a ele a decisão de PESO
+   é irregular — está aqui de propósito, com o motivo escrito. Espalhados pelo
+   projeto existem dezenas de `font-display font-normal`, e aquele `font-normal`
+   não é escolha de composição: é o cumprimento da regra "a Bodoni nunca vai em
+   bold", que acabou de ser revogada. Trocar um a um significaria trinta
+   arquivos, três agentes trabalhando em paralelo nos mesmos arquivos, e a
+   certeza de esquecer um — que é justamente a reclamação original: *"você não
+   mudou a fonte que eu falei"*. Com a regra aqui, quem escrever `font-display`
+   amanhã acerta sem saber que houve uma discussão.
+
+   ## Por que ela vence `font-normal`
+
+   Mesma especificidade (0,1,0) e mesma camada (`utilities`), mas este arquivo
+   é processado DEPOIS dos utilitários gerados pelo `@import "tailwindcss"` da
+   linha 1 — então, em empate, vence a última. É o mesmo mecanismo que já
+   governa `.link-filete` (ver docs/DESIGN-SYSTEM.md § 9).
+
+   ## Como fugir dela
+
+   Não brigando com `font-normal`, que perde. Redefinindo a variável no escopo
+   que precisa: `class="font-display [--peso-display:400]"`. A exceção fica
+   legível no markup, o que é melhor do que um utilitário de peso que às vezes
+   funciona e às vezes não.
+   ========================================================================== */
+
+@layer utilities {
+  .font-display {
+    font-weight: var(--peso-display);
+    font-optical-sizing: auto;
   }
 }
 

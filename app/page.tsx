@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { BotaoWhatsAppFixo } from "@/components/form/BotaoWhatsApp";
 import { RespiroTraco } from "@/components/sections/RespiroTraco";
 import { AMedicaEFormacao } from "@/components/sections/home/AMedicaEFormacao";
 import { Chamada } from "@/components/sections/home/Chamada";
@@ -17,6 +18,7 @@ import {
   physicianJsonLd,
   serializarJsonLd,
 } from "@/lib/jsonld";
+import { tituloSeo } from "@/lib/site";
 
 /**
  * Home — landing page de conversão.
@@ -69,13 +71,20 @@ import {
 const home = getHome();
 
 export const metadata: Metadata = {
-  // `absolute` porque o layout raiz aplica o template "%s | Lívia Sant'Anna",
-  // e o título da home já tem 45 caracteres — com o sufixo estouraria os 60.
-  title: { absolute: home.seo.titulo },
+  /*
+    A home é a única rota que monta o sufixo à mão.
+
+    O `title.template` do layout raiz vale para os segmentos filhos, e não para
+    o `page` do próprio segmento — layout raiz e home são o mesmo segmento.
+    Deixar `home.seo.titulo` cru aqui produziria a única página do site sem o
+    nome dela no título, e o defeito só apareceria no HTML construído. Ver
+    `tituloSeo` em lib/site.ts.
+  */
+  title: tituloSeo(home.seo.titulo),
   description: home.seo.descricao,
   alternates: { canonical: "/" },
   openGraph: {
-    title: home.seo.titulo,
+    title: tituloSeo(home.seo.titulo),
     description: home.seo.descricao,
     url: "/",
     type: "website",
@@ -106,6 +115,19 @@ export default function Home() {
         bloco={home.procedimentos}
         procedimentos={listarProcedimentos()}
       />
+
+      {/* A ação sempre à mão no celular.
+
+          A home tinha dois CTAs no total — um no hero, outro no fim — e no
+          celular a distância entre eles é de várias telas de rolagem. Quem
+          decidia agendar no meio da leitura não tinha onde clicar. Esta barra
+          resolve sem custo de layout: ela é `fixed`, então não empurra nada, e
+          some a partir de `lg`, onde a ação já está no fluxo.
+
+          O `pb` no `<main>` (ver `app/layout.tsx`) é o que impede a barra de
+          cobrir o fim da página, incluindo o bloco de identificação do CFM —
+          que a Resolução 2.336/2023 exige visível. */}
+      <BotaoWhatsAppFixo />
     </>
   );
 }

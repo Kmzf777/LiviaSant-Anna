@@ -26,7 +26,7 @@ export const PROCEDIMENTOS_OTORRINO: readonly Procedimento[] = [
     hub: "otorrinolaringologia",
     nome: "Desvio de septo",
     seo: {
-      titulo: "Cirurgia de desvio de septo em BH | Lívia Sant'Anna",
+      titulo: "Cirurgia de desvio de septo em BH",
       descricao:
         "Septoplastia para quem não respira bem pelo nariz: como é a cirurgia, ficha técnica, recuperação semana a semana e riscos, sem eufemismo.",
     },
@@ -193,7 +193,7 @@ export const PROCEDIMENTOS_OTORRINO: readonly Procedimento[] = [
     hub: "otorrinolaringologia",
     nome: "Amígdalas e adenoides",
     seo: {
-      titulo: "Cirurgia de amígdalas e adenoides | Lívia Sant'Anna",
+      titulo: "Cirurgia de amígdalas e adenoides",
       descricao:
         "Quando operar amígdalas e adenoides em crianças e adultos: critérios, como é a cirurgia, recuperação dia a dia e riscos. Belo Horizonte, MG.",
     },
@@ -360,7 +360,7 @@ export const PROCEDIMENTOS_OTORRINO: readonly Procedimento[] = [
     hub: "otorrinolaringologia",
     nome: "Sinusite",
     seo: {
-      titulo: "Tratamento cirúrgico da sinusite | Lívia Sant'Anna",
+      titulo: "Tratamento cirúrgico da sinusite",
       descricao:
         "Sinusite crônica e de repetição: quando o tratamento clínico basta, quando a cirurgia endoscópica entra, como é feita e quais são os riscos.",
     },
@@ -527,7 +527,7 @@ export const PROCEDIMENTOS_OTORRINO: readonly Procedimento[] = [
     hub: "otorrinolaringologia",
     nome: "Tubo de ventilação",
     seo: {
-      titulo: "Tubo de ventilação no ouvido | Lívia Sant'Anna",
+      titulo: "Tubo de ventilação no ouvido",
       descricao:
         "Colocação de tubo de ventilação em crianças e adultos: quando é indicado, como é feito, cuidados com água, riscos e o que esperar depois.",
     },
@@ -678,7 +678,7 @@ export const PROCEDIMENTOS_OTORRINO: readonly Procedimento[] = [
     hub: "otorrinolaringologia",
     nome: "Timpanoplastia",
     seo: {
-      titulo: "Timpanoplastia em Belo Horizonte | Lívia Sant'Anna",
+      titulo: "Timpanoplastia em Belo Horizonte",
       descricao:
         "Cirurgia para fechar o furo no tímpano: quando é indicada, como é feita, recuperação semana a semana, chance de sucesso e riscos reais.",
     },

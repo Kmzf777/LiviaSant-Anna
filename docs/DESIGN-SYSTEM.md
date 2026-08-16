@@ -65,14 +65,58 @@ precisa gritar, ele muda de bloco — não de cor.
 | Corpo   | Switzer (variable)             | Todo texto lido                                          |
 | Dados   | IBM Plex Mono                  | Eyebrows, ficha técnica, bloco CFM, endereço, disclaimer |
 
-Duas regras inegociáveis, verificadas por `pnpm verify:bodoni`:
+Uma regra inegociável, verificada por `pnpm verify:bodoni`:
 
-1. **Bodoni nunca abaixo de 1.5rem.** O hairline some e vira borrão.
-2. **Bodoni nunca em bold.** O contraste dela vem do desenho, não do peso.
+1. **Bodoni nunca abaixo de 1.5rem.** O hairline some e vira borrão. Isso vale
+   em qualquer peso: peso não compra tamanho, e mesmo em 900 o serifado de uma
+   Didone continua sendo um fio.
 
 Por isso `SectionTitle` só oferece os degraus `hero`, `h1` e `h2`, e aplica
-`font-normal` explicitamente — em `as="h3"` o reset de `globals.css` mandaria
+`font-display` explicitamente — em `as="h3"` o reset de `globals.css` mandaria
 a família do corpo e peso 500.
+
+#### A regra que caiu: "Bodoni nunca em bold"
+
+Havia uma segunda regra, e ela foi **revogada pelo cliente em 15/08/2026**. O
+pedido veio em áudio, literal: _"a fonte onde está escrito 'Lívia Sant'Anna' e
+os outros títulos, deixa ela o mais bold que conseguir"_. Registro em
+`PLANO-CONVERSAO-SEO.md`, decisão 2.
+
+O argumento tipográfico que sustentava a regra continua verdadeiro — numa
+Didone o contraste vem do desenho, e engrossar o tronco sem engrossar a serifa
+aumenta o contraste em vez de dar "peso" no sentido que um leigo espera. Ele
+simplesmente deixou de ser a decisão de quem escreve CSS. Se alguém quiser a
+regra de volta, isso é uma conversa nova com o cliente, não uma correção.
+
+Como o peso é aplicado, em um lugar só:
+
+```
+--peso-display: 900        styles/theme.css, bloco :root
+```
+
+Três consumidores, e nenhum outro lugar do projeto decide peso de display:
+
+1. **Os degraus da escala** — `--text-hero--font-weight`,
+   `--text-h1--font-weight` e `--text-h2--font-weight` apontam para o token, e
+   com eles as classes `text-hero`, `text-h1` e `text-h2`.
+2. **O reset** — `h1, h2` em `app/globals.css`.
+3. **A classe de família** — `.font-display` em `app/globals.css` também aplica
+   o peso. É irregular de propósito: espalhados pelo projeto existem dezenas de
+   `font-display font-normal`, e aquele `font-normal` era o cumprimento da regra
+   revogada, não uma escolha de composição. A regra vence `font-normal` porque
+   está na mesma camada (`utilities`) e é processada depois — o mesmo mecanismo
+   de `.link-filete`, § 9.
+
+**Para um título mais leve num trecho**, não escreva `font-normal`: ele perde.
+Redefina a variável no escopo — `class="font-display [--peso-display:400]"`.
+
+900 é o topo real do eixo `wght` da Bodoni Moda (400–900), não um negrito
+sintético. O arquivo variável com o eixo já vinha sendo baixado: no
+`next/font/google`, `axes` lista apenas os eixos ADICIONAIS, e `wght` entra
+sozinho e por inteiro quando a família tem corte variável — declarar
+`axes: ["opsz", "wght"]` é erro de build, não redundância. `app/fonts.ts`
+registra a medição que comprova a interpolação, e `font-synthesis-weight: none`
+no `body` garante que nenhum navegador engrosse por conta própria.
 
 ### Geometria
 
@@ -88,10 +132,16 @@ lugar nenhum. O selo circular aparece uma única vez, no rodapé.
 
 ```
 --container  1440px
---gutter     clamp(1.25rem, 4vw, 5rem)
+--gutter     clamp(20px, 4vw, 5rem)
 --rail       80px
 --secao-y    clamp(5rem, 12vh, 11rem)
 ```
+
+O piso do `--gutter` é `px` e não `rem` de propósito: margem não deve crescer
+com o tamanho do texto. Com a fonte do sistema em 150%, um piso de 1.25rem vira
+30px de cada lado e, somado ao corredor do Traço, comia 96px dos 390 de um
+celular. Quem precisa de letra maior precisa de mais lugar para ela, não de mais
+margem. O mesmo vale para o piso de `--traco-corredor`.
 
 Assimetria é regra (§ 5.4). O `RailLateral` é o eixo visível dessa assimetria:
 some abaixo de 1024px, e é o que impede a página de virar uma pilha de blocos
@@ -283,6 +333,30 @@ esbarra nisso.
 emoji cobre `U+2190–U+21FF` (setas) e `U+2600–U+27BF`. Não use `→` nem `✓` em
 `.ts`/`.tsx` sob `app`, `components`, `content` ou `lib`.
 
+**`overflow-wrap: break-word` não impede overflow horizontal.** Essa foi a
+primeira correção tentada (commit `ed25bd9`) e o cliente continuou vendo texto
+sair da tela. O motivo está na especificação: `break-word` autoriza quebrar a
+palavra na hora de renderizar, mas as oportunidades de quebra que ele cria **não
+entram no cálculo do min-content**. E é o min-content que dimensiona trilha de
+grid e item de flex. Medido no domínio `publicidademedica.cfm.org.br.`: 212px de
+min-content com `break-word`, 13px com `anywhere`.
+
+Consequência prática: uma `<div class="grid">` no celular tem uma trilha `auto`
+cujo mínimo é o maior min-content entre os itens. **Uma única palavra sem ponto
+de quebra — uma URL, um e-mail — define a largura da página inteira.** Foi
+exatamente isso em `/aviso-legal` a 320px com a fonte do sistema em 150%: 365px
+de documento numa tela de 320.
+
+Hoje o `body` leva `hyphens: auto` **e** `overflow-wrap: anywhere`. O primeiro é
+a preferência (quebra silábica com hífen, onde o navegador tem dicionário de
+pt-BR); o segundo é o piso, e é o que fecha o buraco — dicionário de hifenização
+é componente baixado à parte, e num aparelho que não o tem `hyphens: auto` não
+faz nada. `tests/e2e/overflow.spec.ts` varre 4 larguras × 2 escalas de fonte ×
+todas as rotas para impedir a terceira volta do defeito.
+
+**Nunca `overflow-x: hidden` no `body` para resolver isso.** Esconde o sintoma,
+deixa o bug vivo e mata o scroll horizontal legítimo de tabela.
+
 **`data-superficie="vinho"` pinta o fundo.** Para usar o atributo só pelo
 efeito colateral (o Traço, a cor do foco) sem o `wine-700`, acrescente um
 utilitário de fundo: o Footer faz isso com `bg-wine-900`, o Header com
@@ -294,7 +368,7 @@ utilitário de fundo: o Footer faz isso com `bg-wine-900`, o Header com
 
 ```
 pnpm verify:cores       #000, #fff, gradiente, sombra colorida, outline none, pílula
-pnpm verify:bodoni      display abaixo de 1.5rem ou em bold
+pnpm verify:bodoni      display abaixo de 1.5rem
 pnpm verify:contraste   os 21 pares em uso, em AA
 pnpm verify:termos      superlativo, promessa de resultado, copy vaga, emoji
 pnpm test               contratos dos componentes e da navegação

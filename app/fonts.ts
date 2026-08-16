@@ -17,8 +17,28 @@ import localFont from "next/font/local";
  * tamanho grande o hairline afina como deve, e em tamanho pequeno
  * engrossa o suficiente para não sumir.
  *
- * Regra do design system: nunca abaixo de 1.5rem, nunca em bold.
- * Verificada por scripts/verificar-bodoni.ts.
+ * ## Sobre o eixo de peso não aparecer aqui
+ *
+ * A lista `axes` só tem `opsz`, e isso NÃO significa que o peso ficou de fora.
+ * No `next/font/google`, `axes` é a lista de eixos ADICIONAIS: o `wght` é
+ * tratado pela opção `weight` e, quando ela é omitida numa família que tem
+ * corte variável, o loader assume `variable` e pede o intervalo inteiro do
+ * eixo. Declarar `axes: ["opsz", "wght"]` não é "mais completo" — é erro de
+ * build ("Invalid axes value `wght`"), porque `wght` é filtrado da lista de
+ * eixos declaráveis em `get-font-axes.js`.
+ *
+ * Conferido, e não suposto. Os metadados que o Next carrega dão
+ * `wght: 400..900` para esta família, e o CSS que ele gera declara
+ * `font-weight: 400 900` nos quatro `@font-face` da Bodoni. Medido no
+ * navegador com `font-synthesis-weight: none` (que `app/globals.css` aplica no
+ * body), "Lívia Sant'Anna" em 64px mede 452.97px em 400, 463.47 em 500, 490.34
+ * em 700 e 527.81 em 900: uma rampa contínua, que só existe se o arquivo
+ * variável estiver mesmo interpolando. Negrito sintético não produz degraus
+ * intermediários — e, com `font-synthesis-weight: none`, não produz nada.
+ *
+ * Regra do design system: nunca abaixo de 1.5rem. A regra "nunca em bold" foi
+ * revogada pelo cliente em 15/08/2026, e a display passou a 900 por
+ * `--peso-display` (`styles/theme.css`). Ver scripts/verificar-bodoni.ts.
  */
 export const bodoni = Bodoni_Moda({
   subsets: ["latin", "latin-ext"],

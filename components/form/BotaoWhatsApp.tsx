@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { getConsultorio } from "@/content";
 import { linkWhatsapp } from "@/lib/whatsapp";
 import { cn } from "@/components/ui/cn";
@@ -81,25 +83,53 @@ export function BotaoWhatsApp({ procedimento, children, className }: Props) {
 /**
  * Atalho persistente do celular. Retangular, como todo elemento de interface
  * do site — a pílula flutuante é justamente o clichê que o § 5.5 recusa.
+ *
+ * ## Por que este, ao contrário do inline, NÃO some sem o número
+ *
+ * O `BotaoWhatsApp` inline pode desaparecer sem custo: ele mora no meio de uma
+ * seção que já tem um botão de agendar ao lado. Este é o único CTA visível em
+ * boa parte da rolagem no celular, e sumir significa a pessoa chegar ao fim da
+ * página sem nenhuma ação à mão — que é exatamente a reclamação que originou
+ * esta barra ("CTAs escondidos e fracos", 15/08/2026).
+ *
+ * Então ele degrada em vez de sumir: com número confirmado abre a conversa;
+ * sem número, leva ao formulário de `/contato`. A promessa do rótulo muda
+ * junto — não diz "WhatsApp" quando não vai abrir o WhatsApp, porque um botão
+ * que mente gasta mais confiança do que um botão que não existe.
+ *
+ * Quando o número entrar em `content/consultorio.ts`, os dois modos trocam
+ * sozinhos, sem tocar em componente nenhum.
  */
 export function BotaoWhatsAppFixo({ procedimento, children }: Props) {
   const href = usarLink(procedimento);
-  if (!href) return null;
+
+  const classes = cn(
+    BASE,
+    "border-wine-800 bg-wine-700 text-sand-50 border px-6 py-4",
+    "hover:bg-wine-800",
+    // Barra de largura inteira, e não um adesivo no canto: no celular o alvo
+    // que converte é o que não exige mira. `pb` com a área segura do iOS para
+    // não ficar sob a barra de gestos.
+    "fixed inset-x-0 bottom-0 z-40 rounded-none lg:hidden",
+    "pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4",
+  );
+
+  if (!href) {
+    return (
+      <Link href="/contato" className={classes}>
+        {children ?? "Agendar consulta"}
+      </Link>
+    );
+  }
 
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn(
-        BASE,
-        "border-wine-800 bg-wine-700 text-sand-50 border px-6 py-4",
-        "hover:bg-wine-800",
-        "fixed right-4 bottom-4 z-40 lg:hidden",
-        "mb-[env(safe-area-inset-bottom)]",
-      )}
+      className={classes}
     >
-      {children ?? "WhatsApp"}
+      {children ?? "Agendar pelo WhatsApp"}
       <span className="sr-only"> (abre o WhatsApp em outra aba)</span>
     </a>
   );
