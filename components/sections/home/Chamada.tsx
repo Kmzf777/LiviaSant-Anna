@@ -86,7 +86,7 @@ export function Chamada({ hero }: Props) {
 
             <h1
               id="chamada-titulo"
-              className="font-display text-blush-200 mt-6 text-[clamp(1.9rem,0.9rem_+_3.4vw,3.75rem)] leading-[1.04] tracking-[-0.025em]"
+              className="font-display text-blush-200 mt-6 font-normal text-[clamp(1.9rem,0.9rem_+_3.4vw,3.75rem)] leading-[1.04] tracking-[-0.025em]"
             >
               {hero.h1.map((linha) => (
                 <span key={linha} className="block">

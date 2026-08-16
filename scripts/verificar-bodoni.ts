@@ -1,32 +1,12 @@
 /**
- * Protege a regra que sobrou da Bodoni Moda (briefing § 5.3).
+ * Protege as duas regras da Bodoni Moda (briefing § 5.3).
  *
  *   1. Nunca abaixo de 1.5rem — o hairline some e vira borrão em tela.
+ *   2. Nunca em bold — a Didone quebra; o contraste dela já vem do desenho.
  *
- * ---------------------------------------------------------------------------
- * A regra 2 ("nunca em bold") foi REVOGADA em 15/08/2026
- * ---------------------------------------------------------------------------
- *
- * Este script chegou a reprovar o build de quem escrevesse `font-display
- * font-bold`, com a justificativa de que a Didone quebra em peso alto e de que
- * o contraste dela já vem do desenho. O argumento tipográfico continua de pé;
- * a decisão não é mais nossa.
- *
- * O dono do site pediu o contrário, em áudio: *"a fonte onde está escrito
- * 'Lívia Sant'Anna' e os outros títulos, deixa ela o mais bold que conseguir"*.
- * A decisão foi aceita e está registrada em `PLANO-CONVERSAO-SEO.md` (decisão
- * 2). A display passou a 900 — o topo real do eixo `wght` da Bodoni Moda — por
- * `--peso-display` em `styles/theme.css`.
- *
- * Ou seja: se você está lendo isto daqui a seis meses e estranhando a ausência
- * da checagem de peso, ela não caiu por descuido nem por conveniência de quem
- * queria fazer o build passar. Caiu por ordem de quem manda no site, e o preço
- * estético foi discutido antes. Reintroduzi-la exige uma decisão nova, do
- * cliente, não uma correção de rota.
- *
- * A checagem de TAMANHO fica, e por um motivo independente: mesmo em 900 a
- * Bodoni é uma Didone, o serifado dela continua sendo um fio, e abaixo de
- * 1.5rem esse fio some na renderização. Peso não compra tamanho.
+ * A display é a voz da persuasão no site. Usá-la pequena ou pesada não é
+ * um deslize de estilo: descaracteriza o eco do traço filete do logo, que é
+ * a razão de ela ter sido escolhida.
  *
  *   pnpm verify:bodoni
  */
@@ -43,6 +23,9 @@ import {
 /** Degraus da escala que ficam abaixo de 1.5rem no mínimo do clamp. */
 const TAMANHOS_PEQUENOS = ["text-h3", "text-lead", "text-body", "text-small", "text-micro"];
 
+/** Utilitários de peso do Tailwind que estouram o limite. */
+const PESOS_PESADOS = ["font-semibold", "font-bold", "font-extrabold", "font-black"];
+
 const violacoes: Violacao[] = [];
 
 const arquivos = listarArquivos(["app", "components", "styles"], [".tsx", ".css"]);
@@ -52,7 +35,8 @@ for (const caminho of arquivos) {
   const conteudo = semComentarios(original);
 
   // ---------------------------------------------------------------------------
-  // Combinações na mesma lista de classes: font-display + tamanho pequeno.
+  // Combinações na mesma lista de classes: font-display + tamanho pequeno,
+  // ou font-display + peso pesado.
   // ---------------------------------------------------------------------------
   for (const match of conteudo.matchAll(
     /class(?:Name)?\s*=\s*(?:"([^"]*)"|'([^']*)'|\{`([^`]*)`\})/g,
@@ -79,6 +63,21 @@ for (const caminho of arquivos) {
       );
     }
 
+    const pesado = tokens.find((t) =>
+      PESOS_PESADOS.some((p) => t === p || t.endsWith(`:${p}`)),
+    );
+    if (pesado) {
+      violacoes.push(
+        violacaoEm(
+          caminho,
+          original,
+          match.index,
+          `font-display com ${pesado}: a Bodoni nunca vai em bold. ` +
+            `Mantenha font-weight 400 e deixe o optical-size fazer o trabalho.`,
+        ),
+      );
+    }
+
     const arbitrarioPequeno = tokens.find((t) => {
       const m = /^text-\[(\d*\.?\d+)(rem|px|em)\]$/.exec(t);
       if (!m?.[1] || !m[2]) return false;
@@ -98,10 +97,30 @@ for (const caminho of arquivos) {
     }
   }
 
-  // A varredura de CSS que existia aqui procurava blocos com
-  // `font-family: var(--font-display)` e `font-weight` ≥ 600. Saiu junto com a
-  // regra de peso: hoje o bloco que ela acusaria é justamente o certo — ver
-  // `h1, h2` e `.font-display` em app/globals.css.
+  // ---------------------------------------------------------------------------
+  // CSS: regras que combinam a família display com peso ≥ 600.
+  // ---------------------------------------------------------------------------
+  if (caminho.endsWith(".css")) {
+    for (const match of conteudo.matchAll(/\{[^{}]*\}/g)) {
+      if (match.index === undefined) continue;
+      const bloco = match[0];
+
+      if (!/font-family\s*:\s*var\(--font-display\)/.test(bloco)) continue;
+
+      const peso = /font-weight\s*:\s*(\d{3}|bold(?:er)?)\b/.exec(bloco);
+      const valor = peso?.[1];
+      if (valor && (valor.startsWith("bold") || Number.parseInt(valor, 10) >= 600)) {
+        violacoes.push(
+          violacaoEm(
+            caminho,
+            original,
+            match.index,
+            `--font-display com font-weight: ${valor}. A Bodoni nunca vai em bold.`,
+          ),
+        );
+      }
+    }
+  }
 }
 
 console.log(`\nBodoni Moda — ${arquivos.length} arquivos\n`);

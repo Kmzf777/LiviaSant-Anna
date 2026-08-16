@@ -119,26 +119,12 @@ describe("SectionTitle", () => {
     );
   });
 
-  /**
-   * Este teste afirmava o contrário: que a display nunca ia em peso pesado, e
-   * que `font-normal` estava sempre presente. A regra "nunca em bold" do
-   * briefing § 5.3 foi revogada pelo cliente em 15/08/2026 — ver
-   * `scripts/verificar-bodoni.ts` e `PLANO-CONVERSAO-SEO.md`, decisão 2.
-   *
-   * O que ficou no lugar é mais forte do que a asserção antiga: o componente
-   * não pode carregar peso NENHUM na lista de classes. Peso é decisão de
-   * `--peso-display` (`styles/theme.css`), num lugar só. Um `font-normal`
-   * esquecido aqui deixaria os títulos de seção em 400 enquanto o resto do site
-   * foi para 900, que é exatamente a reclamação que originou a mudança.
-   */
-  it("não decide o peso: ele vem do token da display", () => {
+  it("nunca combina display com peso pesado", () => {
     render(<SectionTitle as="h2">Rinoplastia</SectionTitle>);
     const classes = screen.getByRole("heading", { level: 2 }).className;
 
-    expect(classes).toContain("font-display");
-    expect(classes).not.toMatch(
-      /\bfont-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/,
-    );
+    expect(classes).toContain("font-normal");
+    expect(classes).not.toMatch(/font-(semibold|bold|extrabold|black)/);
   });
 });
 

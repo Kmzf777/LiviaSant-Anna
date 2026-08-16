@@ -80,15 +80,15 @@
     overflow-wrap: anywhere;
   }
 
-  /* Bodoni nunca abaixo de 1.5rem: o hairline some. Verificado por
-     scripts/verificar-bodoni.ts.
+  /* Bodoni nunca em bold e nunca abaixo de 1.5rem: o hairline some.
+     Verificado por scripts/verificar-bodoni.ts.
 
-     O peso vem de `--peso-display` (900). A regra "nunca em bold" do § 5.3 foi
-     revogada pelo cliente em 15/08/2026 — ver styles/theme.css. */
+     O peso 900 esteve aqui entre 15 e 16/08/2026 e foi revertido a pedido do
+     cliente. O peso volta a sair dos degraus da escala (`--text-h1--font-weight`
+     e irmãos, em styles/theme.css), todos em 400. */
   h1,
   h2 {
     font-family: var(--font-display);
-    font-weight: var(--peso-display);
     font-optical-sizing: auto;
   }
 
@@ -176,42 +176,55 @@
 }
 
 /* =============================================================================
-   O peso da display
+   Títulos não partem palavra no meio
 
-   Uma regra, e é a que faz a decisão do cliente de 15/08/2026 valer no site
-   inteiro em vez de arquivo por arquivo.
+   O H1 do hero saía, no celular, como "gargan / ta". Sem hífen, no meio da
+   sílaba. É o efeito direto do `overflow-wrap: anywhere` do topo deste
+   arquivo: ele resolve o overflow horizontal justamente por permitir quebra em
+   QUALQUER caractere, e essa permissão valia também para a display.
 
-   ## Por que a família também manda no peso
+   Num parágrafo de corpo o custo é aceitável e raro — só age quando não há
+   alternativa, e o que ele salva é a página inteira deixar de transbordar. Num
+   título de 40px, em Bodoni, é a primeira coisa que alguém vê ao abrir o site.
 
-   `font-display` é utilitário de FAMÍLIA, e emprestar a ele a decisão de PESO
-   é irregular — está aqui de propósito, com o motivo escrito. Espalhados pelo
-   projeto existem dezenas de `font-display font-normal`, e aquele `font-normal`
-   não é escolha de composição: é o cumprimento da regra "a Bodoni nunca vai em
-   bold", que acabou de ser revogada. Trocar um a um significaria trinta
-   arquivos, três agentes trabalhando em paralelo nos mesmos arquivos, e a
-   certeza de esquecer um — que é justamente a reclamação original: *"você não
-   mudou a fonte que eu falei"*. Com a regra aqui, quem escrever `font-display`
-   amanhã acerta sem saber que houve uma discussão.
+   Então a regra do corpo continua onde ela trabalha, e o display sai dela:
 
-   ## Por que ela vence `font-normal`
+     overflow-wrap: normal   nunca quebra dentro da palavra
+     hyphens: manual         só quebra onde houver `&shy;` escrito à mão
 
-   Mesma especificidade (0,1,0) e mesma camada (`utilities`), mas este arquivo
-   é processado DEPOIS dos utilitários gerados pelo `@import "tailwindcss"` da
-   linha 1 — então, em empate, vence a última. É o mesmo mecanismo que já
-   governa `.link-filete` (ver docs/DESIGN-SYSTEM.md § 9).
+   `hyphens: manual` e não `auto`: o `auto` produziria "gargan-ta" com hífen, o
+   que é hifenização correta e ainda assim não é o que se quer num H1 de duas
+   linhas cuja quebra é decisão de conteúdo (`content/home.ts` traz as linhas
+   já separadas).
 
-   ## Como fugir dela
+   ## E o overflow que isto poderia trazer de volta
 
-   Não brigando com `font-normal`, que perde. Redefinindo a variável no escopo
-   que precisa: `class="font-display [--peso-display:400]"`. A exceção fica
-   legível no markup, o que é melhor do que um utilitário de peso que às vezes
-   funciona e às vezes não.
+   Não traz, porque o problema nunca esteve nos títulos: o bloco medido em
+   /aviso-legal era um parágrafo com um domínio de 345px, e domínio não aparece
+   em H1. O título mais longo do site cabe pela rampa de `clamp()`, que encolhe
+   a fonte antes de a palavra faltar espaço. `tests/e2e/overflow.spec.ts` varre
+   as 21 rotas em quatro larguras e é quem garante que continue assim.
+
+   ## Por que em `base`
+
+   É a camada do reset de tipografia deste arquivo — o `body` acima e o
+   `h1, h2` logo abaixo já moram nela —, é o lugar de seletor de elemento, e
+   ela perde de qualquer utilitário. O último ponto é o que importa: um
+   `break-words` escrito à mão em algum componente continua vencendo esta
+   regra, que é o comportamento desejado para uma exceção deliberada.
+
+   Confira no `.css` construído procurando por `hyphens:manual`, e não pelo
+   seletor: o minificador reordena a lista alfabeticamente e a regra sai como
+   `.font-display,h1,h2,h3{…}`.
    ========================================================================== */
 
-@layer utilities {
+@layer base {
+  h1,
+  h2,
+  h3,
   .font-display {
-    font-weight: var(--peso-display);
-    font-optical-sizing: auto;
+    overflow-wrap: normal;
+    hyphens: manual;
   }
 }
 
